@@ -1,0 +1,126 @@
+package de.legoshi.parkourcalculator.gui;
+
+import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
+import de.legoshi.parkourcalculator.parkour.environment.Environment;
+import javafx.scene.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.Box;
+import javafx.scene.transform.Rotate;
+
+public class MinecraftScreen {
+
+    private final PositionVisualizer positionVisualizer;
+    private static Box firstBlock;
+
+    public MinecraftScreen(Group group, Scene scene, SubScene subScene, PositionVisualizer positionVisualizer) {
+        this.positionVisualizer = positionVisualizer;
+        setupModelScreen(group, scene, subScene);
+    }
+
+    public void setupModelScreen(Group root, Scene scene, SubScene subScene) {
+        createStartPlatform(root);
+        registerCamera(subScene);
+        registerKeyInputs(scene, subScene, root);
+        prepareLightSource(root);
+    }
+
+    private void createStartPlatform(Group root) {
+        Box box = new Box(100, 100, 100);
+        box.setOnMouseClicked(mouseEvent -> handleBlockClick(root, mouseEvent));
+        root.getChildren().add(box);
+
+        firstBlock = box;
+    }
+
+    private void handleBlockClick(Group root, MouseEvent mouseEvent) {
+        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+            addBlock(root, mouseEvent);
+        } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+            removeBlock(root, mouseEvent);
+        }
+        positionVisualizer.generatePlayerPath();
+    }
+
+    private void removeBlock(Group root, MouseEvent mouseEvent) {
+        Box bOld = (Box) mouseEvent.getTarget();
+        if (bOld.equals(firstBlock)) return;
+        root.getChildren().remove(bOld);
+        Environment.removeBlock(bOld, firstBlock);
+    }
+
+    private void addBlock(Group root, MouseEvent mouseEvent) {
+        Box bAdded = new Box(100, 100, 100);
+        Box bOld = (Box) mouseEvent.getTarget();
+        System.out.println(mouseEvent);
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseColor(Color.GREEN);
+        bAdded.setMaterial(material);
+        double roundedX = Math.round(mouseEvent.getX() * 100.0) / 100.0;
+        double roundedY = Math.round(mouseEvent.getY() * 100.0) / 100.0;
+        double roundedZ = Math.round(mouseEvent.getZ() * 100.0) / 100.0;
+        if (roundedX == 50.0) bAdded.setTranslateX(100);
+        else if (roundedX == -50.0) bAdded.setTranslateX(-100);
+        else if (roundedY == 50.0) bAdded.setTranslateY(100);
+        else if (roundedY == -50.0) bAdded.setTranslateY(-100);
+        else if (roundedZ == 50.0) bAdded.setTranslateZ(100);
+        else if (roundedZ == -50.0) bAdded.setTranslateZ(-100);
+        bAdded.setTranslateX(bAdded.getTranslateX() + bOld.getTranslateX());
+        bAdded.setTranslateY(bAdded.getTranslateY() + bOld.getTranslateY());
+        bAdded.setTranslateZ(bAdded.getTranslateZ() + bOld.getTranslateZ());
+        bAdded.setOnMouseClicked(mouseEvent1 -> handleBlockClick(root, mouseEvent1));
+        root.getChildren().add(bAdded);
+
+        Environment.addBlock(bAdded, firstBlock);
+    }
+
+    private void registerCamera(SubScene subScene) {
+        PerspectiveCamera camera = new PerspectiveCamera(true);
+        camera.translateXProperty().set(0);
+        camera.translateYProperty().set(0);
+        camera.translateZProperty().set(-1000);
+        camera.setNearClip(1);
+        camera.setFarClip(10000);
+        subScene.setCamera(camera);
+    }
+
+    private void registerKeyInputs(Scene scene, SubScene subScene, Group group) {
+
+        scene.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode().equals(KeyCode.S)) group.setTranslateY(group.getTranslateY() + 10);
+            if (keyEvent.getCode().equals(KeyCode.W)) group.setTranslateY(group.getTranslateY() - 10);
+            if (keyEvent.getCode().equals(KeyCode.A)) {
+                group.setRotationAxis(Rotate.Y_AXIS);
+                group.setRotate(group.getRotate()+10);
+            }
+            if (keyEvent.getCode().equals(KeyCode.D)) {
+                group.setRotationAxis(Rotate.Y_AXIS);
+                group.setRotate(group.getRotate()-10);
+            }
+            if(keyEvent.getCode().equals(KeyCode.O)) {
+                group.setScaleX(group.getScaleX()*0.8);
+                group.setScaleY(group.getScaleY()*0.8);
+                group.setScaleZ(group.getScaleZ()*0.8);
+            }
+            if(keyEvent.getCode().equals(KeyCode.P)) {
+                group.setScaleX(group.getScaleX()*1.2);
+                group.setScaleY(group.getScaleY()*1.2);
+                group.setScaleZ(group.getScaleZ()*1.2);
+            }
+            if (keyEvent.getCode().equals(KeyCode.F)) {
+                subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()+10);
+            }
+            if (keyEvent.getCode().equals(KeyCode.G)) {
+                subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()-10);
+            }
+        });
+    }
+
+    private void prepareLightSource(Group group) {
+
+    }
+
+}
