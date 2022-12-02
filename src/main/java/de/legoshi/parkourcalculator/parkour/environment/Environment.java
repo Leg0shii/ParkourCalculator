@@ -13,14 +13,15 @@ import java.util.List;
 
 public class Environment {
 
-    public static Block[][][] field = new Block[100][100][100];
+    public static Block[][][] field = new Block[200][200][200];
+    private static final int ARRAY_OFFSET = 50;
 
     public Environment() {
         addFirstBlock();
     }
 
     public void addFirstBlock() {
-        field[0][0][0] = new FullBlock(0, 0, 0);
+        field[ARRAY_OFFSET][ARRAY_OFFSET][ARRAY_OFFSET] = new FullBlock(0, 0, 0);
     }
 
     public static void addBlock(Box placedBox, Box firstBox) {
@@ -28,14 +29,14 @@ public class Environment {
         int y = (int) Math.round((firstBox.getTranslateY() - placedBox.getTranslateY())/100);
         int z = (int) Math.round((placedBox.getTranslateZ() - firstBox.getTranslateZ())/100);
         Block block = new FullBlock(x, y, z);
-        field[block.gridY][block.gridZ][block.gridX] = block;
+        field[block.gridY+ARRAY_OFFSET][block.gridZ+ARRAY_OFFSET][block.gridX+ARRAY_OFFSET] = block;
     }
 
     public static void removeBlock(Box placedBox, Box firstBox) {
         int x = (int) Math.round((placedBox.getTranslateX() - firstBox.getTranslateX())/100);
         int y = (int) Math.round((firstBox.getTranslateY() - placedBox.getTranslateY())/100);
         int z = (int) Math.round((placedBox.getTranslateZ() - firstBox.getTranslateZ())/100);
-        field[y][z][x] = null;
+        field[y+ARRAY_OFFSET][z+ARRAY_OFFSET][x+ARRAY_OFFSET] = null;
     }
 
     public static List<AxisAlignedBB> getAllBBs() {
@@ -51,7 +52,7 @@ public class Environment {
     }
 
     public static Movement.Slipperiness getSlipperinessFromWorld(int x, int y, int z) {
-        return field[y][z][x].slipperiness;
+        return field[y+ARRAY_OFFSET][z+ARRAY_OFFSET][x+ARRAY_OFFSET].slipperiness;
     }
 
     private Block getBlockFromDrawable(Block.DrawableBlock block, int x, int y, int z) {

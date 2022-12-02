@@ -76,10 +76,6 @@
       </SubScene>
    </center>
    <right>
-      <AnchorPane minWidth="300.0" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER">
-         <children>
-            <TextField layoutX="51.0" layoutY="25.0" />
-         </children>
-      </AnchorPane>
+      <AnchorPane minWidth="300.0" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>

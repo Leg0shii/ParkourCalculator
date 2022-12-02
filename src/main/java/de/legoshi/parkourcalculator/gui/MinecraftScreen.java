@@ -3,7 +3,6 @@ package de.legoshi.parkourcalculator.gui;
 import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import javafx.scene.*;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -87,42 +86,23 @@ public class MinecraftScreen {
     }
 
     private void registerKeyInputs(Scene scene, SubScene subScene, Group group) {
-
         scene.setOnKeyPressed(keyEvent -> {
             switch (keyEvent.getCode()) {
                 case W -> scaleGroup(group, 1.2);
                 case S -> scaleGroup(group, 0.8);
                 case A -> subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()-10);
                 case D -> subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()+10);
-            }
-
-            if (keyEvent.getCode().equals(KeyCode.S)) group.setTranslateY(group.getTranslateY() + 10);
-            if (keyEvent.getCode().equals(KeyCode.W)) group.setTranslateY(group.getTranslateY() - 10);
-            if (keyEvent.getCode().equals(KeyCode.A)) {
-                group.setRotationAxis(Rotate.Y_AXIS);
-                group.setRotate(group.getRotate()+10);
-            }
-            if (keyEvent.getCode().equals(KeyCode.D)) {
-                group.setRotationAxis(Rotate.Y_AXIS);
-                group.setRotate(group.getRotate()-10);
-            }
-            if(keyEvent.getCode().equals(KeyCode.O)) {
-                group.setScaleX(group.getScaleX()*0.8);
-                group.setScaleY(group.getScaleY()*0.8);
-                group.setScaleZ(group.getScaleZ()*0.8);
-            }
-            if(keyEvent.getCode().equals(KeyCode.P)) {
-                group.setScaleX(group.getScaleX()*1.2);
-                group.setScaleY(group.getScaleY()*1.2);
-                group.setScaleZ(group.getScaleZ()*1.2);
-            }
-            if (keyEvent.getCode().equals(KeyCode.F)) {
-                subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()+10);
-            }
-            if (keyEvent.getCode().equals(KeyCode.G)) {
-                subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()-10);
+                case CAPS -> subScene.getCamera().setTranslateY(subScene.getCamera().getTranslateY()-10);
+                case SHIFT -> subScene.getCamera().setTranslateY(subScene.getCamera().getTranslateY()+10);
+                case PLUS -> rotateGroup(group, -10);
+                case MINUS -> rotateGroup(group, 10);
             }
         });
+    }
+
+    private void rotateGroup(Group group, int value) {
+        group.setRotationAxis(Rotate.Y_AXIS);
+        group.setRotate(group.getRotate()+value);
     }
 
     private void scaleGroup(Group group, double factor) {

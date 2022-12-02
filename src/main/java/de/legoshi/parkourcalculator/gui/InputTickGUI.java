@@ -19,6 +19,7 @@ public class InputTickGUI {
     public void addObserver(InputTickManager inputTicks, Button button) {
         this.inputTicks = inputTicks;
         this.button = button;
+        this.button.setFocusTraversable(true);
     }
 
     public void setButtonAction(VBox vBox) {
