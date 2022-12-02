@@ -55,8 +55,12 @@ public class PositionVisualizer {
         }
 
         for (int i = 0; i < playerPos.size() - 1; i++) {
-            Point3D startPoint = new Point3D(playerPos.get(i).x * 100 + XPOSOFFSET, playerPos.get(i).y * -100 + YPOSOFFSET, playerPos.get(i).z * 100 + ZPOSOFFSET);
-            Point3D endPoint = new Point3D(playerPos.get(i + 1).x * 100 + XPOSOFFSET, playerPos.get(i + 1).y * -100 + YPOSOFFSET, playerPos.get(i + 1).z * 100 + ZPOSOFFSET);
+            Point3D startPoint = new Point3D(playerPos.get(i).x * 100, playerPos.get(i).y * -100, playerPos.get(i).z * 100);
+            startPoint.add(XPOSOFFSET, YPOSOFFSET, ZPOSOFFSET);
+
+            Point3D endPoint = new Point3D(playerPos.get(i+1).x * 100, playerPos.get(i+1).y * -100, playerPos.get(i+1).z * 100);
+            endPoint.add(XPOSOFFSET, YPOSOFFSET, ZPOSOFFSET);
+
             Cylinder cylinder = createCylinder(startPoint, endPoint);
             lines.add(cylinder);
             group.getChildren().add(cylinder);
@@ -71,6 +75,7 @@ public class PositionVisualizer {
         return parkour.updatePath(playerInputs);
     }
 
+    // move around the player path
     private void onMouseDrag(MouseEvent event) {
         if (lastX == 0 && lastZ == 0) {
             this.lastX = event.getSceneX();

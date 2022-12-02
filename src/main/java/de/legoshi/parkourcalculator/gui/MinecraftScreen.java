@@ -25,7 +25,7 @@ public class MinecraftScreen {
         createStartPlatform(root);
         registerCamera(subScene);
         registerKeyInputs(scene, subScene, root);
-        prepareLightSource(root);
+        // prepareLightSource(root);
     }
 
     private void createStartPlatform(Group root) {
@@ -55,7 +55,6 @@ public class MinecraftScreen {
     private void addBlock(Group root, MouseEvent mouseEvent) {
         Box bAdded = new Box(100, 100, 100);
         Box bOld = (Box) mouseEvent.getTarget();
-        System.out.println(mouseEvent);
         PhongMaterial material = new PhongMaterial();
         material.setDiffuseColor(Color.GREEN);
         bAdded.setMaterial(material);
@@ -90,6 +89,13 @@ public class MinecraftScreen {
     private void registerKeyInputs(Scene scene, SubScene subScene, Group group) {
 
         scene.setOnKeyPressed(keyEvent -> {
+            switch (keyEvent.getCode()) {
+                case W -> scaleGroup(group, 1.2);
+                case S -> scaleGroup(group, 0.8);
+                case A -> subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()-10);
+                case D -> subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()+10);
+            }
+
             if (keyEvent.getCode().equals(KeyCode.S)) group.setTranslateY(group.getTranslateY() + 10);
             if (keyEvent.getCode().equals(KeyCode.W)) group.setTranslateY(group.getTranslateY() - 10);
             if (keyEvent.getCode().equals(KeyCode.A)) {
@@ -119,8 +125,10 @@ public class MinecraftScreen {
         });
     }
 
-    private void prepareLightSource(Group group) {
-
+    private void scaleGroup(Group group, double factor) {
+        group.setScaleX(group.getScaleX()*factor);
+        group.setScaleY(group.getScaleY()*factor);
+        group.setScaleZ(group.getScaleZ()*factor);
     }
 
 }

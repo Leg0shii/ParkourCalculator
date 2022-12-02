@@ -1,6 +1,7 @@
 module de.legoshi.parkourcalculator {
     requires javafx.controls;
     requires javafx.fxml;
+    requires lombok;
 
 
     opens de.legoshi.parkourcalculator to javafx.fxml;

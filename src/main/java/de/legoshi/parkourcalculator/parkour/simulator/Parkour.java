@@ -2,9 +2,13 @@ package de.legoshi.parkourcalculator.parkour.simulator;
 
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.util.Vec3;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 
+@Getter
+@Setter
 public class Parkour {
 
     public Player player;
@@ -30,21 +34,5 @@ public class Parkour {
         }
 
         return vec3s;
-    }
-
-    public void setStartPosition(Vec3 startPosition) {
-        this.startPosition = startPosition;
-    }
-
-    public void setStartVelocity(Vec3 startVelocity) {
-        this.startVelocity = startVelocity;
-    }
-
-    public Vec3 getStartPosition() {
-        return startPosition;
-    }
-
-    public Vec3 getStartVelocity() {
-        return startVelocity;
     }
 }
