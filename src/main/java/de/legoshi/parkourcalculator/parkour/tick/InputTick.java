@@ -7,22 +7,11 @@ public class InputTick {
 
     public float YAW = 0;
 
-    private boolean selected = false;
-    private boolean below = false;
-
     public InputTick() {
         this.W = false;
         this.A = false;
         this.S = false;
         this.D = false;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-    public void setBelow(boolean below) {
-        this.below = below;
     }
 
 }

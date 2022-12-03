@@ -1,5 +1,7 @@
 package de.legoshi.parkourcalculator.util;
 
+import javafx.scene.shape.Box;
+
 public class AxisAlignedBB {
     public final double minX;
     public final double minY;
@@ -247,5 +249,13 @@ public class AxisAlignedBB {
 
     public boolean func_181656_b() {
         return Double.isNaN(this.minX) || Double.isNaN(this.minY) || Double.isNaN(this.minZ) || Double.isNaN(this.maxX) || Double.isNaN(this.maxY) || Double.isNaN(this.maxZ);
+    }
+
+    public Box getBox() {
+        Box box = new Box(this.maxX-this.minX, this.maxY-this.minY, this.maxZ-this.minZ);
+        box.setTranslateX(this.minX);
+        box.setTranslateY(this.minY-0.5);
+        box.setTranslateZ(this.minZ);
+        return box;
     }
 }

@@ -15,6 +15,10 @@ public class Application extends javafx.application.Application {
 
         Controller controller = fxmlLoader.getController();
         controller.setUpModelScreen(scene);
+        controller.registerObservers();
+
+        // bad, make order better
+        controller.minecraftScreen.addStartingBlock();
 
         stage.setTitle("Parkour Simulator!");
         stage.setScene(scene);

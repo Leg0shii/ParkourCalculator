@@ -1,26 +1,25 @@
 package de.legoshi.parkourcalculator.parkour.tick;
 
-import de.legoshi.parkourcalculator.Controller;
-
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class InputTickManager extends Observable implements Observer {
+public class InputTickManager extends Observable {
 
     private final ArrayList<InputTick> inputTicks = new ArrayList<>();
-    private Controller controller;
+    private ArrayList<Observer> observers = new ArrayList<>();
 
     public ArrayList<InputTick> getInputTicks() {
         return this.inputTicks;
     }
 
-    public void addObserver(Controller controller) {
-        this.controller = controller;
+    public void addObserver(Observer observer) {
+        this.observers.add(observer);
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        controller.update(o, arg);
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(this, null);
+        }
     }
 }

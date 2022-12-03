@@ -7,19 +7,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import lombok.Getter;
 
 import java.util.ArrayList;
 
 public class InputTickGUI {
 
-    private ArrayList<HBox> hBoxes = new ArrayList<>();
-    private InputTickManager inputTicks;
-    private Button button;
+    @Getter private final ArrayList<HBox> hBoxes = new ArrayList<>();
+    private final InputTickManager inputTicks;
+    private final Button button;
 
-    public void addObserver(InputTickManager inputTicks, Button button) {
-        this.inputTicks = inputTicks;
-        this.button = button;
-        this.button.setFocusTraversable(true);
+    public InputTickGUI(InputTickManager inputTickManager, Button addButton) {
+        this.inputTicks = inputTickManager;
+        this.button = addButton;
     }
 
     public void setButtonAction(VBox vBox) {
@@ -28,10 +28,6 @@ public class InputTickGUI {
             vBox.getChildren().add(duplicateRow());
             vBox.getChildren().add(button);
         }));
-    }
-
-    public ArrayList<HBox> getHBoxes() {
-        return hBoxes;
     }
 
     private HBox duplicateRow() {
@@ -61,7 +57,7 @@ public class InputTickGUI {
         TextField tF = new TextField();
         tF.setOnAction(actionEvent -> {
             inputTick.YAW = Float.parseFloat(tF.getText());
-            inputTicks.update(inputTicks, null);
+            inputTicks.notifyObservers();
         });
         tF.setMaxWidth(60);
         return tF;
@@ -78,7 +74,7 @@ public class InputTickGUI {
                 case "p" -> inputTick.SPRINT = cB.isSelected();
                 case "n" -> inputTick.SNEAK = cB.isSelected();
             }
-            inputTicks.update(inputTicks, null);
+            inputTicks.notifyObservers();
         });
         return cB;
     }

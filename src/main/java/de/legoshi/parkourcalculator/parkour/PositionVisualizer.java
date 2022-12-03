@@ -12,12 +12,14 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
-public class PositionVisualizer {
+public class PositionVisualizer implements Observer {
 
     private final Parkour parkour;
     private final InputTickManager inputTickManager;
-    private Group group;
+    private final Group group;
 
     public ArrayList<Sphere> spheres = new ArrayList<>();
     public ArrayList<Cylinder> lines = new ArrayList<>();
@@ -26,17 +28,13 @@ public class PositionVisualizer {
     private double lastY;
     private double lastZ;
 
-    private static final int XPOSOFFSET = -50;
-    private static final int YPOSOFFSET = 50;
-    private static final int ZPOSOFFSET = -50;
-
-    public PositionVisualizer(Parkour parkour, InputTickManager inputTickManager) {
+    public PositionVisualizer(Group group, Parkour parkour, InputTickManager inputTickManager) {
         this.inputTickManager = inputTickManager;
         this.parkour = parkour;
-        this.group = new Group();
+        this.group = group;
     }
 
-    public Group generatePlayerPath() {
+    public void generatePlayerPath() {
         ArrayList<Vec3> playerPos = getUpdatedPlayerPos();
         group.getChildren().clear();
 
@@ -44,28 +42,28 @@ public class PositionVisualizer {
         lines = new ArrayList<>();
 
         for (Vec3 pos : playerPos) {
-            Sphere sphere = new Sphere(3);
-            sphere.setTranslateX(pos.x * 100 + XPOSOFFSET);
-            sphere.setTranslateY(pos.y * -100 + YPOSOFFSET);
-            sphere.setTranslateZ(pos.z * 100 + ZPOSOFFSET);
+            Sphere sphere = new Sphere(0.03);
+            sphere.setTranslateX(pos.x);
+            sphere.setTranslateY(pos.y*-1);
+            sphere.setTranslateZ(pos.z);
             spheres.add(sphere);
             group.getChildren().add(sphere);
         }
 
         for (int i = 0; i < playerPos.size() - 1; i++) {
-            Point3D startPoint = new Point3D(playerPos.get(i).x * 100 + XPOSOFFSET, playerPos.get(i).y * -100 + YPOSOFFSET, playerPos.get(i).z * 100 + ZPOSOFFSET);
-            Point3D endPoint = new Point3D(playerPos.get(i+1).x * 100 + XPOSOFFSET, playerPos.get(i+1).y * -100 + YPOSOFFSET, playerPos.get(i+1).z * 100 + ZPOSOFFSET);
+            Point3D startPoint = new Point3D(playerPos.get(i).x, playerPos.get(i).y*-1, playerPos.get(i).z);
+            Point3D endPoint = new Point3D(playerPos.get(i+1).x, playerPos.get(i+1).y*-1, playerPos.get(i+1).z);
             Cylinder cylinder = createCylinder(startPoint, endPoint);
             lines.add(cylinder);
             group.getChildren().add(cylinder);
         }
         group.setOnMouseClicked(this::onMouseReleaseClick);
         group.setOnMouseDragged(this::onMouseDrag);
-        return group;
     }
 
     private ArrayList<Vec3> getUpdatedPlayerPos() {
         ArrayList<InputTick> playerInputs = inputTickManager.getInputTicks();
+        System.out.println(inputTickManager.getInputTicks().size());
         return parkour.updatePath(playerInputs);
     }
 
@@ -76,10 +74,10 @@ public class PositionVisualizer {
             this.lastZ = event.getSceneY();
         }
 
-        Vec3 updatedStartPos = parkour.getStartPosition().copy();
-        updatedStartPos.x = updatedStartPos.x + (event.getSceneX() - lastX)/100;
-        updatedStartPos.z = updatedStartPos.z - (event.getSceneY() - lastZ)/100;
-        parkour.setStartPosition(updatedStartPos);
+        Vec3 updatedStartPos = parkour.player.getPosition().copy();
+        updatedStartPos.x = updatedStartPos.x + (event.getSceneX() - lastX);
+        updatedStartPos.z = updatedStartPos.z - (event.getSceneY() - lastZ);
+        parkour.player.setPosition(updatedStartPos);
 
         this.lastX = event.getSceneX();
         this.lastZ = event.getSceneY();
@@ -104,11 +102,13 @@ public class PositionVisualizer {
         double angle = Math.acos(diff.normalize().dotProduct(yAxis));
         Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
 
-        Cylinder line = new Cylinder(1, height);
-
+        Cylinder line = new Cylinder(0.01, height);
         line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
-
         return line;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        generatePlayerPath();
+    }
 }
