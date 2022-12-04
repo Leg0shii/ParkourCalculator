@@ -1,29 +1,38 @@
 package de.legoshi.parkourcalculator.gui;
 
+import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
 import de.legoshi.parkourcalculator.util.Vec3;
+import javafx.geometry.Bounds;
 import javafx.scene.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
 public class MinecraftScreen extends Observable {
 
+    public static final double BLOCK_OFFSET_X = 0.5;
+    public static final double BLOCK_OFFSET_Y = 0.5;
+    public static final double BLOCK_OFFSET_Z = 0.5;
+
     private final Group group;
     private final Scene scene;
     private final SubScene subScene;
+    private final Environment environment;
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
-    public MinecraftScreen(Group group, Scene scene, SubScene subScene) {
+    public MinecraftScreen(Group group, Scene scene, SubScene subScene, Environment environment) {
         this.group = group;
         this.scene = scene;
         this.subScene = subScene;
+        this.environment = environment;
 
         setupModelScreen();
     }
@@ -34,29 +43,52 @@ public class MinecraftScreen extends Observable {
     }
 
     public void addStartingBlock() {
-        ABlock aBlock = new StandardBlock(new Vec3(0.0, 0.0, 0.0));
+        ABlock aBlock = new StandardBlock(new Vec3(0, 0, 0));
         addBlock(aBlock);
     }
 
     public void handleMouseClick(MouseEvent mouseEvent) {
-        System.out.println("CLICKED!");
+        System.out.println(mouseEvent);
+        if (!(mouseEvent.getTarget() instanceof Box)) return;
         switch (mouseEvent.getButton()) {
             case PRIMARY -> {
                 ABlock block = getNewBlockFromPos(mouseEvent);
-                // addBlock(block);
+                if (block != null) addBlock(block);
             }
             case SECONDARY -> {
                 ABlock block = getExistingBlockFromPos(mouseEvent);
-                // removeBlock(block);
+                if (block != null) removeBlock(block);
             }
         }
     }
 
     private ABlock getNewBlockFromPos(MouseEvent mouseEvent) {
-        return null;
+        if (!(mouseEvent.getTarget() instanceof Box clickedBox)) return null;
+        ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
+        if (clickedBlock == null) return null;
+
+        double clickX = mouseEvent.getX();
+        double clickY = mouseEvent.getY();
+        double clickZ = mouseEvent.getZ();
+        Bounds bounds = clickedBox.getBoundsInLocal();
+
+        Vec3 vec3 = clickedBlock.getVec3().copy();
+        if (bounds.getMinX() == clickX) vec3.addVector(-1, 0, 0);
+        else if (bounds.getMaxX() == clickX) vec3.addVector(1, 0, 0);
+        else if (bounds.getMinY() == clickY) vec3.addVector(0, 1, 0);
+        else if (bounds.getMaxY() == clickY) vec3.addVector(0, -1, 0);
+        else if (bounds.getMinZ() == clickZ) vec3.addVector(0, 0, -1);
+        else if (bounds.getMaxZ() == clickZ) vec3.addVector(0, 0, 1);
+        return new StandardBlock(vec3);
     }
 
     private ABlock getExistingBlockFromPos(MouseEvent mouseEvent) {
+        for (ABlock aBlock : environment.aBlocks) {
+            Box box = (Box) mouseEvent.getTarget();
+            if (aBlock.getBoxesArrayList().contains(box)) {
+                return aBlock;
+            }
+        }
         return null;
     }
 

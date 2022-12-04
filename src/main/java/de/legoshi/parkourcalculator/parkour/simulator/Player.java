@@ -64,6 +64,18 @@ public class Player {
     protected void resetPlayer() {
         this.position = this.startPos.copy();
         this.velocity = this.startVel.copy();
+        GROUND = true;
+        WEB = false;
+        SPRINT = false;
+        SNEAK = false;
+        JUMP = false;
+        moveStrafe = 0;
+        moveForward = 0;
+        jumpMovementFactor = 0.02F;
+        isCollidedHorizontally = false;
+        isCollidedVertically = false;
+        isCollided = false;
+        slipperiness = Movement.Slipperiness.BLOCK;
         updatePlayerBB();
         resetPositionToBB();
     }

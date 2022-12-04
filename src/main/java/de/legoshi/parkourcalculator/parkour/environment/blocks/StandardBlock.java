@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.gui.MinecraftScreen;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Movement;
@@ -16,7 +17,7 @@ public class StandardBlock extends ABlock {
     void updateBoundingBox() {
         Vec3 lowerEdge = getVec3();
         Vec3 upperEdge = getVec3().copy();
-        upperEdge.add(new Vec3(1.0, 1.0, 1.0));
+        upperEdge.addVector(1.0, 1.0, 1.0);
 
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
         this.axisAlignedBBS = new ArrayList<>();

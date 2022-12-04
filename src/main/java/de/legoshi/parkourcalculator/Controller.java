@@ -64,7 +64,7 @@ public class Controller implements Initializable {
         subScene.heightProperty().bind(borderPane.heightProperty().subtract(110));
         subScene.widthProperty().bind(borderPane.widthProperty().subtract(558));
 
-        this.minecraftScreen = new MinecraftScreen(group, scene, subScene);
+        this.minecraftScreen = new MinecraftScreen(group, scene, subScene, environment);
         this.minecraftScreen.setupModelScreen();
 
         this.pathGroup = new Group();

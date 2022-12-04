@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.util;
 
+import de.legoshi.parkourcalculator.gui.MinecraftScreen;
 import javafx.scene.shape.Box;
 
 public class AxisAlignedBB {
@@ -24,7 +25,7 @@ public class AxisAlignedBB {
         this.minY = pos1.y;
         this.minZ = pos1.z;
         this.maxX = pos2.x;
-        this.maxY = pos2.z;
+        this.maxY = pos2.y;
         this.maxZ = pos2.z;
     }
 
@@ -253,9 +254,9 @@ public class AxisAlignedBB {
 
     public Box getBox() {
         Box box = new Box(this.maxX-this.minX, this.maxY-this.minY, this.maxZ-this.minZ);
-        box.setTranslateX(this.minX);
-        box.setTranslateY(this.minY-0.5);
-        box.setTranslateZ(this.minZ);
+        box.setTranslateX(this.minX + MinecraftScreen.BLOCK_OFFSET_X);
+        box.setTranslateY(-this.minY - MinecraftScreen.BLOCK_OFFSET_Y);
+        box.setTranslateZ(this.minZ + MinecraftScreen.BLOCK_OFFSET_Z);
         return box;
     }
 }

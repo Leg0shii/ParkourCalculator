@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.gui.MinecraftScreen;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
