@@ -76,6 +76,6 @@
       </SubScene>
    </center>
    <right>
-      <AnchorPane minWidth="300.0" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER" />
+      <AnchorPane fx:id="debugHolder" minWidth="300.0" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>

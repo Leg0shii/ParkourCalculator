@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator;
 
+import de.legoshi.parkourcalculator.gui.DebugScreen;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftScreen;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
@@ -30,24 +31,33 @@ public class Controller implements Initializable {
     public HBox itemBox;
     public SubScene subScene;
     public Group group;
+    public AnchorPane debugHolder;
     private Group pathGroup;
+
+    public MinecraftScreen minecraftScreen;
+    private InputTickGUI inputTickGUI;
+    private InputTickManager inputTickManager;
+    private PositionVisualizer positionVisualizer;
+
+    private DebugScreen debugScreen;
 
     public Environment environment;
     private Parkour parkour;
-    public MinecraftScreen minecraftScreen;
-    private InputTickManager inputTickManager;
-    private InputTickGUI inputTickGUI;
-    private PositionVisualizer positionVisualizer;
+    private Player player;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Player player = new Player(new Vec3(0, 1.0, 0), new Vec3(0, -0.0784000015258789, 0));
+        this.player = new Player(new Vec3(0.5, 1.0, 0.5), new Vec3(0, -0.0784000015258789, 0));
         this.environment = new Environment();
         this.parkour = new Parkour(player, environment);
         this.inputTickManager = new InputTickManager();
 
         this.inputTickGUI = new InputTickGUI(inputTickManager, addButton);
         this.inputTickGUI.setButtonAction(vBox);
+
+        this.debugScreen = new DebugScreen(player);
+        debugHolder.getChildren().add(debugScreen);
+
         registerBlocks();
     }
 

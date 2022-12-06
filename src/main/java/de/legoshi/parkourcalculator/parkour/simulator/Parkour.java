@@ -27,16 +27,11 @@ public class Parkour {
         ArrayList<Vec3> vec3s = new ArrayList<>();
         if (inputTicks.size() == 0) return vec3s;
         player.resetPlayer();
-
         vec3s.add(player.position.copy());
-        System.out.println(player.position);
-        System.out.println(player.velocity);
 
         for (InputTick inputTick : inputTicks) {
             calculateTick(inputTick);
             vec3s.add(player.position.copy());
-            System.out.println(player.position);
-            System.out.println(player.velocity);
         }
 
         return vec3s;

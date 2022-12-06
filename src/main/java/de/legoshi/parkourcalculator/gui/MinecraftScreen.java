@@ -109,9 +109,11 @@ public class MinecraftScreen extends Observable {
 
     private void registerCamera() {
         PerspectiveCamera camera = new PerspectiveCamera(true);
-        camera.translateXProperty().set(0);
+        camera.translateXProperty().set(10);
         camera.translateYProperty().set(-2);
-        camera.translateZProperty().set(-10);
+        camera.translateZProperty().set(0);
+        camera.setRotationAxis(Rotate.Y_AXIS);
+        camera.setRotate(270);
         camera.setNearClip(0.01);
         camera.setFarClip(100);
         subScene.setCamera(camera);
@@ -122,8 +124,8 @@ public class MinecraftScreen extends Observable {
             switch (keyEvent.getCode()) {
                 case W -> scaleGroup(1.02);
                 case S -> scaleGroup(0.98);
-                case A -> subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()-0.1);
-                case D -> subScene.getCamera().setTranslateX(subScene.getCamera().getTranslateX()+0.1);
+                case A -> subScene.getCamera().setTranslateZ(subScene.getCamera().getTranslateZ()+0.1);
+                case D -> subScene.getCamera().setTranslateZ(subScene.getCamera().getTranslateZ()-0.1);
                 case CAPS -> subScene.getCamera().setTranslateY(subScene.getCamera().getTranslateY()-0.1);
                 case SHIFT -> subScene.getCamera().setTranslateY(subScene.getCamera().getTranslateY()+0.1);
                 case PLUS -> rotateGroup(-1);
