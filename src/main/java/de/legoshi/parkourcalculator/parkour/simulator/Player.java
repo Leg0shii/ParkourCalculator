@@ -16,7 +16,7 @@ public class Player {
     protected boolean SNEAK;
     protected boolean JUMP;
 
-    protected float YAW;
+    @Getter protected float YAW;
     protected float moveStrafe, moveForward;
 
     protected float jumpMovementFactor = 0.02F;

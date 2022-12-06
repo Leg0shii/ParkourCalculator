@@ -7,7 +7,7 @@
 
 <BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.legoshi.parkourcalculator.Controller">
    <top>
-      <MenuBar BorderPane.alignment="CENTER">
+      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
@@ -28,11 +28,11 @@
       </MenuBar>
    </top>
    <left>
-      <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="tickList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
         <content>
           <AnchorPane>
                <children>
-                  <VBox fx:id="vBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0">
+                  <VBox fx:id="vBox" alignment="CENTER" spacing="10.0">
                      <children>
                         <HBox spacing="25.0">
                            <children>
@@ -63,7 +63,7 @@
       </ScrollPane>
    </left>
    <bottom>
-      <HBox fx:id="itemBox" prefHeight="100.0" prefWidth="200.0" spacing="15.0" BorderPane.alignment="CENTER">
+      <HBox fx:id="itemBox" spacing="15.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding></HBox>
@@ -76,6 +76,6 @@
       </SubScene>
    </center>
    <right>
-      <AnchorPane fx:id="debugHolder" minWidth="300.0" prefHeight="200.0" prefWidth="300.0" BorderPane.alignment="CENTER" />
+      <AnchorPane fx:id="debugHolder" minWidth="-Infinity" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>

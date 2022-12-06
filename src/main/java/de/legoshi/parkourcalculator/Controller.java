@@ -16,6 +16,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 
 import java.net.URL;
@@ -32,6 +34,8 @@ public class Controller implements Initializable {
     public SubScene subScene;
     public Group group;
     public AnchorPane debugHolder;
+    public ScrollPane tickList;
+    public MenuBar menuBar;
     private Group pathGroup;
 
     public MinecraftScreen minecraftScreen;
@@ -55,7 +59,7 @@ public class Controller implements Initializable {
         this.inputTickGUI = new InputTickGUI(inputTickManager, addButton);
         this.inputTickGUI.setButtonAction(vBox);
 
-        this.debugScreen = new DebugScreen(player);
+        this.debugScreen = new DebugScreen(parkour);
         debugHolder.getChildren().add(debugScreen);
 
         registerBlocks();
@@ -71,8 +75,8 @@ public class Controller implements Initializable {
 
         // bad
         subScene.setRoot(group);
-        subScene.heightProperty().bind(borderPane.heightProperty().subtract(110));
-        subScene.widthProperty().bind(borderPane.widthProperty().subtract(558));
+        subScene.heightProperty().bind(borderPane.heightProperty().subtract(menuBar.heightProperty()).subtract(itemBox.heightProperty()));
+        subScene.widthProperty().bind(borderPane.widthProperty().subtract(tickList.widthProperty()).subtract(debugScreen.widthProperty()));
 
         this.minecraftScreen = new MinecraftScreen(group, scene, subScene, environment);
         this.minecraftScreen.setupModelScreen();
@@ -84,8 +88,10 @@ public class Controller implements Initializable {
 
     public void registerObservers() {
         inputTickManager.addObserver(positionVisualizer);
+        inputTickManager.addObserver(debugScreen);
         minecraftScreen.addObserver(positionVisualizer);
         minecraftScreen.addObserver(environment);
+        minecraftScreen.addObserver(debugScreen);
     }
 
 }

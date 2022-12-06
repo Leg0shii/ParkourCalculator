@@ -16,15 +16,18 @@ import java.util.List;
 public class Parkour {
 
     public Player player;
+    public ArrayList<PlayerTickInformation> playerTickInformations;
     public Environment environment;
 
     public Parkour(Player player, Environment environment) {
         this.player = player;
         this.environment = environment;
+        this.playerTickInformations = new ArrayList<>();
     }
 
     public ArrayList<Vec3> updatePath(ArrayList<InputTick> inputTicks) {
         ArrayList<Vec3> vec3s = new ArrayList<>();
+        playerTickInformations = new ArrayList<>();
         if (inputTicks.size() == 0) return vec3s;
         player.resetPlayer();
         vec3s.add(player.position.copy());
@@ -32,6 +35,14 @@ public class Parkour {
         for (InputTick inputTick : inputTicks) {
             calculateTick(inputTick);
             vec3s.add(player.position.copy());
+            playerTickInformations.add(new PlayerTickInformation(
+                    player.YAW,
+                    player.position.copy(),
+                    player.velocity.copy(),
+                    player.isCollided,
+                    player.GROUND,
+                    player.JUMP
+            ));
         }
 
         return vec3s;

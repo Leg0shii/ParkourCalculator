@@ -10,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -31,6 +30,8 @@ public class MinecraftScreen extends Observable {
     public MinecraftScreen(Group group, Scene scene, SubScene subScene, Environment environment) {
         this.group = group;
         this.scene = scene;
+        // this.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, new Insets(0, 0, 0, 0))));
+
         this.subScene = subScene;
         this.environment = environment;
 
@@ -48,7 +49,6 @@ public class MinecraftScreen extends Observable {
     }
 
     public void handleMouseClick(MouseEvent mouseEvent) {
-        System.out.println(mouseEvent);
         if (!(mouseEvent.getTarget() instanceof Box)) return;
         switch (mouseEvent.getButton()) {
             case PRIMARY -> {

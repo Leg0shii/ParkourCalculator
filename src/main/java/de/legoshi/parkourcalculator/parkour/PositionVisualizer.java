@@ -1,12 +1,16 @@
 package de.legoshi.parkourcalculator.parkour;
 
+import de.legoshi.parkourcalculator.gui.DebugScreen;
 import de.legoshi.parkourcalculator.parkour.simulator.Parkour;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -41,13 +45,18 @@ public class PositionVisualizer implements Observer {
         spheres = new ArrayList<>();
         lines = new ArrayList<>();
 
+        int posCounter = 0;
         for (Vec3 pos : playerPos) {
             Sphere sphere = new Sphere(0.03);
             sphere.setTranslateX(pos.x);
             sphere.setTranslateY(pos.y*-1);
             sphere.setTranslateZ(pos.z);
             spheres.add(sphere);
+            int finalPosCounter = posCounter;
+            sphere.setOnMouseClicked((event) -> onMouseClick(event, finalPosCounter));
+            sphere.setOnMouseDragged((event) -> onMouseClick(event, finalPosCounter));
             group.getChildren().add(sphere);
+            posCounter++;
         }
 
         for (int i = 0; i < playerPos.size() - 1; i++) {
@@ -65,6 +74,20 @@ public class PositionVisualizer implements Observer {
         ArrayList<InputTick> playerInputs = inputTickManager.getInputTicks();
         System.out.println(inputTickManager.getInputTicks().size());
         return parkour.updatePath(playerInputs);
+    }
+
+    private void onMouseClick(MouseEvent event, int tickPos) {
+        System.out.println("CLICK");
+        if (!(event.getTarget() instanceof Sphere sphere)) return;
+        PhongMaterial white = new PhongMaterial();
+        white.setDiffuseColor(Color.WHITE);
+        for (Sphere s : spheres) s.setMaterial(white);
+        sphere.setMaterial(new PhongMaterial(Color.RED));
+        for (Observer observer : inputTickManager.getObservers()) {
+            if (observer instanceof DebugScreen) {
+                ((DebugScreen) observer).updateTickClick(tickPos);
+            }
+        }
     }
 
     // move around the player path
