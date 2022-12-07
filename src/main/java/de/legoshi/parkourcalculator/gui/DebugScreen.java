@@ -41,7 +41,7 @@ public class DebugScreen extends VBox implements Observer {
     private final Label yLandPos = new Label();
     private final Label zLandPos = new Label();
 
-    private final Text tickLabelInfo = new Text("1. Tick Information");
+    private final Text tickLabelInfo = new Text("nth Tick Information");
     private final Label tickFacing = new Label();
     private final Label xTickPos = new Label();
     private final Label yTickPos = new Label();
@@ -54,6 +54,7 @@ public class DebugScreen extends VBox implements Observer {
         this.setMinWidth(200);
         applyBackgroundColor();
         updateLabels();
+        updateTickClick(-1); // init
         addLabels();
         indentLabels();
     }
@@ -86,18 +87,37 @@ public class DebugScreen extends VBox implements Observer {
             this.xJumpPos.setText("X-Jump: " + setDecimals(ptiJ.getPosition().x));
             this.yJumpPos.setText("Y-Jump: " + setDecimals(ptiJ.getPosition().y));
             this.zJumpPos.setText("Z-Jump: " + setDecimals(ptiJ.getPosition().z));
+        } else {
+            this.jumpFacing.setText("F-Jump: -");
+            this.xJumpPos.setText("X-Jump: -");
+            this.yJumpPos.setText("Y-Jump: -");
+            this.zJumpPos.setText("Z-Jump: -");
         }
 
         PlayerTickInformation ptiL = getLandTick();
         if(ptiL != null) {
+            if (!this.getChildren().contains(landFacing))
+                this.getChildren().addAll(landFacing, xLandPos, yLandPos, zLandPos);
             this.landFacing.setText("F-Land: " + setDecimals(ptiL.getFacing()));
             this.xLandPos.setText("X-Land: " + setDecimals(ptiL.getPosition().x));
             this.yLandPos.setText("Y-Land: " + setDecimals(ptiL.getPosition().y));
             this.zLandPos.setText("Z-Land: " + setDecimals(ptiL.getPosition().z));
+        } else {
+            this.landFacing.setText("F-Land: -");
+            this.xLandPos.setText("X-Land: -");
+            this.yLandPos.setText("Y-Land: -");
+            this.zLandPos.setText("Z-Land: -");
         }
     }
 
     public void updateTickClick(int tickPos) {
+        if (tickPos == -1) {
+            this.tickFacing.setText("F-Tick: -");
+            this.xTickPos.setText("X-Tick: -");
+            this.yTickPos.setText("Y-Tick: -");
+            this.zTickPos.setText("Z-Tick: -");
+            return;
+        }
         PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(tickPos);
         this.tickLabelInfo.setText(tickPos + ". Tick Information");
         this.tickFacing.setText("F-Tick: " + setDecimals(ptiC.getFacing()));
