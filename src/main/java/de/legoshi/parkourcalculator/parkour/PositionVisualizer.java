@@ -1,14 +1,13 @@
 package de.legoshi.parkourcalculator.parkour;
 
 import de.legoshi.parkourcalculator.gui.DebugScreen;
-import de.legoshi.parkourcalculator.parkour.simulator.Parkour;
+import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -22,7 +21,7 @@ import java.util.Observer;
 
 public class PositionVisualizer implements Observer {
 
-    private final Parkour parkour;
+    private final MovementEngine movementEngine;
     private final InputTickManager inputTickManager;
     private final Group group;
 
@@ -33,9 +32,9 @@ public class PositionVisualizer implements Observer {
     private double lastY;
     private double lastZ;
 
-    public PositionVisualizer(Group group, Parkour parkour, InputTickManager inputTickManager) {
+    public PositionVisualizer(Group group, MovementEngine movementEngine, InputTickManager inputTickManager) {
         this.inputTickManager = inputTickManager;
-        this.parkour = parkour;
+        this.movementEngine = movementEngine;
         this.group = group;
     }
 
@@ -77,7 +76,7 @@ public class PositionVisualizer implements Observer {
     private ArrayList<PlayerTickInformation> getUpdatedPlayerPos() {
         ArrayList<InputTick> playerInputs = inputTickManager.getInputTicks();
         System.out.println(inputTickManager.getInputTicks().size());
-        return parkour.updatePath(playerInputs);
+        return movementEngine.updatePath(playerInputs);
     }
 
     private void onMouseClick(MouseEvent event, int tickPos) {
@@ -101,10 +100,10 @@ public class PositionVisualizer implements Observer {
             this.lastZ = event.getSceneY();
         }
 
-        Vec3 updatedStartPos = parkour.player.getPosition().copy();
+        Vec3 updatedStartPos = movementEngine.player.getPosition().copy();
         updatedStartPos.x = updatedStartPos.x + (event.getSceneX() - lastX);
         updatedStartPos.z = updatedStartPos.z - (event.getSceneY() - lastZ);
-        parkour.player.setPosition(updatedStartPos);
+        movementEngine.player.setPosition(updatedStartPos);
 
         this.lastX = event.getSceneX();
         this.lastZ = event.getSceneY();

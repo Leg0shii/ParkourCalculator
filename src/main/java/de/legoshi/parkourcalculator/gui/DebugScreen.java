@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.gui;
 
-import de.legoshi.parkourcalculator.parkour.simulator.Parkour;
+import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import javafx.geometry.Insets;
@@ -19,7 +19,7 @@ public class DebugScreen extends VBox implements Observer {
 
     private final Font boldFont = Font.font("Arial", FontWeight.BOLD, 12);
 
-    private final Parkour parkour;
+    private final MovementEngine movementEngine;
     private final Player player;
 
     private final Text generalLabelInfo = new Text("General Information");
@@ -47,9 +47,9 @@ public class DebugScreen extends VBox implements Observer {
     private final Label yTickPos = new Label();
     private final Label zTickPos = new Label();
 
-    public DebugScreen(Parkour parkour) {
-        this.parkour = parkour;
-        this.player = parkour.player;
+    public DebugScreen(MovementEngine movementEngine) {
+        this.movementEngine = movementEngine;
+        this.player = movementEngine.player;
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setMinWidth(200);
         applyBackgroundColor();
@@ -98,7 +98,7 @@ public class DebugScreen extends VBox implements Observer {
     }
 
     public void updateTickClick(int tickPos) {
-        PlayerTickInformation ptiC = parkour.playerTickInformations.get(tickPos);
+        PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(tickPos);
         this.tickLabelInfo.setText(tickPos + ". Tick Information");
         this.tickFacing.setText("F-Tick: " + setDecimals(ptiC.getFacing()));
         this.xTickPos.setText("X-Tick: " + setDecimals(ptiC.getPosition().x));
@@ -109,7 +109,7 @@ public class DebugScreen extends VBox implements Observer {
     private PlayerTickInformation getLandTick() {
         PlayerTickInformation playerTickInformation = null;
         PlayerTickInformation prevTick = null;
-        for (PlayerTickInformation pti : parkour.getPlayerTickInformations()) {
+        for (PlayerTickInformation pti : movementEngine.getPlayerTickInformations()) {
             if (pti.isGround() && prevTick != null && !prevTick.isGround()) playerTickInformation = prevTick;
             prevTick = pti;
         }
@@ -118,7 +118,7 @@ public class DebugScreen extends VBox implements Observer {
 
     private PlayerTickInformation getJumpTick() {
         PlayerTickInformation playerTickInformation = null;
-        for (PlayerTickInformation pti : parkour.getPlayerTickInformations()) {
+        for (PlayerTickInformation pti : movementEngine.getPlayerTickInformations()) {
             if (pti.isJump()) playerTickInformation = pti;
         }
         return playerTickInformation;

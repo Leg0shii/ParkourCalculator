@@ -4,10 +4,8 @@ import de.legoshi.parkourcalculator.gui.DebugScreen;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftScreen;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
 import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
-import de.legoshi.parkourcalculator.parkour.simulator.Parkour;
+import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -21,8 +19,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 
 import java.net.URL;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -46,20 +42,20 @@ public class Controller implements Initializable {
     private DebugScreen debugScreen;
 
     public Environment environment;
-    private Parkour parkour;
+    private MovementEngine movementEngine;
     private Player player;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.player = new Player(new Vec3(0.5, 1.0, 0.5), new Vec3(0, -0.0784000015258789, 0));
         this.environment = new Environment();
-        this.parkour = new Parkour(player, environment);
+        this.movementEngine = new MovementEngine(player, environment);
         this.inputTickManager = new InputTickManager();
 
         this.inputTickGUI = new InputTickGUI(inputTickManager, addButton);
         this.inputTickGUI.setButtonAction(vBox);
 
-        this.debugScreen = new DebugScreen(parkour);
+        this.debugScreen = new DebugScreen(movementEngine);
         debugHolder.getChildren().add(debugScreen);
 
         registerBlocks();
@@ -82,7 +78,7 @@ public class Controller implements Initializable {
         this.minecraftScreen.setupModelScreen();
 
         this.pathGroup = new Group();
-        this.positionVisualizer = new PositionVisualizer(pathGroup, parkour, inputTickManager);
+        this.positionVisualizer = new PositionVisualizer(pathGroup, movementEngine, inputTickManager);
         this.group.getChildren().add(pathGroup);
     }
 

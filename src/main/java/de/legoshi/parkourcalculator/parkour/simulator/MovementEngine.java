@@ -4,7 +4,6 @@ import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
-import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,13 +12,13 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Parkour {
+public class MovementEngine {
 
     public Player player;
     public ArrayList<PlayerTickInformation> playerTickInformations;
     public Environment environment;
 
-    public Parkour(Player player, Environment environment) {
+    public MovementEngine(Player player, Environment environment) {
         this.player = player;
         this.environment = environment;
         this.playerTickInformations = new ArrayList<>();
