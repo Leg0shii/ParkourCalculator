@@ -25,27 +25,19 @@ public class Parkour {
         this.playerTickInformations = new ArrayList<>();
     }
 
-    public ArrayList<Vec3> updatePath(ArrayList<InputTick> inputTicks) {
-        ArrayList<Vec3> vec3s = new ArrayList<>();
+    public ArrayList<PlayerTickInformation> updatePath(ArrayList<InputTick> inputTicks) {
         playerTickInformations = new ArrayList<>();
-        if (inputTicks.size() == 0) return vec3s;
+        if (inputTicks.size() == 0) return playerTickInformations;
+
         player.resetPlayer();
-        vec3s.add(player.position.copy());
+        playerTickInformations.add(player.getPlayerTickInformation());
 
         for (InputTick inputTick : inputTicks) {
             calculateTick(inputTick);
-            vec3s.add(player.position.copy());
-            playerTickInformations.add(new PlayerTickInformation(
-                    player.YAW,
-                    player.position.copy(),
-                    player.velocity.copy(),
-                    player.isCollided,
-                    player.GROUND,
-                    player.JUMP
-            ));
+            playerTickInformations.add(player.getPlayerTickInformation());
         }
 
-        return vec3s;
+        return playerTickInformations;
     }
 
     public void calculateTick(InputTick inputTick) {

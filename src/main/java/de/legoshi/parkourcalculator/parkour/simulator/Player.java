@@ -101,4 +101,15 @@ public class Player {
         this.position.z = (this.playerBB.minZ + this.playerBB.maxZ) / 2.0D;
     }
 
+    protected PlayerTickInformation getPlayerTickInformation() {
+        return new PlayerTickInformation(
+                YAW,
+                position.copy(),
+                velocity.copy(),
+                isCollided,
+                GROUND,
+                JUMP
+        );
+    }
+
 }

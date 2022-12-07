@@ -2,6 +2,7 @@ package de.legoshi.parkourcalculator.parkour;
 
 import de.legoshi.parkourcalculator.gui.DebugScreen;
 import de.legoshi.parkourcalculator.parkour.simulator.Parkour;
+import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -39,7 +40,10 @@ public class PositionVisualizer implements Observer {
     }
 
     public void generatePlayerPath() {
-        ArrayList<Vec3> playerPos = getUpdatedPlayerPos();
+        ArrayList<PlayerTickInformation> playerTI = getUpdatedPlayerPos();
+        ArrayList<Vec3> playerPos = new ArrayList<>();
+        playerTI.forEach(pti -> playerPos.add(pti.getPosition()));
+
         group.getChildren().clear();
 
         spheres = new ArrayList<>();
@@ -70,7 +74,7 @@ public class PositionVisualizer implements Observer {
         group.setOnMouseDragged(this::onMouseDrag);
     }
 
-    private ArrayList<Vec3> getUpdatedPlayerPos() {
+    private ArrayList<PlayerTickInformation> getUpdatedPlayerPos() {
         ArrayList<InputTick> playerInputs = inputTickManager.getInputTicks();
         System.out.println(inputTickManager.getInputTicks().size());
         return parkour.updatePath(playerInputs);
