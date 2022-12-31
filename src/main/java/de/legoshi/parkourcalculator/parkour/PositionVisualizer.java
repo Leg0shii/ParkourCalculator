@@ -71,16 +71,15 @@ public class PositionVisualizer implements Observer {
         }
         group.setOnMouseClicked(this::onMouseReleaseClick);
         group.setOnMouseDragged(this::onMouseDrag);
+        group.setOnMouseDragExited(this::onMouseReleaseClick);
     }
 
     private ArrayList<PlayerTickInformation> getUpdatedPlayerPos() {
         ArrayList<InputTick> playerInputs = inputTickManager.getInputTicks();
-        System.out.println(inputTickManager.getInputTicks().size());
         return movementEngine.updatePath(playerInputs);
     }
 
     private void onMouseClick(MouseEvent event, int tickPos) {
-        System.out.println("CLICK");
         if (!(event.getTarget() instanceof Sphere sphere)) return;
         PhongMaterial white = new PhongMaterial();
         white.setDiffuseColor(Color.WHITE);
@@ -96,17 +95,19 @@ public class PositionVisualizer implements Observer {
     // move around the player path
     private void onMouseDrag(MouseEvent event) {
         if (lastX == 0 && lastZ == 0) {
-            this.lastX = event.getSceneX();
-            this.lastZ = event.getSceneY();
+            this.lastX = event.getScreenX();
+            this.lastZ = event.getScreenY();
         }
 
-        Vec3 updatedStartPos = movementEngine.player.getPosition().copy();
-        updatedStartPos.x = updatedStartPos.x + (event.getSceneX() - lastX);
-        updatedStartPos.z = updatedStartPos.z - (event.getSceneY() - lastZ);
-        movementEngine.player.setPosition(updatedStartPos);
+        Vec3 updatedStartPos = movementEngine.player.getStartPos().copy();
+        updatedStartPos.z = updatedStartPos.z + (event.getScreenX() - lastX)/100;
+        updatedStartPos.x = updatedStartPos.x + (event.getScreenY() - lastZ)/100;
+        movementEngine.player.setStartPos(updatedStartPos);
 
-        this.lastX = event.getSceneX();
-        this.lastZ = event.getSceneY();
+        System.out.println(updatedStartPos);
+
+        this.lastX = event.getScreenX();
+        this.lastZ = event.getScreenY();
 
         generatePlayerPath();
     }

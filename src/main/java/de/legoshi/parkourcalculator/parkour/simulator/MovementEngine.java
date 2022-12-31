@@ -117,7 +117,6 @@ public class MovementEngine {
         // get all colliding BB from extending current position BB by x, y, z
         // NOTE: it takes all blocks for collision checks
         List<AxisAlignedBB> allBlocks = environment.getAllBBs();
-        System.out.println(allBlocks);
 
         // save playerBB temporarily
         AxisAlignedBB originalBB = player.playerBB;

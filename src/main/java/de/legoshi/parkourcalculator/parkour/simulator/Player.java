@@ -29,8 +29,8 @@ public class Player {
 
     @Getter @Setter protected Vec3 velocity;
     @Getter @Setter protected Vec3 position;
-    protected final Vec3 startVel;
-    protected final Vec3 startPos;
+    @Getter @Setter protected Vec3 startVel;
+    @Getter @Setter protected Vec3 startPos;
     protected AxisAlignedBB playerBB;
 
     public Player(Vec3 position, Vec3 velocity) {
