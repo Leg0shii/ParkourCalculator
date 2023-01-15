@@ -134,7 +134,7 @@ public class MinecraftScreen extends Observable {
     }
 
     private void registerMouseHandler() {
-        this.scene.setOnMouseMoved(mouseEvent -> {
+        /*this.scene.setOnMouseMoved(mouseEvent -> {
             double currentX = mouseEvent.getY();
             double currentY = mouseEvent.getX();
             deltaX = currentX - previousX;
@@ -147,7 +147,7 @@ public class MinecraftScreen extends Observable {
             this.currAngleY = currAngleY + deltaY;
             camera.getTransforms().add(new Rotate(-deltaX, Rotate.X_AXIS));
             camera.getTransforms().add(new Rotate(deltaY, Rotate.Y_AXIS));
-        });
+        });*/
     }
 
     private void registerKeyInputs() {

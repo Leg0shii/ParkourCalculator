@@ -22,16 +22,23 @@ public abstract class ABlock {
     public ArrayList<Box> boxesArrayList;
     private Vec3 vec3;
 
-    public ABlock(Vec3 vec3) {
-        this.vec3 = vec3;
-        updateBoundingBox();
-        updateBoxes();
+    public ABlock() {
         updateImage();
         updateSlipperiness();
     }
 
+    public ABlock(Vec3 vec3) {
+        this.vec3 = vec3;
+        updateBoundingBox();
+        updateBoxes();
+        updateSlipperiness();
+    }
+
     abstract void updateBoundingBox();
-    abstract void updateSlipperiness();
+
+    public void updateSlipperiness() {
+        this.slipperiness = Movement.Slipperiness.BLOCK;
+    }
     abstract void updateImage();
 
     private void updateBoxes() {

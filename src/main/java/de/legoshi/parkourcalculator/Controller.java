@@ -5,6 +5,8 @@ import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftScreen;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.Enderchest;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
@@ -16,7 +18,10 @@ import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -62,7 +67,19 @@ public class Controller implements Initializable {
     }
 
     private void registerBlocks() {
+        StandardBlock standardBlock = new StandardBlock();
+        Enderchest enderchest = new Enderchest();
 
+        ImageView standardBlockIV = new ImageView(standardBlock.image);
+        ImageView enderchestIV = new ImageView(enderchest.image);
+
+        itemBox.getChildren().add(standardBlockIV);
+        itemBox.getChildren().add(enderchestIV);
+
+        Rectangle rectangle = new Rectangle(50, 50);
+        rectangle.setFill(Color.RED);
+        itemBox.getChildren().add(rectangle);
+        // itemBox
     }
 
     // this is called after the initialize method was called

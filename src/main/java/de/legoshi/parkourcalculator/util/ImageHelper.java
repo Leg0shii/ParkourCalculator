@@ -6,9 +6,13 @@ import java.io.InputStream;
 
 public class ImageHelper {
 
+    private static final int IMAGE_HEIGHT = 50;
+    private static final int IMAGE_WIDTH = 50;
+    private static final boolean PRESERVE_RATIO = true;
+    private static final boolean SMOOTH = true;
+
     public Image getImageFromURL(String path) {
-        // "/images/grass_block.png"
-        return new Image(ImageHelper.class.getResourceAsStream(path));
+        return new Image(ImageHelper.class.getResourceAsStream(path), IMAGE_HEIGHT, IMAGE_WIDTH, PRESERVE_RATIO, SMOOTH);
     }
 
 }

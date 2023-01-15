@@ -1,26 +1,26 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
-import de.legoshi.parkourcalculator.gui.MinecraftScreen;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.ImageHelper;
-import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 
 @NoArgsConstructor
-public class StandardBlock extends ABlock {
+public class Enderchest extends ABlock {
 
-    public StandardBlock(Vec3 vec3) {
+    public Enderchest(Vec3 vec3) {
         super(vec3);
     }
 
     @Override
     void updateBoundingBox() {
+
         Vec3 lowerEdge = getVec3();
+        lowerEdge.subtract(0.0625, 0, 0.0625);
         Vec3 upperEdge = getVec3().copy();
-        upperEdge.addVector(1.0, 1.0, 1.0);
+        upperEdge.addVector(0.875, 0.9375, 0.875);
 
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
         this.axisAlignedBBS = new ArrayList<>();
@@ -29,7 +29,6 @@ public class StandardBlock extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/grass_block.png");
+        this.image = new ImageHelper().getImageFromURL("/images/enderchest.jpeg");
     }
-
 }
