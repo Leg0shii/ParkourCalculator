@@ -54,7 +54,7 @@ public class InputTickGUI {
     }
 
     private TextField registerTextField(InputTick inputTick) {
-        TextField tF = new TextField();
+        TextField tF = new TextField("0");
         tF.setOnAction(actionEvent -> {
             inputTick.YAW = Float.parseFloat(tF.getText());
             inputTicks.notifyObservers();

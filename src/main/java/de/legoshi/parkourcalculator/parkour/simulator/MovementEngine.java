@@ -4,6 +4,7 @@ import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
+import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,13 +16,19 @@ import java.util.List;
 public class MovementEngine {
 
     public Player player;
-    public ArrayList<PlayerTickInformation> playerTickInformations;
     public Environment environment;
+    public ArrayList<PlayerTickInformation> playerTickInformations;
 
-    public MovementEngine(Player player, Environment environment) {
-        this.player = player;
+    public MovementEngine(Environment environment) {
+        this.player = new Player(new Vec3(0.5, 1.0, 0.5), new Vec3(0, -0.0784000015258789, 0));
         this.environment = environment;
         this.playerTickInformations = new ArrayList<>();
+    }
+
+    public PlayerTickInformation getLastTick(ArrayList<InputTick> inputTicks) {
+        player.resetPlayer();
+        for (InputTick inputTick : inputTicks) calculateTick(inputTick);
+        return player.getPlayerTickInformation();
     }
 
     public ArrayList<PlayerTickInformation> updatePath(ArrayList<InputTick> inputTicks) {
@@ -258,4 +265,23 @@ public class MovementEngine {
             player.velocity.z = player.velocity.z + forward * cos + strafe * sin;
         }
     }
+
+    public PlayerTickInformation getLandTick() {
+        PlayerTickInformation playerTickInformation = null;
+        PlayerTickInformation prevTick = null;
+        for (PlayerTickInformation pti : getPlayerTickInformations()) {
+            if (pti.isGround() && prevTick != null && !prevTick.isGround()) playerTickInformation = prevTick;
+            prevTick = pti;
+        }
+        return playerTickInformation;
+    }
+
+    public PlayerTickInformation getJumpTick() {
+        PlayerTickInformation playerTickInformation = null;
+        for (PlayerTickInformation pti : getPlayerTickInformations()) {
+            if (pti.isJump()) playerTickInformation = pti;
+        }
+        return playerTickInformation;
+    }
+
 }

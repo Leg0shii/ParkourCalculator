@@ -1,10 +1,10 @@
 package de.legoshi.parkourcalculator.gui;
 
+import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
 import de.legoshi.parkourcalculator.util.Vec3;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
@@ -12,12 +12,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
 
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Vector;
 
 public class MinecraftScreen extends Observable {
 
@@ -29,7 +27,6 @@ public class MinecraftScreen extends Observable {
     private final Scene scene;
     private final SubScene subScene;
     private PerspectiveCamera camera;
-    private final Environment environment;
 
     private double currAngleX = 270;
     private double currAngleY = 270;
@@ -40,13 +37,12 @@ public class MinecraftScreen extends Observable {
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
-    public MinecraftScreen(Group group, Scene scene, SubScene subScene, Environment environment) {
+    public MinecraftScreen(Group group, Scene scene, SubScene subScene) {
         this.group = group;
         this.scene = scene;
         // this.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, new Insets(0, 0, 0, 0))));
 
         this.subScene = subScene;
-        this.environment = environment;
 
         registerMouseHandler();
         setupModelScreen();
@@ -86,18 +82,20 @@ public class MinecraftScreen extends Observable {
         double clickZ = mouseEvent.getZ();
         Bounds bounds = clickedBox.getBoundsInLocal();
 
-        Vec3 vec3 = clickedBlock.getVec3().copy();
-        if (bounds.getMinX() == clickX) vec3.addVector(-1, 0, 0);
-        else if (bounds.getMaxX() == clickX) vec3.addVector(1, 0, 0);
-        else if (bounds.getMinY() == clickY) vec3.addVector(0, 1, 0);
-        else if (bounds.getMaxY() == clickY) vec3.addVector(0, -1, 0);
-        else if (bounds.getMinZ() == clickZ) vec3.addVector(0, 0, -1);
-        else if (bounds.getMaxZ() == clickZ) vec3.addVector(0, 0, 1);
-        return new StandardBlock(vec3);
+        Vec3 vec3Float = clickedBlock.getVec3().copy();
+        Vec3 vec3Rounded = new Vec3(Math.floor(vec3Float.x), Math.floor(vec3Float.y), Math.floor(vec3Float.z));
+        if (bounds.getMinX() == clickX) vec3Rounded.addVector(-1, 0, 0);
+        else if (bounds.getMaxX() == clickX) vec3Rounded.addVector(1, 0, 0);
+        else if (bounds.getMinY() == clickY) vec3Rounded.addVector(0, 1, 0);
+        else if (bounds.getMaxY() == clickY) vec3Rounded.addVector(0, -1, 0);
+        else if (bounds.getMinZ() == clickZ) vec3Rounded.addVector(0, 0, -1);
+        else if (bounds.getMaxZ() == clickZ) vec3Rounded.addVector(0, 0, 1);
+        ABlock aBlock = BlockFactory.createBlock(vec3Rounded, Environment.currentBlock.getClass().getSimpleName());
+        return aBlock;
     }
 
     private ABlock getExistingBlockFromPos(MouseEvent mouseEvent) {
-        for (ABlock aBlock : environment.aBlocks) {
+        for (ABlock aBlock : Environment.aBlocks) {
             Box box = (Box) mouseEvent.getTarget();
             if (aBlock.getBoxesArrayList().contains(box)) {
                 return aBlock;
@@ -107,6 +105,10 @@ public class MinecraftScreen extends Observable {
     }
 
     public void addBlock(ABlock aBlock) {
+        if (aBlock.getBoxesArrayList().size() == 0) {
+            System.out.println("No block to add... Set a connection?");
+            return;
+        }
         for (Box box : aBlock.getBoxesArrayList()) {
             box.setOnMouseClicked(this::handleMouseClick);
             group.getChildren().add(box);

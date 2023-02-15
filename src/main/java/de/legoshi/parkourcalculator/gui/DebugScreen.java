@@ -81,7 +81,7 @@ public class DebugScreen extends VBox implements Observer {
         this.yVel.setText("Y-Vel: " + setDecimals(this.player.getVelocity().y));
         this.zVel.setText("Z-Vel: " + setDecimals(this.player.getVelocity().z));
 
-        PlayerTickInformation ptiJ = getJumpTick();
+        PlayerTickInformation ptiJ = movementEngine.getJumpTick();
         if (ptiJ != null) {
             this.jumpFacing.setText("F-Jump: " + setDecimals(ptiJ.getFacing()));
             this.xJumpPos.setText("X-Jump: " + setDecimals(ptiJ.getPosition().x));
@@ -94,7 +94,7 @@ public class DebugScreen extends VBox implements Observer {
             this.zJumpPos.setText("Z-Jump: -");
         }
 
-        PlayerTickInformation ptiL = getLandTick();
+        PlayerTickInformation ptiL = movementEngine.getLandTick();
         if(ptiL != null) {
             if (!this.getChildren().contains(landFacing))
                 this.getChildren().addAll(landFacing, xLandPos, yLandPos, zLandPos);
@@ -124,24 +124,6 @@ public class DebugScreen extends VBox implements Observer {
         this.xTickPos.setText("X-Tick: " + setDecimals(ptiC.getPosition().x));
         this.yTickPos.setText("Y-Tick: " + setDecimals(ptiC.getPosition().y));
         this.zTickPos.setText("Z-Tick: " + setDecimals(ptiC.getPosition().z));
-    }
-
-    private PlayerTickInformation getLandTick() {
-        PlayerTickInformation playerTickInformation = null;
-        PlayerTickInformation prevTick = null;
-        for (PlayerTickInformation pti : movementEngine.getPlayerTickInformations()) {
-            if (pti.isGround() && prevTick != null && !prevTick.isGround()) playerTickInformation = prevTick;
-            prevTick = pti;
-        }
-        return playerTickInformation;
-    }
-
-    private PlayerTickInformation getJumpTick() {
-        PlayerTickInformation playerTickInformation = null;
-        for (PlayerTickInformation pti : movementEngine.getPlayerTickInformations()) {
-            if (pti.isJump()) playerTickInformation = pti;
-        }
-        return playerTickInformation;
     }
 
     private void indentLabels() {

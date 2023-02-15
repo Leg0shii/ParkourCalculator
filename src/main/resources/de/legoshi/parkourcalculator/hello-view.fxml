@@ -5,77 +5,88 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.legoshi.parkourcalculator.Controller">
-   <top>
-      <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
-   <left>
-      <ScrollPane fx:id="tickList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
-        <content>
-          <AnchorPane>
-               <children>
-                  <VBox fx:id="vBox" alignment="CENTER" spacing="10.0">
-                     <children>
-                        <HBox spacing="25.0">
-                           <children>
-                              <Label text="W" />
-                              <Label text="A" />
-                              <Label text="S" />
-                              <Label text="D" />
-                              <Label text="J" />
-                              <Label text="P" />
-                              <Label text="N" />
-                              <Label text="F" />
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                        </HBox>
-                        <Button fx:id="addButton" mnemonicParsing="false" text="+" />
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding></VBox>
-               </children>
-            </AnchorPane>
-        </content>
-      </ScrollPane>
-   </left>
-   <bottom>
-      <HBox fx:id="itemBox" spacing="15.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding></HBox>
-   </bottom>
-   <center>
-      <SubScene fx:id="subScene" depthBuffer="true" height="500.0" width="500.0" BorderPane.alignment="CENTER">
-        <root>
-          <Region />
-        </root>
-      </SubScene>
-   </center>
-   <right>
-      <AnchorPane fx:id="debugHolder" minWidth="-Infinity" BorderPane.alignment="CENTER" />
-   </right>
+<BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+            xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.legoshi.parkourcalculator.Controller">
+    <top>
+        <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Close"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#loadConnectionUI" text="Connections"/>
+                        <MenuItem mnemonicParsing="false" onAction="#loadEditPlayerUI" text="Player Settings"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="View">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#loadConnectionUI" text="Side"/>
+                        <MenuItem mnemonicParsing="false" onAction="#loadEditPlayerUI" text="Top"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <left>
+        <ScrollPane fx:id="tickList" minHeight="-Infinity" minWidth="-Infinity" prefWidth="325" prefHeight="500" BorderPane.alignment="CENTER">
+            <content>
+                <AnchorPane>
+                    <children>
+                        <VBox fx:id="vBox" alignment="CENTER" spacing="10.0">
+                            <children>
+                                <HBox spacing="25.0">
+                                    <children>
+                                        <Label text="W"/>
+                                        <Label text="A"/>
+                                        <Label text="S"/>
+                                        <Label text="D"/>
+                                        <Label text="J"/>
+                                        <Label text="P"/>
+                                        <Label text="N"/>
+                                        <Label text="F"/>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets/>
+                                    </VBox.margin>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </padding>
+                                </HBox>
+                                <Button fx:id="addButton" mnemonicParsing="false" text="+"/>
+                            </children>
+                            <padding>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                            </padding>
+                        </VBox>
+                    </children>
+                </AnchorPane>
+            </content>
+        </ScrollPane>
+    </left>
+    <bottom>
+        <HBox fx:id="itemBox" spacing="15.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+        </HBox>
+    </bottom>
+    <center>
+        <SubScene fx:id="subScene" depthBuffer="true" height="500.0" width="500.0" BorderPane.alignment="CENTER">
+            <root>
+                <Region/>
+            </root>
+        </SubScene>
+    </center>
+    <right>
+        <AnchorPane fx:id="debugHolder" minWidth="-Infinity" BorderPane.alignment="CENTER"/>
+    </right>
 </BorderPane>

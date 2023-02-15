@@ -2,6 +2,7 @@ package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
 import de.legoshi.parkourcalculator.gui.MinecraftScreen;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.image.Image;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 public abstract class ABlock {
 
     public Image image;
-    public ArrayList<AxisAlignedBB> axisAlignedBBS;
+    public ArrayList<AxisVecTuple> axisVecTuples;
     public Movement.Slipperiness slipperiness;
 
     public ArrayList<Box> boxesArrayList;
@@ -43,8 +44,8 @@ public abstract class ABlock {
 
     private void updateBoxes() {
         this.boxesArrayList = new ArrayList<>();
-        for (AxisAlignedBB axisAlignedBB : this.axisAlignedBBS) {
-            this.boxesArrayList.add(axisAlignedBB.getBox());
+        for (AxisVecTuple axisVecTuple : this.axisVecTuples) {
+            this.boxesArrayList.add(axisVecTuple.getBox());
         }
     }
 

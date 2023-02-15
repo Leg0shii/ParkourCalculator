@@ -1,7 +1,9 @@
 package de.legoshi.parkourcalculator.parkour.environment;
 
-import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.*;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.AxisVecTuple;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -9,10 +11,21 @@ import java.util.Observer;
 
 public class Environment implements Observer {
 
-    public ArrayList<ABlock> aBlocks = new ArrayList<>();
+    public static ABlock currentBlock = new StandardBlock();
+    public static ArrayList<ABlock> registeredBlocks = new ArrayList<>();
+    public static ArrayList<ABlock> aBlocks = new ArrayList<>();
 
     public Environment() {
+        registeredBlocks.add(new StandardBlock());
+        registeredBlocks.add(new Enderchest());
+        registeredBlocks.add(new Pane());
+        registeredBlocks.add(new Cake());
+        registeredBlocks.add(new Stair());
+    }
 
+
+    public static void updateCurrentBlock(ABlock aBlock) {
+        currentBlock = aBlock;
     }
 
     public void addBlock(ABlock block) {
@@ -26,7 +39,9 @@ public class Environment implements Observer {
     public ArrayList<AxisAlignedBB> getAllBBs() {
         ArrayList<AxisAlignedBB> boundingBoxes = new ArrayList<>();
         for (ABlock aBlock : aBlocks) {
-            boundingBoxes.addAll(aBlock.getAxisAlignedBBS());
+            for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
+                boundingBoxes.add(axisVecTuple.getBb());
+            }
         }
         return boundingBoxes;
     }

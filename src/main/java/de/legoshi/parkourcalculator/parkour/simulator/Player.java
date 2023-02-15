@@ -16,7 +16,7 @@ public class Player {
     protected boolean SNEAK;
     protected boolean JUMP;
 
-    @Getter protected float YAW;
+    @Setter @Getter protected float YAW;
     protected float moveStrafe, moveForward;
 
     protected float jumpMovementFactor = 0.02F;
@@ -64,6 +64,7 @@ public class Player {
     protected void resetPlayer() {
         this.position = this.startPos.copy();
         this.velocity = this.startVel.copy();
+        YAW = 0;
         GROUND = true;
         WEB = false;
         SPRINT = false;
@@ -82,7 +83,7 @@ public class Player {
 
     protected void applyInput(InputTick inputTick) {
         updateTick(inputTick);
-        YAW = inputTick.YAW;
+        YAW = YAW + inputTick.YAW;
         JUMP = inputTick.JUMP && GROUND;
         SPRINT = inputTick.SPRINT || SPRINT;
         SNEAK = inputTick.SNEAK;

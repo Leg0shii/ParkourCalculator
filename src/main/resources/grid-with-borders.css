@@ -1,5 +1,3 @@
 .root {
-    -fx-padding: 20 ;
-    cell-color: white ;
-    cell-border-color: lightgray ;
+    background-color: darkgray;
 }

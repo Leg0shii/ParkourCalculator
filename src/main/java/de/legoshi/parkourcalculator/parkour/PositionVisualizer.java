@@ -74,7 +74,12 @@ public class PositionVisualizer implements Observer {
         group.setOnMouseDragExited(this::onMouseReleaseClick);
     }
 
-    private ArrayList<PlayerTickInformation> getUpdatedPlayerPos() {
+    public PlayerTickInformation calcLastTick() {
+        ArrayList<InputTick> playerInputs = inputTickManager.getInputTicks();
+        return movementEngine.getLastTick(playerInputs);
+    }
+
+    public ArrayList<PlayerTickInformation> getUpdatedPlayerPos() {
         ArrayList<InputTick> playerInputs = inputTickManager.getInputTicks();
         return movementEngine.updatePath(playerInputs);
     }
