@@ -154,7 +154,7 @@ public class MinecraftScreen extends Observable {
 
     private void registerKeyInputs() {
         scene.setOnKeyPressed(keyEvent -> {
-            Point3D velocity = new Point3D(1, 1, 1);
+            Point3D velocity = new Point3D(0, 0, 0);
             switch (keyEvent.getCode()) {
                 case W -> velocity = new Point3D(0, 0, 0.1);
                 case S -> velocity = new Point3D(0, 0, -0.1);
