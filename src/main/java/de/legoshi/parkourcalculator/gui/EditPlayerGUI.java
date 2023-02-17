@@ -6,17 +6,13 @@ import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
-import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.util.Date;
 
 public class EditPlayerGUI extends GridPane {
 
@@ -307,15 +303,4 @@ public class EditPlayerGUI extends GridPane {
         this.zVelTextField.setText(ptiC.getVelocity().z + "");
     }
 
-    public void setMovementEngine(MovementEngine movementEngine) {
-        this.movementEngine = movementEngine;
-    }
-
-    public void setPositionVisualizer(PositionVisualizer positionVisualizer) {
-        this.positionVisualizer = positionVisualizer;
-    }
-
-    public void setInputTickGUI(InputTickGUI inputTickGUI) {
-        this.inputTickGUI = inputTickGUI;
-    }
 }

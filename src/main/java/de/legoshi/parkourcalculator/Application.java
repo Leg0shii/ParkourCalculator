@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Box;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -77,8 +79,8 @@ public class Application extends javafx.application.Application {
         controller.subScene.widthProperty().bind(controller.borderPane.widthProperty().subtract(controller.tickList.widthProperty()).subtract(debugScreen.widthProperty()));
         controller.tickList.setContent(controller.vBox);
 
-        this.minecraftScreen = new MinecraftScreen(group, scene, controller.subScene);
-        this.minecraftScreen.setupModelScreen();
+        this.minecraftScreen = new MinecraftScreen(group, controller.subScene);
+        // this.minecraftScreen.setupModelScreen();
 
         Group pathGroup = new Group();
         this.positionVisualizer = new PositionVisualizer(pathGroup, movementEngine, inputTickManager);

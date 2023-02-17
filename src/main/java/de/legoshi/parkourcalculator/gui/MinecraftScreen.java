@@ -5,13 +5,14 @@ import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
 import de.legoshi.parkourcalculator.util.Vec3;
+import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
+import de.legoshi.parkourcalculator.util.fxyz.FPSController;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -24,33 +25,24 @@ public class MinecraftScreen extends Observable {
     public static final double BLOCK_OFFSET_Z = 0.5;
 
     private final Group group;
-    private final Scene scene;
     private final SubScene subScene;
-    private PerspectiveCamera camera;
 
-    private double currAngleX = 270;
-    private double currAngleY = 270;
-    private double previousX = 270;
-    private double previousY = 0;
-    private double deltaX = 0;
-    private double deltaY = 0;
+    private AdvancedCamera camera;
+    @Getter private FPSController controller;
+
+    private final double currAngleY = 270;
+
+    private float yaw;
+    private float pitch;
+    private float roll;
 
     private ArrayList<Observer> observers = new ArrayList<>();
 
-    public MinecraftScreen(Group group, Scene scene, SubScene subScene) {
+    public MinecraftScreen(Group group, SubScene subScene) {
         this.group = group;
-        this.scene = scene;
-        // this.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, new Insets(0, 0, 0, 0))));
-
         this.subScene = subScene;
 
-        registerMouseHandler();
-        setupModelScreen();
-    }
-
-    public void setupModelScreen() {
         registerCamera();
-        registerKeyInputs();
     }
 
     public void addStartingBlock() {
@@ -60,6 +52,7 @@ public class MinecraftScreen extends Observable {
 
     public void handleMouseClick(MouseEvent mouseEvent) {
         if (!(mouseEvent.getTarget() instanceof Box)) return;
+        mouseEvent.consume();
         switch (mouseEvent.getButton()) {
             case PRIMARY -> {
                 ABlock block = getNewBlockFromPos(mouseEvent);
@@ -90,8 +83,7 @@ public class MinecraftScreen extends Observable {
         else if (bounds.getMaxY() == clickY) vec3Rounded.addVector(0, -1, 0);
         else if (bounds.getMinZ() == clickZ) vec3Rounded.addVector(0, 0, -1);
         else if (bounds.getMaxZ() == clickZ) vec3Rounded.addVector(0, 0, 1);
-        ABlock aBlock = BlockFactory.createBlock(vec3Rounded, Environment.currentBlock.getClass().getSimpleName());
-        return aBlock;
+        return BlockFactory.createBlock(vec3Rounded, Environment.currentBlock.getClass().getSimpleName());
     }
 
     private ABlock getExistingBlockFromPos(MouseEvent mouseEvent) {
@@ -124,65 +116,26 @@ public class MinecraftScreen extends Observable {
     }
 
     private void registerCamera() {
-        this.camera = new PerspectiveCamera(true);
-        camera.translateXProperty().set(10);
-        camera.translateYProperty().set(-2);
-        camera.translateZProperty().set(0);
-        camera.setRotationAxis(Rotate.Y_AXIS);
-        camera.setRotate(270);
-        camera.setNearClip(0.01);
-        camera.setFarClip(100);
+        camera = new AdvancedCamera();
+        controller = new FPSController();
+
+        camera.setNearClip(0.1);
+        camera.setFarClip(10000.0);
+        camera.setFieldOfView(42);
+
+        camera.setController(controller);
         subScene.setCamera(camera);
-    }
+        subScene.setFill(Color.LIGHTBLUE);
 
-    private void registerMouseHandler() {
-        /*this.scene.setOnMouseMoved(mouseEvent -> {
-            double currentX = mouseEvent.getY();
-            double currentY = mouseEvent.getX();
-            deltaX = currentX - previousX;
-            deltaY = currentY - previousY;
-            if (deltaX > 50 || deltaX < -50) deltaX = 0;
-            if (deltaY > 50 || deltaY < -50) deltaY = 0;
-            previousX = currentX;
-            previousY = currentY;
-            this.currAngleX = currAngleX + deltaX;
-            this.currAngleY = currAngleY + deltaY;
-            camera.getTransforms().add(new Rotate(-deltaX, Rotate.X_AXIS));
-            camera.getTransforms().add(new Rotate(deltaY, Rotate.Y_AXIS));
-        });*/
-    }
+        controller.setSubScene(subScene);
+        controller.affine.setTz(-8);
+        controller.affine.setTy(-2);
 
-    private void registerKeyInputs() {
-        scene.setOnKeyPressed(keyEvent -> {
-            Point3D velocity = new Point3D(1, 1, 1);
-            switch (keyEvent.getCode()) {
-                case W -> velocity = new Point3D(0, 0, 0.1);
-                case S -> velocity = new Point3D(0, 0, -0.1);
-                case A -> velocity = new Point3D(0.1, 0, 0);
-                case D -> velocity = new Point3D(-0.1, 0, 0);
-                case CAPS -> velocity = new Point3D(0, 0.1, 0);
-                case SHIFT -> velocity = new Point3D(0, -0.1, 0);
-            }
-            camera.setRotationAxis(new Point3D(0, 1, 0));
-            Transform transform = new Rotate(currAngleY, new Point3D(0, 1, 0));
-            Point3D direction = transform.transform(velocity);
-            System.out.println(direction);
-
-            camera.setTranslateX(camera.getTranslateX() + direction.getX());
-            camera.setTranslateY(camera.getTranslateY() + direction.getY());
-            camera.setTranslateZ(camera.getTranslateZ() + direction.getZ());
+        // allows button presses
+        subScene.setOnMousePressed(e -> {
+            subScene.requestFocus();
+            e.consume();
         });
-    }
-
-    private void rotateGroup(int value) {
-        group.setRotationAxis(Rotate.Y_AXIS);
-        group.setRotate(group.getRotate() + value);
-    }
-
-    private void scaleGroup(double factor) {
-        group.setScaleX(group.getScaleX() * factor);
-        group.setScaleY(group.getScaleY() * factor);
-        group.setScaleZ(group.getScaleZ() * factor);
     }
 
     public void addObserver(Observer observer) {

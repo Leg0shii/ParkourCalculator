@@ -6,9 +6,12 @@ import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
+import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
 import javafx.geometry.Point3D;
-import javafx.scene.Group;
+import javafx.scene.*;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
@@ -24,6 +27,7 @@ public class PositionVisualizer implements Observer {
     private final MovementEngine movementEngine;
     private final InputTickManager inputTickManager;
     private final Group group;
+    private final Box box;
 
     public ArrayList<Sphere> spheres = new ArrayList<>();
     public ArrayList<Cylinder> lines = new ArrayList<>();
@@ -36,6 +40,11 @@ public class PositionVisualizer implements Observer {
         this.inputTickManager = inputTickManager;
         this.movementEngine = movementEngine;
         this.group = group;
+
+        this.box = new Box(400, 1, 400);
+        box.setTranslateY(-0.5);
+        box.setOpacity(0);
+        group.getChildren().add(box);
     }
 
     public void generatePlayerPath() {
@@ -44,6 +53,7 @@ public class PositionVisualizer implements Observer {
         playerTI.forEach(pti -> playerPos.add(pti.getPosition()));
 
         group.getChildren().clear();
+        group.getChildren().add(box);
 
         spheres = new ArrayList<>();
         lines = new ArrayList<>();
@@ -69,9 +79,8 @@ public class PositionVisualizer implements Observer {
             lines.add(cylinder);
             group.getChildren().add(cylinder);
         }
-        group.setOnMouseClicked(this::onMouseReleaseClick);
         group.setOnMouseDragged(this::onMouseDrag);
-        group.setOnMouseDragExited(this::onMouseReleaseClick);
+        group.setOnMouseReleased(this::onMouseDragReleased);
     }
 
     public PlayerTickInformation calcLastTick() {
@@ -82,6 +91,40 @@ public class PositionVisualizer implements Observer {
     public ArrayList<PlayerTickInformation> getUpdatedPlayerPos() {
         ArrayList<InputTick> playerInputs = inputTickManager.getInputTicks();
         return movementEngine.updatePath(playerInputs);
+    }
+
+    private void onMouseDragReleased(MouseEvent event) {
+        event.consume();
+        for (Node node : group.getChildren()) {
+            node.setMouseTransparent(false);
+        }
+        box.setMouseTransparent(true);
+    }
+
+    // move around the player path
+    private void onMouseDrag(MouseEvent event) {
+        event.consume();
+        box.setMouseTransparent(false);
+
+        for (Node node : group.getChildren()) {
+            if (node instanceof Sphere || node instanceof Cylinder) {
+                node.setMouseTransparent(true);
+            }
+        }
+
+        Point3D coords = event.getPickResult().getIntersectedPoint();
+        Vec3 pOffset = movementEngine.player.getStartPos().copy();
+
+        if (coords.getZ() == 0) return;
+        if (coords.getY() != -0.5) return;
+
+        Node node = event.getPickResult().getIntersectedNode();
+        if (!node.equals(this.box)) {
+            coords = coords.add(node.getTranslateX(), 0, node.getTranslateZ());
+        }
+
+        movementEngine.player.setStartPos(new Vec3(coords.getX(), pOffset.y, coords.getZ()));
+        generatePlayerPath();
     }
 
     private void onMouseClick(MouseEvent event, int tickPos) {
@@ -95,31 +138,6 @@ public class PositionVisualizer implements Observer {
                 ((DebugScreen) observer).updateTickClick(tickPos);
             }
         }
-    }
-
-    // move around the player path
-    private void onMouseDrag(MouseEvent event) {
-        if (lastX == 0 && lastZ == 0) {
-            this.lastX = event.getScreenX();
-            this.lastZ = event.getScreenY();
-        }
-
-        Vec3 updatedStartPos = movementEngine.player.getStartPos().copy();
-        updatedStartPos.z = updatedStartPos.z + (event.getScreenX() - lastX)/100;
-        updatedStartPos.x = updatedStartPos.x + (event.getScreenY() - lastZ)/100;
-        movementEngine.player.setStartPos(updatedStartPos);
-
-        System.out.println(updatedStartPos);
-
-        this.lastX = event.getScreenX();
-        this.lastZ = event.getScreenY();
-
-        generatePlayerPath();
-    }
-
-    private void onMouseReleaseClick(MouseEvent event) {
-        this.lastX = 0;
-        this.lastZ = 0;
     }
 
     private Cylinder createCylinder(Point3D startP, Point3D endP) {
@@ -143,4 +161,5 @@ public class PositionVisualizer implements Observer {
     public void update(Observable o, Object arg) {
         generatePlayerPath();
     }
+
 }
