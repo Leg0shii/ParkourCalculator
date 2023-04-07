@@ -13,13 +13,14 @@ public class Ladder extends FacingBlock {
         super(vec3);
     }
 
+    // works
     @Override
     protected void calcNorth() {
         Vec3 lowerEdge = getVec3().copy();
         Vec3 upperEdge = getVec3().copy();
         lowerEdge.addVector(0, 0, 0);
         upperEdge.addVector(1, 1.0, 0.125);
-        Vec3 shift = new Vec3(0, 0, -0.5625);
+        Vec3 shift = new Vec3(0, 0, -0.4375);
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
         this.north = new AxisVecTuple(axisAlignedBB, shift);
     }
@@ -30,7 +31,7 @@ public class Ladder extends FacingBlock {
         Vec3 upperEdge = getVec3().copy();
         lowerEdge.addVector(0.875, 0, 0);
         upperEdge.addVector(1.0, 1.0, 1);
-        Vec3 shift = new Vec3(0.5625, 0, 0);
+        Vec3 shift = new Vec3(1.3125, 0, 0);
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
         this.east = new AxisVecTuple(axisAlignedBB, shift);
     }
@@ -41,18 +42,19 @@ public class Ladder extends FacingBlock {
         Vec3 upperEdge = getVec3().copy();
         lowerEdge.addVector(0, 0, 0.875);
         upperEdge.addVector(1, 1.0, 1.0);
-        Vec3 shift = new Vec3(0, 0, 0.5625);
+        Vec3 shift = new Vec3(0, 0, 1.3125);
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
         this.south = new AxisVecTuple(axisAlignedBB, shift);
     }
 
+    // works
     @Override
     protected void calcWest() {
         Vec3 lowerEdge = getVec3().copy();
         Vec3 upperEdge = getVec3().copy();
         lowerEdge.addVector(0.0, 0, 0);
         upperEdge.addVector(0.125, 1.0, 1);
-        Vec3 shift = new Vec3(0.5625, 0, 0);
+        Vec3 shift = new Vec3(-0.4375, 0, 0);
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
         this.west = new AxisVecTuple(axisAlignedBB, shift);
     }
