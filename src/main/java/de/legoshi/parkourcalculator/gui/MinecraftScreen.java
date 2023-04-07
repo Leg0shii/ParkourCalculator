@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 import lombok.Getter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -62,10 +63,13 @@ public class MinecraftScreen extends Observable {
         ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
         if (clickedBlock == null) return null;
 
-        double clickX = mouseEvent.getX();
-        double clickY = mouseEvent.getY();
-        double clickZ = mouseEvent.getZ();
+        DecimalFormat df = new DecimalFormat("#.######");
+        double clickX = Double.parseDouble(df.format(mouseEvent.getX()).replace(",", "."));
+        double clickY = Double.parseDouble(df.format(mouseEvent.getY()).replace(",", "."));
+        double clickZ = Double.parseDouble(df.format(mouseEvent.getZ()).replace(",", "."));
         Bounds bounds = clickedBox.getBoundsInLocal();
+
+        System.out.println("X: " + clickX + " Y: " + clickY + " Z: " + clickZ);
 
         Vec3 vec3Float = clickedBlock.getVec3().copy();
         Vec3 vec3Rounded = new Vec3(Math.floor(vec3Float.x), Math.floor(vec3Float.y), Math.floor(vec3Float.z));
