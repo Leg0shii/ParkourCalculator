@@ -9,11 +9,9 @@ import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
 import de.legoshi.parkourcalculator.util.fxyz.FPSController;
 import javafx.geometry.Bounds;
 import javafx.scene.*;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
-import lombok.Getter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -68,8 +66,6 @@ public class MinecraftScreen extends Observable {
         double clickY = Double.parseDouble(df.format(mouseEvent.getY()).replace(",", "."));
         double clickZ = Double.parseDouble(df.format(mouseEvent.getZ()).replace(",", "."));
         Bounds bounds = clickedBox.getBoundsInLocal();
-
-        System.out.println("X: " + clickX + " Y: " + clickY + " Z: " + clickZ);
 
         Vec3 vec3Float = clickedBlock.getVec3().copy();
         Vec3 vec3Rounded = new Vec3(Math.floor(vec3Float.x), Math.floor(vec3Float.y), Math.floor(vec3Float.z));
