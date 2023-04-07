@@ -32,18 +32,16 @@ public class PositionVisualizer implements Observer {
     public ArrayList<Sphere> spheres = new ArrayList<>();
     public ArrayList<Cylinder> lines = new ArrayList<>();
 
-    private double lastX;
-    private double lastY;
-    private double lastZ;
-
     public PositionVisualizer(Group group, MovementEngine movementEngine, InputTickManager inputTickManager) {
         this.inputTickManager = inputTickManager;
         this.movementEngine = movementEngine;
         this.group = group;
 
         this.box = new Box(400, 1, 400);
+        // box.translateYProperty().bind(movementEngine.player.); // setTranslateY(-0.5);
         box.setTranslateY(-0.5);
         box.setOpacity(0);
+        box.setMouseTransparent(true);
         group.getChildren().add(box);
     }
 
@@ -116,7 +114,7 @@ public class PositionVisualizer implements Observer {
         Vec3 pOffset = movementEngine.player.getStartPos().copy();
 
         if (coords.getZ() == 0) return;
-        if (coords.getY() != -0.5) return;
+        if (coords.getY() != (-1)*(pOffset.y - 0.5)) return;
 
         Node node = event.getPickResult().getIntersectedNode();
         if (!node.equals(this.box)) {

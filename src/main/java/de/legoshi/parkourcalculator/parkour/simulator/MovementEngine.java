@@ -85,6 +85,21 @@ public class MovementEngine {
         moveFlying(player.moveStrafe, player.moveForward, movementFactor);
 
         // calculate ladder
+        if (player.isOnLadder()) {
+            float f6 = 0.15F;
+            player.velocity.x = MinecraftMathHelper.clamp_double(player.velocity.x, -f6, f6);
+            player.velocity.z = MinecraftMathHelper.clamp_double(player.velocity.z, -f6, f6);
+
+            if (player.velocity.y < -0.15D) {
+                player.velocity.y = -0.15D;
+            }
+
+            boolean flag = player.SNEAK;
+
+            if (flag && player.velocity.y < 0.0D) {
+                player.velocity.y = 0.0D;
+            }
+        }
 
         moveEntity(player.velocity.x, player.velocity.y, player.velocity.z);
 

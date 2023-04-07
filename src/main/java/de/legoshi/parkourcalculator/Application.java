@@ -29,12 +29,10 @@ public class Application extends javafx.application.Application {
     private PositionVisualizer positionVisualizer;
     private DebugScreen debugScreen;
 
-    private Scene scene;
-
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("main-view.fxml"));
-        this.scene = new Scene(fxmlLoader.load(), 1200, 1000, true);
+        Scene scene = new Scene(fxmlLoader.load(), 1200, 1000, true);
         this.controller = fxmlLoader.getController();
 
         this.environment = new Environment();
@@ -53,6 +51,7 @@ public class Application extends javafx.application.Application {
         registerObservers();
 
         this.minecraftScreen.addStartingBlock();
+        this.controller.setObjects(inputTickGUI, positionVisualizer, movementEngine);
 
         stage.setTitle("Parkour Simulator!");
         stage.setScene(scene);

@@ -9,6 +9,7 @@ import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
 import de.legoshi.parkourcalculator.util.fxyz.FPSController;
 import javafx.geometry.Bounds;
 import javafx.scene.*;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
@@ -27,16 +28,7 @@ public class MinecraftScreen extends Observable {
     private final Group group;
     private final SubScene subScene;
 
-    private AdvancedCamera camera;
-    @Getter private FPSController controller;
-
-    private final double currAngleY = 270;
-
-    private float yaw;
-    private float pitch;
-    private float roll;
-
-    private ArrayList<Observer> observers = new ArrayList<>();
+    private final ArrayList<Observer> observers = new ArrayList<>();
 
     public MinecraftScreen(Group group, SubScene subScene) {
         this.group = group;
@@ -116,8 +108,8 @@ public class MinecraftScreen extends Observable {
     }
 
     private void registerCamera() {
-        camera = new AdvancedCamera();
-        controller = new FPSController();
+        AdvancedCamera camera = new AdvancedCamera();
+        FPSController controller = new FPSController();
 
         camera.setNearClip(0.1);
         camera.setFarClip(10000.0);

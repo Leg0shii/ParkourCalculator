@@ -3,7 +3,6 @@ package de.legoshi.parkourcalculator.parkour.environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.*;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
-import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -21,8 +20,9 @@ public class Environment implements Observer {
         registeredBlocks.add(new Pane());
         registeredBlocks.add(new Cake());
         registeredBlocks.add(new Stair());
+        registeredBlocks.add(new Ladder());
+        registeredBlocks.add(new Vine());
     }
-
 
     public static void updateCurrentBlock(ABlock aBlock) {
         currentBlock = aBlock;
@@ -44,6 +44,15 @@ public class Environment implements Observer {
             }
         }
         return boundingBoxes;
+    }
+
+    public static ABlock getBlock(double x, double y, double z) {
+        for (ABlock aBlock : aBlocks) {
+            if (aBlock.getVec3().x == x && aBlock.getVec3().y == y && aBlock.getVec3().z == z) {
+                return aBlock;
+            }
+        }
+        return new Air();
     }
 
     @Override

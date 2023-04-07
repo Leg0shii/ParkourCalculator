@@ -47,6 +47,12 @@ public class Controller implements Initializable {
 
     }
 
+    public void setObjects(InputTickGUI inputTickGUI, PositionVisualizer positionVisualizer, MovementEngine movementEngine) {
+        this.inputTickGUI = inputTickGUI;
+        this.positionVisualizer = positionVisualizer;
+        this.movementEngine = movementEngine;
+    }
+
     public void loadConnectionUI() {
         new ConnectionGUI().show();
     }

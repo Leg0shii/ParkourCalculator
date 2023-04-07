@@ -1,7 +1,12 @@
 package de.legoshi.parkourcalculator.parkour.simulator;
 
+import de.legoshi.parkourcalculator.parkour.environment.Environment;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.Ladder;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.Vine;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
 import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
@@ -111,6 +116,15 @@ public class Player {
                 GROUND,
                 JUMP
         );
+    }
+
+    public boolean isOnLadder() {
+        int x = MinecraftMathHelper.floor_double(this.position.x);
+        int minY = MinecraftMathHelper.floor_double(this.playerBB.minY);
+        int z = MinecraftMathHelper.floor_double(this.position.z);
+
+        ABlock block = Environment.getBlock(x, minY, z);
+        return (block instanceof Ladder || block instanceof Vine);
     }
 
 }
