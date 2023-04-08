@@ -103,6 +103,10 @@ public class MovementEngine {
 
         moveEntity(player.velocity.x, player.velocity.y, player.velocity.z);
 
+        if (player.isCollidedHorizontally && player.isOnLadder()) {
+            player.velocity.y = 0.2D;
+        }
+
         player.velocity.y -= 0.08D;
         player.velocity.y *= 0.9800000190734863D;
 

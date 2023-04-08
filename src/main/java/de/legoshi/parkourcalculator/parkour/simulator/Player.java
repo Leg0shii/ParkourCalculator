@@ -14,6 +14,9 @@ import lombok.Setter;
 
 public class Player {
 
+    protected float width = 0.3F;
+    protected float height = 1.8F;
+
     protected boolean GROUND = true;
     protected boolean WEB;
 
@@ -96,8 +99,8 @@ public class Player {
 
     protected void updatePlayerBB() {
         this.playerBB = new AxisAlignedBB(
-                position.x - 0.3, position.y, position.z - 0.3,
-                position.x + 0.3, position.y + 1.8, position.z + 0.3
+                position.x - this.width, position.y, position.z - this.width,
+                position.x + this.width, position.y + this.height, position.z + this.width
         );
     }
 
