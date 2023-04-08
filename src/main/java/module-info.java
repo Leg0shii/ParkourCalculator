@@ -16,4 +16,6 @@ module de.legoshi.parkourcalculator {
     exports de.legoshi.parkourcalculator.parkour.simulator;
     exports de.legoshi.parkourcalculator.util;
     exports de.legoshi.parkourcalculator.gui;
+    exports de.legoshi.parkourcalculator.parkour.environment.blocks.ablock;
+    opens de.legoshi.parkourcalculator.parkour.environment.blocks.ablock to javafx.fxml;
 }

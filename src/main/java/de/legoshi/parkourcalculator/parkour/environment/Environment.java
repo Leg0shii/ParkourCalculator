@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.parkour.environment;
 
 import de.legoshi.parkourcalculator.parkour.environment.blocks.*;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 
