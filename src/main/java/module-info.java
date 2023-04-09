@@ -2,6 +2,8 @@ module de.legoshi.parkourcalculator {
     requires javafx.controls;
     requires javafx.fxml;
     requires lombok;
+    requires java.desktop;
+    requires javafx.swing;
 
     opens de.legoshi.parkourcalculator to javafx.fxml;
     exports de.legoshi.parkourcalculator;
@@ -16,6 +18,4 @@ module de.legoshi.parkourcalculator {
     exports de.legoshi.parkourcalculator.parkour.simulator;
     exports de.legoshi.parkourcalculator.util;
     exports de.legoshi.parkourcalculator.gui;
-    exports de.legoshi.parkourcalculator.parkour.environment.blocks.ablock;
-    opens de.legoshi.parkourcalculator.parkour.environment.blocks.ablock to javafx.fxml;
 }

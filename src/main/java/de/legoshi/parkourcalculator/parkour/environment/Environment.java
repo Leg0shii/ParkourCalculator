@@ -16,6 +16,12 @@ public class Environment implements Observer {
     public static ArrayList<ABlock> aBlocks = new ArrayList<>();
 
     public Environment() {
+        // registeredBlocks.add(new Water());
+        // registeredBlocks.add(new Cobweb());
+        // registeredBlocks.add(new Lava());
+
+        registeredBlocks.add(new PistonHead());
+        registeredBlocks.add(new PistonBase());
         registeredBlocks.add(new StandardBlock());
         registeredBlocks.add(new Enderchest());
         registeredBlocks.add(new Pane());
@@ -23,6 +29,25 @@ public class Environment implements Observer {
         registeredBlocks.add(new Stair());
         registeredBlocks.add(new Ladder());
         registeredBlocks.add(new Vine());
+        registeredBlocks.add(new Anvil());
+        registeredBlocks.add(new Bed());
+        registeredBlocks.add(new BrewingStand());
+        registeredBlocks.add(new Cactus());
+        registeredBlocks.add(new Carpet());
+        registeredBlocks.add(new Cauldron());
+        registeredBlocks.add(new Cobblewall());
+        registeredBlocks.add(new CocoaBean());
+        registeredBlocks.add(new DragonEgg());
+        registeredBlocks.add(new EndPortalFrame());
+        registeredBlocks.add(new Fence());
+        registeredBlocks.add(new Flowerpot());
+        registeredBlocks.add(new Head());
+        registeredBlocks.add(new Hopper());
+        registeredBlocks.add(new Ice());
+        registeredBlocks.add(new Lilypad());
+        registeredBlocks.add(new Snow());
+        registeredBlocks.add(new Soulsand());
+        registeredBlocks.add(new Trapdoor());
     }
 
     public static void updateCurrentBlock(ABlock aBlock) {

@@ -12,6 +12,9 @@ public class ConnectionGUI extends GridPane {
 
     private Stage stage;
 
+    private Label ceilingLabel = new Label("Ceiling: ");
+    private static CheckBox checkBoxCeiling = new CheckBox();
+
     private Label northLabel = new Label("North: ");
     private static CheckBox checkBoxNorth = new CheckBox();
 
@@ -35,6 +38,8 @@ public class ConnectionGUI extends GridPane {
         this.add(checkBoxSouth, 1, 2);
         this.add(westLabel, 0, 3);
         this.add(checkBoxWest, 1, 3);
+        this.add(ceilingLabel, 0, 4);
+        this.add(checkBoxCeiling, 1, 4);
     }
 
     public void show() {
@@ -62,6 +67,10 @@ public class ConnectionGUI extends GridPane {
 
     public static boolean isWest() {
         return checkBoxWest.isSelected();
+    }
+
+    public static boolean isFlip() {
+        return checkBoxCeiling.isSelected();
     }
 
 }

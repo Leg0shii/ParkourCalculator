@@ -5,9 +5,8 @@ import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class Vine extends FacingBlock {
-
-    public Vine(Vec3 vec3) {
+public class Head extends FacingBlock {
+    public Head(Vec3 vec3) {
         super(vec3);
     }
 
@@ -19,6 +18,11 @@ public class Vine extends FacingBlock {
     @Override
     protected void calcBaseFlip() {
 
+    }
+
+    @Override
+    void updateImage() {
+        this.image = new ImageHelper().getImageFromURL("/images/head.webp");
     }
 
     @Override
@@ -39,10 +43,5 @@ public class Vine extends FacingBlock {
     @Override
     protected void calcWest() {
 
-    }
-
-    @Override
-    void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/vine.webp");
     }
 }

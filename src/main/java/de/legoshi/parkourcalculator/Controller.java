@@ -18,11 +18,11 @@ public class Controller implements Initializable {
     public BorderPane borderPane;
     public Button addButton;
     public VBox vBox;
-    public HBox itemBox;
     public SubScene subScene;
     public ScrollPane tickList;
     public MenuBar menuBar;
     public AnchorPane debugHolder;
+    public HBox itemBox;
 
     private InputTickGUI inputTickGUI;
     private PositionVisualizer positionVisualizer;

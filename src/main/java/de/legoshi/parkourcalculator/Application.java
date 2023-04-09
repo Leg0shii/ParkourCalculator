@@ -8,10 +8,14 @@ import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 import javafx.stage.Stage;
 
@@ -63,10 +67,42 @@ public class Application extends javafx.application.Application {
     }
 
     private void registerBlocks() {
+        Insets insets2 = new Insets(3, 3, 3, 3);
+        Insets insets0 = new Insets(0, 0, 0, 0);
+        Border blackBorder = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3, 3, 3, 3)));
+        Border grayBorder = new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3, 3, 3, 3)));
+
         Environment.registeredBlocks.forEach(block -> {
+            StackPane stackPane = new StackPane();
+            stackPane.setPadding(insets2);
+
             ImageView imageView = new ImageView(block.image);
-            controller.itemBox.getChildren().add(imageView);
-            imageView.setOnMouseClicked(mouseEvent -> Environment.updateCurrentBlock(block));
+            stackPane.getChildren().add(imageView);
+            controller.itemBox.getChildren().add(stackPane);
+
+            stackPane.setOnMouseClicked(mouseEvent -> {
+                for (Node node : controller.itemBox.getChildren()) {
+                    if (node instanceof StackPane sP) {
+                        sP.setBorder(null);
+                        sP.setPadding(insets2);
+                    }
+                }
+                stackPane.setPadding(insets0);
+                stackPane.setBorder(blackBorder);
+                Environment.updateCurrentBlock(block);
+            });
+
+            stackPane.setOnMouseEntered(mouseEvent -> {
+                if (stackPane.getBorder() != null && stackPane.getBorder().equals(blackBorder)) return;
+                stackPane.setPadding(insets0);
+                stackPane.setBorder(grayBorder);
+            });
+
+            stackPane.setOnMouseExited(mouseEvent -> {
+                if (stackPane.getBorder() != null && stackPane.getBorder().equals(blackBorder)) return;
+                stackPane.setPadding(insets2);
+                stackPane.setBorder(null);
+            });
         });
     }
 

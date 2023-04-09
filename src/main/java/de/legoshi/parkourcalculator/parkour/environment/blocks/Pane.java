@@ -14,52 +14,50 @@ public class Pane extends FacingBlock {
     }
 
     @Override
+    protected void calcBase() {
+
+    }
+
+    @Override
+    protected void calcBaseFlip() {
+
+    }
+
+    @Override
     protected void calcNorth() {
-        Vec3 lowerEdge = getVec3().copy();
-        Vec3 upperEdge = getVec3().copy();
-        lowerEdge.addVector(0.4375, 0, 0);
-        upperEdge.addVector(0.5625, 1.0, 0.5000);
-        Vec3 shift = new Vec3(0.4375, 0, 0.5000/2);
-        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
-        this.north = new AxisVecTuple(axisAlignedBB, shift);
+        Vec3 lowerEdge = new Vec3(0.4375, 0, 0);
+        Vec3 upperEdge = new Vec3(0.5625, 1, 0.5);
+        Vec3 shift = new Vec3(0.4375, 0, 0.25);
+        this.north = constructBlock(lowerEdge, upperEdge, shift);
     }
 
     @Override
     protected void calcEast() {
-        Vec3 lowerEdge = getVec3().copy();
-        Vec3 upperEdge = getVec3().copy();
-        lowerEdge.addVector(0.5000, 0, 0.4375);
-        upperEdge.addVector(1.0, 1.0, 0.5625);
-        Vec3 shift = new Vec3(0.5000/2, 0, 0.4375);
-        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
-        this.east = new AxisVecTuple(axisAlignedBB, shift);
+        Vec3 lowerEdge = new Vec3(0.5, 0, 0.4375);
+        Vec3 upperEdge = new Vec3(1, 1, 0.5625);
+        Vec3 shift = new Vec3(0.25, 0, 0.4375);
+        this.east = constructBlock(lowerEdge, upperEdge, shift);
     }
 
     @Override
     protected void calcSouth() {
-        Vec3 lowerEdge = getVec3().copy();
-        Vec3 upperEdge = getVec3().copy();
-        lowerEdge.addVector(0.4375, 0, 0.5000);
-        upperEdge.addVector(0.5625, 1.0, 1.0);
-        Vec3 shift = new Vec3(0.4375, 0, 0.5000/2);
-        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
-        this.south = new AxisVecTuple(axisAlignedBB, shift);
+        Vec3 lowerEdge = new Vec3(0.4375, 0, 0.5);
+        Vec3 upperEdge = new Vec3(0.5625, 1, 1);
+        Vec3 shift = new Vec3(0.4375, 0, 0.25);
+        this.south = constructBlock(lowerEdge, upperEdge, shift);
     }
 
     @Override
     protected void calcWest() {
-        Vec3 lowerEdge = getVec3().copy();
-        Vec3 upperEdge = getVec3().copy();
-        lowerEdge.addVector(0.0, 0, 0.4375);
-        upperEdge.addVector(0.5000, 1.0, 0.5625);
-        Vec3 shift = new Vec3(0.5000/2, 0, 0.4375);
-        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lowerEdge, upperEdge);
-        this.west = new AxisVecTuple(axisAlignedBB, shift);
+        Vec3 lowerEdge = new Vec3(0, 0, 0.4375);
+        Vec3 upperEdge = new Vec3(0.5, 1, 0.5625);
+        Vec3 shift = new Vec3(0.25, 0, 0.4375);
+        this.west = constructBlock(lowerEdge, upperEdge, shift);
     }
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/glass.png");
+        this.image = new ImageHelper().getImageFromURL("/images/glass_pane.webp");
     }
 
 }
