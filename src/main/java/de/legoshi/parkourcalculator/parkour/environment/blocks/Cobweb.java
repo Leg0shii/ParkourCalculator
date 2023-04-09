@@ -4,4 +4,5 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Cobweb {
+
 }

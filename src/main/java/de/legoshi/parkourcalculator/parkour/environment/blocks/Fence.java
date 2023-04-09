@@ -18,9 +18,9 @@ public class Fence extends FacingBlock {
     }
 
     protected void calcBase() {
-        Vec3 lowerEdge = new Vec3(0, 0, 0);
-        Vec3 upperEdge = new Vec3(0.25, 1.5, 0.25);
-        Vec3 shift = new Vec3(0, -0.25, 0);
+        Vec3 lowerEdge = new Vec3(0.375, 0, 0.375);
+        Vec3 upperEdge = new Vec3(0.625, 1.5, 0.625);
+        Vec3 shift = new Vec3(0.375, -0.25, 0.375);
 
         AxisVecTuple axisVecTuple = constructBlock(lowerEdge, upperEdge, shift);
         this.axisVecTuples.add(axisVecTuple);
@@ -42,7 +42,7 @@ public class Fence extends FacingBlock {
     @Override
     protected void calcEast() {
         Vec3 lowerEdge = new Vec3(0.5, 0, 0.375);
-        Vec3 upperEdge = new Vec3(1.0, 1.5, 0.625);
+        Vec3 upperEdge = new Vec3(1, 1.5, 0.625);
         Vec3 shift = new Vec3(0.25, -0.25, 0.375);
         this.east = constructBlock(lowerEdge, upperEdge, shift);
     }
@@ -50,15 +50,15 @@ public class Fence extends FacingBlock {
     @Override
     protected void calcSouth() {
         Vec3 lowerEdge = new Vec3(0.375, 0, 0.5);
-        Vec3 upperEdge = new Vec3(0.625, 1.5, 1.0);
+        Vec3 upperEdge = new Vec3(0.625, 1.5, 1);
         Vec3 shift = new Vec3(0.375, -0.25, 0.25);
         this.south = constructBlock(lowerEdge, upperEdge, shift);
     }
 
     @Override
     protected void calcWest() {
-        Vec3 lowerEdge = new Vec3(0.0, 0, 0.375);
-        Vec3 upperEdge = new Vec3(0.5000, 1.5, 0.625);
+        Vec3 lowerEdge = new Vec3(0, 0, 0.375);
+        Vec3 upperEdge = new Vec3(0.5, 1.5, 0.625);
         Vec3 shift = new Vec3(0.25, -0.25, 0.375);
         this.west = constructBlock(lowerEdge, upperEdge, shift);
     }

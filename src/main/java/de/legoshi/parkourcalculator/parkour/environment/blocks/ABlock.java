@@ -23,8 +23,6 @@ public abstract class ABlock {
     public ArrayList<Box> boxesArrayList;
     private Vec3 vec3;
 
-
-
     public ABlock() {
         updateImage();
         updateSlipperiness();

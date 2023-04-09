@@ -23,20 +23,12 @@ public class PistonBase extends FacingBlock {
     protected void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
-        calcBase();
-        calcBaseFlip();
-
-        calcNorth();
-        calcEast();
-        calcSouth();
-        calcWest();
-
-        if (ConnectionGUI.isNorth()) this.axisVecTuples.add(north);
-        else if (ConnectionGUI.isEast()) this.axisVecTuples.add(east);
-        else if (ConnectionGUI.isSouth()) this.axisVecTuples.add(south);
-        else if (ConnectionGUI.isWest()) this.axisVecTuples.add(west);
-        else if (ConnectionGUI.isFlip() && baseFlip != null) this.axisVecTuples.add(baseFlip);
-        else if (!ConnectionGUI.isFlip() && base != null) this.axisVecTuples.add(base);
+        if (ConnectionGUI.isNorth())  calcNorth();
+        else if (ConnectionGUI.isEast()) calcEast();
+        else if (ConnectionGUI.isSouth()) calcSouth();
+        else if (ConnectionGUI.isWest()) calcWest();
+        else if (ConnectionGUI.isFlip() && baseFlip != null) calcBaseFlip();
+        else if (!ConnectionGUI.isFlip() && base != null) calcBase();
     }
 
     @Override
@@ -44,7 +36,7 @@ public class PistonBase extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 0.75, 1);
         Vec3 shift = new Vec3(0, 0.125, 0);
-        this.base = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -52,7 +44,7 @@ public class PistonBase extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0.25, 0);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0.125, 0);
-        this.baseFlip = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -60,7 +52,7 @@ public class PistonBase extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 0.75);
         Vec3 shift = new Vec3(0, 0, 0.125);
-        this.north = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -68,7 +60,7 @@ public class PistonBase extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0.25, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0.125, 0, 0);
-        this.east = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -76,7 +68,7 @@ public class PistonBase extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0.25);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0, 0.125);
-        this.south = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -84,6 +76,6 @@ public class PistonBase extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(0.75, 1, 1);
         Vec3 shift = new Vec3(0.125, 0, 0);
-        this.west = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 }

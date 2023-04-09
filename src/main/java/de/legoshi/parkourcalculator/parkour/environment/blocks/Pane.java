@@ -1,7 +1,5 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
-import de.legoshi.parkourcalculator.util.AxisAlignedBB;
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -11,16 +9,6 @@ public class Pane extends FacingBlock {
 
     public Pane(Vec3 vec3) {
         super(vec3);
-    }
-
-    @Override
-    protected void calcBase() {
-
-    }
-
-    @Override
-    protected void calcBaseFlip() {
-
     }
 
     @Override
@@ -53,6 +41,16 @@ public class Pane extends FacingBlock {
         Vec3 upperEdge = new Vec3(0.5, 1, 0.5625);
         Vec3 shift = new Vec3(0.25, 0, 0.4375);
         this.west = constructBlock(lowerEdge, upperEdge, shift);
+    }
+
+    @Override
+    protected void calcBase() {
+
+    }
+
+    @Override
+    protected void calcBaseFlip() {
+
     }
 
     @Override

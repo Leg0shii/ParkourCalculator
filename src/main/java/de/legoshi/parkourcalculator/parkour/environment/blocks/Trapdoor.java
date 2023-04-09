@@ -6,18 +6,57 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Trapdoor extends FacingBlock {
+
     public Trapdoor(Vec3 vec3) {
         super(vec3);
     }
 
     @Override
-    protected void calcBase() {
+    protected void calcNorth() {
+        Vec3 lowerEdge = new Vec3(0, 0, 0);
+        Vec3 upperEdge = new Vec3(1, 1, 0.1875);
+        Vec3 shift = new Vec3(0, 0, 0.40625);
+        this.north = constructBlock(lowerEdge, upperEdge, shift);
+    }
 
+    @Override
+    protected void calcEast() {
+        Vec3 lowerEdge = new Vec3(0.8125, 0, 0);
+        Vec3 upperEdge = new Vec3(1, 1, 1);
+        Vec3 shift = new Vec3(0.40625, 0, 0);
+        this.east = constructBlock(lowerEdge, upperEdge, shift);
+    }
+
+    @Override
+    protected void calcSouth() {
+        Vec3 lowerEdge = new Vec3(0, 0, 0.8125);
+        Vec3 upperEdge = new Vec3(1, 1, 1);
+        Vec3 shift = new Vec3(0, 0, 0.40625);
+        this.south = constructBlock(lowerEdge, upperEdge, shift);
+    }
+
+    @Override
+    protected void calcWest() {
+        Vec3 lowerEdge = new Vec3(0, 0, 0);
+        Vec3 upperEdge = new Vec3(0.1875, 1, 1);
+        Vec3 shift = new Vec3(0.40625, 0, 0);
+        this.west = constructBlock(lowerEdge, upperEdge, shift);
+    }
+
+    @Override
+    protected void calcBase() {
+        Vec3 lowerEdge = new Vec3(0, 0, 0);
+        Vec3 upperEdge = new Vec3(1, 0.1875, 1);
+        Vec3 shift = new Vec3(0, 0.40625, 0);
+        this.base = constructBlock(lowerEdge, upperEdge, shift);
     }
 
     @Override
     protected void calcBaseFlip() {
-
+        Vec3 lowerEdge = new Vec3(0, 0.8125, 0);
+        Vec3 upperEdge = new Vec3(1, 1, 1);
+        Vec3 shift = new Vec3(0, 0.40625, 0);
+        this.baseFlip = constructBlock(lowerEdge, upperEdge, shift);
     }
 
     @Override
@@ -25,23 +64,4 @@ public class Trapdoor extends FacingBlock {
         this.image = new ImageHelper().getImageFromURL("/images/trapdoor.webp");
     }
 
-    @Override
-    protected void calcNorth() {
-
-    }
-
-    @Override
-    protected void calcEast() {
-
-    }
-
-    @Override
-    protected void calcSouth() {
-
-    }
-
-    @Override
-    protected void calcWest() {
-
-    }
 }

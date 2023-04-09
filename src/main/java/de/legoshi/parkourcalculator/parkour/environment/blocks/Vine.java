@@ -45,4 +45,5 @@ public class Vine extends FacingBlock {
     void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/vine.webp");
     }
+
 }

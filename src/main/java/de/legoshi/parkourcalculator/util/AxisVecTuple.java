@@ -17,8 +17,8 @@ public class AxisVecTuple {
     public Box getBox() {
         Box box = new Box(bb.maxX-bb.minX, bb.maxY-bb.minY, bb.maxZ-bb.minZ);
         final PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.DARKBLUE);
-        redMaterial.setSpecularColor(Color.LIGHTBLUE);
+        redMaterial.setDiffuseColor(Color.GREEN);
+        redMaterial.setSpecularColor(Color.LIGHTGREEN);
         box.setMaterial(redMaterial);
         box.setTranslateX(bb.minX + MinecraftScreen.BLOCK_OFFSET_X - shift.x);
         box.setTranslateY(-bb.minY - MinecraftScreen.BLOCK_OFFSET_Y + shift.y);
