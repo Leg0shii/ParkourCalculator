@@ -1,8 +1,11 @@
 package de.legoshi.parkourcalculator.parkour.simulator;
 
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.BlockLiquid;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
@@ -49,69 +52,128 @@ public class MovementEngine {
     public void calculateTick(InputTick inputTick) {
         player.applyInput(inputTick);
 
-        if (player.SPRINT && (player.moveForward < 0.8F || player.isCollidedHorizontally)) {
-            player.SPRINT = false;
-        }
+        handleWaterMovement();
+        handleLavaMovement();
 
         if (Math.abs(player.velocity.x) < 0.005D) player.velocity.x = 0.0D;
         if (Math.abs(player.velocity.y) < 0.005D) player.velocity.y = 0.0D;
         if (Math.abs(player.velocity.z) < 0.005D) player.velocity.z = 0.0D;
 
         if (player.JUMP) {
-            player.velocity.y = 0.42F;
-            if (player.SPRINT) {
-                float f = player.YAW * 0.017453292F;
-                player.velocity.x = player.velocity.x - MinecraftMathHelper.sin(f) * 0.2F;
-                player.velocity.z = player.velocity.z + MinecraftMathHelper.cos(f) * 0.2F;
+            if (player.WATER || player.LAVA) {
+                player.velocity.y += 0.03999999910593033D;
+            } else if (player.GROUND) {
+                player.velocity.y = 0.42F;
+                if (player.SPRINT) {
+                    float f = player.YAW * 0.017453292F;
+                    player.velocity.x = player.velocity.x - MinecraftMathHelper.sin(f) * 0.2F;
+                    player.velocity.z = player.velocity.z + MinecraftMathHelper.cos(f) * 0.2F;
+                }
             }
         }
 
         player.moveStrafe = player.moveStrafe * 0.98F;
         player.moveForward = player.moveForward * 0.98F;
 
-        float mult = 0.91F;
-        if (player.GROUND) mult = mult * player.slipperiness.value;
-        float acceleration = 0.16277136F / (mult * mult * mult);
+        if (!player.WATER) {
+            if (!player.LAVA) {
+                if (player.SPRINT && (player.moveForward < 0.8F || player.isCollidedHorizontally)) {
+                    player.SPRINT = false;
+                }
 
-        float movement;
-        if (player.SPRINT) movement = 0.130000010133F;
-        else if (player.SNEAK) movement = 0.03F;
-        else movement = 0.1F;
+                float mult = 0.91F;
+                if (player.GROUND) mult = mult * player.slipperiness.value;
+                float acceleration = 0.16277136F / (mult * mult * mult);
 
-        float movementFactor;
-        if (player.GROUND) movementFactor = movement * acceleration;
-        else movementFactor = player.jumpMovementFactor;
+                float movement;
+                if (player.SPRINT) movement = 0.130000010133F;
+                else if (player.SNEAK) movement = 0.03F;
+                else movement = 0.1F;
 
-        moveFlying(player.moveStrafe, player.moveForward, movementFactor);
+                float movementFactor;
+                if (player.GROUND) movementFactor = movement * acceleration;
+                else movementFactor = player.jumpMovementFactor;
 
-        // calculate ladder
-        if (player.isOnLadder()) {
-            float f6 = 0.15F;
-            player.velocity.x = MinecraftMathHelper.clamp_double(player.velocity.x, -f6, f6);
-            player.velocity.z = MinecraftMathHelper.clamp_double(player.velocity.z, -f6, f6);
+                moveFlying(player.moveStrafe, player.moveForward, movementFactor);
 
-            if (player.velocity.y < -0.15D) {
-                player.velocity.y = -0.15D;
+                // calculate ladder
+                if (player.isOnLadder()) {
+                    float f6 = 0.15F;
+                    player.velocity.x = MinecraftMathHelper.clamp_double(player.velocity.x, -f6, f6);
+                    player.velocity.z = MinecraftMathHelper.clamp_double(player.velocity.z, -f6, f6);
+
+                    if (player.velocity.y < -0.15D) {
+                        player.velocity.y = -0.15D;
+                    }
+
+                    boolean flag = player.SNEAK;
+
+                    if (flag && player.velocity.y < 0.0D) {
+                        player.velocity.y = 0.0D;
+                    }
+                }
+
+                moveEntity(player.velocity.x, player.velocity.y, player.velocity.z);
+
+                if (player.isCollidedHorizontally && player.isOnLadder()) {
+                    player.velocity.y = 0.2D;
+                }
+
+                player.velocity.y -= 0.08D;
+                player.velocity.y *= 0.9800000190734863D;
+
+                player.velocity.x = player.velocity.x * mult;
+                player.velocity.z = player.velocity.z * mult;
+            } else {
+                double d1 = player.position.y;
+                moveFlying(player.moveStrafe, player.moveForward, 0.02F);
+                moveEntity(player.velocity.x, player.velocity.y, player.velocity.z);
+                player.velocity.x *= 0.5D;
+                player.velocity.y *= 0.5D;
+                player.velocity.z *= 0.5D;
+                player.velocity.y -= 0.02D;
+
+                if (player.isCollidedHorizontally
+                        && this.isOffsetPositionInLiquid(player.velocity.x, player.velocity.y + 0.6000000238418579D - player.position.y + d1, player.velocity.z)) {
+                    player.velocity.y = 0.30000001192092896D;
+                }
+            }
+        } else {
+            double d0 = player.position.y;
+            float f1 = 0.8F;
+            float f2 = 0.02F;
+            float f3 = (float) 0; // (float) EnchantmentHelper.getDepthStriderModifier(this);
+
+            if (f3 > 3.0F) {
+                f3 = 3.0F;
             }
 
-            boolean flag = player.SNEAK;
+            if (!player.GROUND) {
+                f3 *= 0.5F;
+            }
 
-            if (flag && player.velocity.y < 0.0D) {
-                player.velocity.y = 0.0D;
+            float movement;
+            if (player.SPRINT) movement = 0.130000010133F;
+            else if (player.SNEAK) movement = 0.03F;
+            else movement = 0.1F;
+
+            if (f3 > 0.0F) {
+                f1 += (0.54600006F - f1) * f3 / 3.0F;
+                f2 += (movement * 1.0F - f2) * f3 / 3.0F;
+            }
+
+            moveFlying(player.moveStrafe, player.moveForward, f2);
+            moveEntity(player.velocity.x, player.velocity.y, player.velocity.z);
+            player.velocity.x *= (double) f1;
+            player.velocity.y *= 0.800000011920929D;
+            player.velocity.z *= (double) f1;
+            player.velocity.y -= 0.02D;
+
+            if (player.isCollidedHorizontally
+                    && isOffsetPositionInLiquid(player.velocity.x, player.velocity.y + 0.6000000238418579D - player.position.y + d0, player.velocity.z)) {
+                player.velocity.y = 0.30000001192092896D;
             }
         }
-
-        moveEntity(player.velocity.x, player.velocity.y, player.velocity.z);
-
-        if (player.isCollidedHorizontally && player.isOnLadder()) {
-            player.velocity.y = 0.2D;
-        }
-
-        player.velocity.y -= 0.08D;
-        player.velocity.y *= 0.9800000190734863D;
-
-        player.velocity.x = player.velocity.x * mult;
-        player.velocity.z = player.velocity.z * mult;
 
         player.jumpMovementFactor = 0.02F;
 
@@ -142,7 +204,7 @@ public class MovementEngine {
 
         // get all colliding BB from extending current position BB by x, y, z
         // NOTE: it takes all blocks for collision checks
-        List<AxisAlignedBB> allBlocks = environment.getAllBBs();
+        List<AxisAlignedBB> allBlocks = environment.getAllNonLiquidBBs();
 
         // save playerBB temporarily
         AxisAlignedBB originalBB = player.playerBB;
@@ -176,7 +238,7 @@ public class MovementEngine {
 
             // get all colliding BB from extending current position BB by x, y=0.6, z
             // NOTE: it takes all blocks for collision checks
-            allBlocks = environment.getAllBBs();
+            allBlocks = environment.getAllNonLiquidBBs();;
             AxisAlignedBB axisAlignedBBNoUpdate = player.playerBB;
 
             // get currentBB extend it by X and Z
@@ -184,17 +246,20 @@ public class MovementEngine {
 
             // check offsetY for Y=0.6 from xzExtendedBB AND apply offsetY to currentBB
             double yWithStep = y;
-            for (AxisAlignedBB axisalignedbb : allBlocks) yWithStep = axisalignedbb.calculateYOffset(axisAlignedBBXZUpdate, yWithStep);
+            for (AxisAlignedBB axisalignedbb : allBlocks)
+                yWithStep = axisalignedbb.calculateYOffset(axisAlignedBBXZUpdate, yWithStep);
             axisAlignedBBNoUpdate = axisAlignedBBNoUpdate.offset(0.0D, yWithStep, 0.0D);
 
             // check offsetX for X from current position AND apply offsetX to currentBB
             double xWithStep = xOriginal;
-            for (AxisAlignedBB axisalignedbb : allBlocks) xWithStep = axisalignedbb.calculateXOffset(axisAlignedBBNoUpdate, xWithStep);
+            for (AxisAlignedBB axisalignedbb : allBlocks)
+                xWithStep = axisalignedbb.calculateXOffset(axisAlignedBBNoUpdate, xWithStep);
             axisAlignedBBNoUpdate = axisAlignedBBNoUpdate.offset(xWithStep, 0.0D, 0.0D);
 
             // check offsetZ for Z from current position AND apply offsetZ to currentBB
             double zWithStep = zOriginal;
-            for (AxisAlignedBB axisalignedbb : allBlocks) zWithStep = axisalignedbb.calculateZOffset(axisAlignedBBNoUpdate, zWithStep);
+            for (AxisAlignedBB axisalignedbb : allBlocks)
+                zWithStep = axisalignedbb.calculateZOffset(axisAlignedBBNoUpdate, zWithStep);
             axisAlignedBBNoUpdate = axisAlignedBBNoUpdate.offset(0.0D, 0.0D, zWithStep);
 
             // get current playerBB and use for further calc
@@ -202,17 +267,20 @@ public class MovementEngine {
 
             // check offsetY for Y=0.6 from currentBB AND apply offsetY to currentBB
             double yWithStepNoXZShift = y;
-            for (AxisAlignedBB axisalignedbb : allBlocks) yWithStepNoXZShift = axisalignedbb.calculateYOffset(currentPlayerBB, yWithStepNoXZShift);
+            for (AxisAlignedBB axisalignedbb : allBlocks)
+                yWithStepNoXZShift = axisalignedbb.calculateYOffset(currentPlayerBB, yWithStepNoXZShift);
             currentPlayerBB = currentPlayerBB.offset(0.0D, yWithStepNoXZShift, 0.0D);
 
             // check offsetX for X from current position AND apply offsetX to currentBB
             double xWithStepNoXZShift = x;
-            for (AxisAlignedBB axisalignedbb : allBlocks) xWithStepNoXZShift = axisalignedbb.calculateXOffset(currentPlayerBB, xWithStepNoXZShift);
+            for (AxisAlignedBB axisalignedbb : allBlocks)
+                xWithStepNoXZShift = axisalignedbb.calculateXOffset(currentPlayerBB, xWithStepNoXZShift);
             currentPlayerBB = currentPlayerBB.offset(xWithStepNoXZShift, 0.0D, 0.0D);
 
             // check offsetZ for Z from current position AND apply offsetZ to currentBB
             double zWithStepNoXZShift = z;
-            for (AxisAlignedBB axisalignedbb : allBlocks) zWithStepNoXZShift = axisalignedbb.calculateZOffset(currentPlayerBB, zWithStepNoXZShift);
+            for (AxisAlignedBB axisalignedbb : allBlocks)
+                zWithStepNoXZShift = axisalignedbb.calculateZOffset(currentPlayerBB, zWithStepNoXZShift);
             currentPlayerBB = currentPlayerBB.offset(zWithStepNoXZShift, 0.0D, 0.0D);
 
             // take the furthest suggestions and apply to x, -y, z, update currentBB
@@ -255,6 +323,14 @@ public class MovementEngine {
         player.isCollided = player.isCollidedHorizontally || player.isCollidedVertically;
 
         // update block below player?
+
+        if (!player.WATER) {
+            handleWaterMovement();
+        }
+
+        if (!player.LAVA) {
+            handleLavaMovement();
+        }
 
         // if movedX != updatedX -> motionX = 0
         if (xOriginal != x) player.velocity.x = 0.0D;
@@ -303,4 +379,60 @@ public class MovementEngine {
         return playerTickInformation;
     }
 
+    public boolean isOffsetPositionInLiquid(double x, double y, double z) {
+        AxisAlignedBB axisalignedbb = player.playerBB.offset(x, y, z);
+        return isLiquidPresentInAABB(axisalignedbb);
+    }
+
+    private boolean isLiquidPresentInAABB(AxisAlignedBB bb) {
+        return getCollidingBoundingBoxes(bb, "Water").isEmpty() && getCollidingBoundingBoxes(bb, "Lava").isEmpty(); // && !isAnyLiquid(bb); can be removed - check in getCollidingBoundingBoxes for water
+    }
+
+    public List<BlockLiquid> getCollidingBoundingBoxes(AxisAlignedBB bb, String type) {
+        List<ABlock> placedBlocks = Environment.aBlocks;
+        List<BlockLiquid> list = new ArrayList<>();
+
+        for (ABlock aBlock : placedBlocks) {
+            if (!(aBlock.getClass().getSimpleName().equals(type))) continue;
+            for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
+                if (bb.intersectsWith(axisVecTuple.getBb())) {
+                    list.add((BlockLiquid) aBlock);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public boolean handleWaterMovement() {
+        if (handleMaterialAcceleration(player.playerBB.expand(0.0D, -0.4000000059604645D, 0.0D).contract(0.001D, 0.001D, 0.001D), "Water")) {
+            player.WATER = true;
+            // this.fire = 0;
+        } else {
+            player.WATER = false;
+        }
+        return player.WATER;
+    }
+
+    public boolean handleLavaMovement() {
+        if (handleMaterialAcceleration(player.playerBB.expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), "Lava")) {
+            player.LAVA = true;
+        } else {
+            player.LAVA = false;
+        }
+        return player.LAVA;
+    }
+
+    public boolean handleMaterialAcceleration(AxisAlignedBB bb, String type) {
+        List<BlockLiquid> blocks = getCollidingBoundingBoxes(bb, type);
+        return !blocks.isEmpty();
+    }
+
 }
+
+/*
+There is a difference in the X (and possible also Z) movement of around 0.0004 blocks regarding a movement change of 0.2364738321. My simulation lets the player get 0.0004 blocks fruther than the game when the player enteres the water. Can you find where that might happen?
+The player is holding space (jump) while in water, he is looking perfectly straight (-90) and holding W and the Sprint key.
+
+Where could the extra 0.0004 distance come from?
+ */

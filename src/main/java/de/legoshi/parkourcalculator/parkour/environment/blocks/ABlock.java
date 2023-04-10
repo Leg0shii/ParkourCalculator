@@ -7,7 +7,6 @@ import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Box;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;

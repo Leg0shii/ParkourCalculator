@@ -12,6 +12,8 @@ import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 public class Player {
 
     protected float width = 0.3F;
@@ -19,6 +21,8 @@ public class Player {
 
     protected boolean GROUND = true;
     protected boolean WEB;
+    protected boolean WATER;
+    protected boolean LAVA;
 
     protected boolean SPRINT;
     protected boolean SNEAK;
@@ -92,7 +96,7 @@ public class Player {
     protected void applyInput(InputTick inputTick) {
         updateTick(inputTick);
         YAW = YAW + inputTick.YAW;
-        JUMP = inputTick.JUMP && GROUND;
+        JUMP = inputTick.JUMP; //&& GROUND;
         SPRINT = inputTick.SPRINT || SPRINT;
         SNEAK = inputTick.SNEAK;
     }

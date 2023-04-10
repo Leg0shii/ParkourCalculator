@@ -16,10 +16,10 @@ public class Environment implements Observer {
     public static ArrayList<ABlock> aBlocks = new ArrayList<>();
 
     public Environment() {
-        // registeredBlocks.add(new Water());
+        registeredBlocks.add(new Water());
         // registeredBlocks.add(new Cobweb());
-        // registeredBlocks.add(new Lava());
 
+        registeredBlocks.add(new Lava());
         registeredBlocks.add(new PistonHead());
         registeredBlocks.add(new PistonBase());
         registeredBlocks.add(new StandardBlock());
@@ -67,6 +67,16 @@ public class Environment implements Observer {
         for (ABlock aBlock : aBlocks) {
             for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
                 boundingBoxes.add(axisVecTuple.getBb());
+            }
+        }
+        return boundingBoxes;
+    }
+
+    public ArrayList<AxisAlignedBB> getAllNonLiquidBBs() {
+        ArrayList<AxisAlignedBB> boundingBoxes = new ArrayList<>();
+        for (ABlock aBlock : aBlocks) {
+            for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
+                if (!(aBlock instanceof BlockLiquid)) boundingBoxes.add(axisVecTuple.getBb());
             }
         }
         return boundingBoxes;

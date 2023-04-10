@@ -9,14 +9,13 @@ public class BlockFactory {
     public static ABlock createBlock(Vec3 vec3, String type) {
         return switch (type) {
             // not implemented
-            //case "Water" -> new Water();
-            // case "Lava" -> new Lava();
             // case "Cobweb" -> new Cobweb();
-            case "PistonHead" -> new PistonHead(vec3);
-            case "PistonBase" -> new PistonBase(vec3);
+            // Slime
 
             // flipable
             case "Stair" -> new Stair(vec3);
+            case "PistonHead" -> new PistonHead(vec3);
+            case "PistonBase" -> new PistonBase(vec3);
 
             // tiers
             case "CocoaBean" -> new CocoaBean(vec3);
@@ -26,6 +25,8 @@ public class BlockFactory {
             // other
             case "EndPortalFrame" -> new EndPortalFrame(vec3);
             case "Head" -> new Head(vec3);
+            case "Water" -> new Water(vec3);
+            case "Lava" -> new Lava(vec3);
 
             case "Enderchest" -> new Enderchest(vec3);
             case "Anvil" -> new Anvil(vec3);

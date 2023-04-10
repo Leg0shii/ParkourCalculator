@@ -61,7 +61,7 @@ public class MinecraftScreen extends Observable {
         ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
         if (clickedBlock == null) return null;
 
-        DecimalFormat df = new DecimalFormat("#.######");
+        DecimalFormat df = new DecimalFormat("#.#########");
         double clickX = Double.parseDouble(df.format(mouseEvent.getX()).replace(",", "."));
         double clickY = Double.parseDouble(df.format(mouseEvent.getY()).replace(",", "."));
         double clickZ = Double.parseDouble(df.format(mouseEvent.getZ()).replace(",", "."));
