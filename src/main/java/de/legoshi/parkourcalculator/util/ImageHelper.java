@@ -12,8 +12,8 @@ import java.io.InputStream;
 
 public class ImageHelper {
 
-    private static final int IMAGE_HEIGHT = 50;
-    private static final int IMAGE_WIDTH = 50;
+    public static final int IMAGE_HEIGHT = 50;
+    public static final int IMAGE_WIDTH = 50;
     private static final boolean PRESERVE_RATIO = true;
     private static final boolean SMOOTH = true;
 

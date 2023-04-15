@@ -1,9 +1,5 @@
 package de.legoshi.parkourcalculator.util;
 
-import de.legoshi.parkourcalculator.gui.MinecraftScreen;
-import de.legoshi.parkourcalculator.parkour.environment.Environment;
-import javafx.scene.shape.Box;
-
 public class AxisAlignedBB {
     public final double minX;
     public final double minY;

@@ -1,4 +1,4 @@
-package de.legoshi.parkourcalculator.gui;
+package de.legoshi.parkourcalculator.gui.debug;
 
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
@@ -15,7 +15,7 @@ import javafx.scene.text.Text;
 import java.util.Observable;
 import java.util.Observer;
 
-public class DebugScreen extends VBox implements Observer {
+public class CoordinateScreen extends VBox implements Observer {
 
     private final Font boldFont = Font.font("Arial", FontWeight.BOLD, 12);
 
@@ -47,7 +47,7 @@ public class DebugScreen extends VBox implements Observer {
     private final Label yTickPos = new Label();
     private final Label zTickPos = new Label();
 
-    public DebugScreen(MovementEngine movementEngine) {
+    public CoordinateScreen(MovementEngine movementEngine) {
         this.movementEngine = movementEngine;
         this.player = movementEngine.player;
         this.setPadding(new Insets(10, 10, 10, 10));

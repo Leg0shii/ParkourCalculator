@@ -18,6 +18,7 @@ public class Environment implements Observer {
     public Environment() {
         registeredBlocks.add(new Water());
         // registeredBlocks.add(new Cobweb());
+        // registeredBlocks.add(new Slime());
 
         registeredBlocks.add(new Lava());
         registeredBlocks.add(new PistonHead());

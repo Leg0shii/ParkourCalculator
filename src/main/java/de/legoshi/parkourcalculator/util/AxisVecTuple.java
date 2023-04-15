@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.util;
 
-import de.legoshi.parkourcalculator.gui.MinecraftScreen;
+import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -20,9 +20,9 @@ public class AxisVecTuple {
         redMaterial.setDiffuseColor(Color.DARKGRAY);
         redMaterial.setSpecularColor(Color.BLACK);
         box.setMaterial(redMaterial);
-        box.setTranslateX(bb.minX + MinecraftScreen.BLOCK_OFFSET_X - shift.x);
-        box.setTranslateY(-bb.minY - MinecraftScreen.BLOCK_OFFSET_Y + shift.y);
-        box.setTranslateZ(bb.minZ + MinecraftScreen.BLOCK_OFFSET_Z - shift.z);
+        box.setTranslateX(bb.minX + MinecraftGUI.BLOCK_OFFSET_X - shift.x);
+        box.setTranslateY(-bb.minY - MinecraftGUI.BLOCK_OFFSET_Y + shift.y);
+        box.setTranslateZ(bb.minZ + MinecraftGUI.BLOCK_OFFSET_Z - shift.z);
         return box;
     }
 

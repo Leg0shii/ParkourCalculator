@@ -1,17 +1,14 @@
 package de.legoshi.parkourcalculator.parkour;
 
-import de.legoshi.parkourcalculator.gui.DebugScreen;
+import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
-import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.PickResult;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
@@ -132,8 +129,8 @@ public class PositionVisualizer implements Observer {
         for (Sphere s : spheres) s.setMaterial(white);
         sphere.setMaterial(new PhongMaterial(Color.RED));
         for (Observer observer : inputTickManager.getObservers()) {
-            if (observer instanceof DebugScreen) {
-                ((DebugScreen) observer).updateTickClick(tickPos);
+            if (observer instanceof CoordinateScreen) {
+                ((CoordinateScreen) observer).updateTickClick(tickPos);
             }
         }
     }

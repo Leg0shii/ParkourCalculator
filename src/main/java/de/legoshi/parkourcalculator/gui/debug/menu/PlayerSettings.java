@@ -1,4 +1,4 @@
-package de.legoshi.parkourcalculator.gui.menu;
+package de.legoshi.parkourcalculator.gui.debug.menu;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -54,17 +54,17 @@ public class PlayerSettings extends TitledPane {
         gridPane.setAlignment(Pos.CENTER);
 
         gridPane.add(new Label("Position:"), 0, 0);
-        gridPane.add(xPosField, 1, 0);
-        gridPane.add(yPosField, 2, 0);
-        gridPane.add(zPosField, 3, 0);
+        gridPane.add(xPosField, 0, 1);
+        gridPane.add(yPosField, 0, 2);
+        gridPane.add(zPosField, 0, 3);
 
-        gridPane.add(new Label("Velocity:"), 0, 1);
+        gridPane.add(new Label("Velocity:"), 1, 0);
         gridPane.add(xVelField, 1, 1);
-        gridPane.add(yVelField, 2, 1);
-        gridPane.add(zVelField, 3, 1);
+        gridPane.add(yVelField, 1, 2);
+        gridPane.add(zVelField, 1, 3);
 
-        gridPane.add(new Label("Facing:"), 0, 2);
-        gridPane.add(facingField, 1, 2);
+        gridPane.add(new Label("Facing:"), 0, 4);
+        gridPane.add(facingField, 0, 5);
 
         // Create the button to apply values
         Button getButton = new Button("Get values");
@@ -76,7 +76,7 @@ public class PlayerSettings extends TitledPane {
             xVelField.setText(Double.toString(0.3));
             yVelField.setText(Double.toString(1.2));
             zVelField.setText(Double.toString(-0.5));
-            facingField.setText("South");
+            facingField.setText(Double.toString(1.3));
         });
 
         Button applyButton = new Button("Apply values");
@@ -94,7 +94,9 @@ public class PlayerSettings extends TitledPane {
         vBox.setSpacing(10);
 
         // Set the content of the titledPane to the VBox
-        setContent(vBox);
+        ScrollPane scrollPane = new ScrollPane(vBox);
+        scrollPane.setFitToWidth(true);
+        setContent(scrollPane);
     }
 
 }

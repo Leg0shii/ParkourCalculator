@@ -1,4 +1,4 @@
-package de.legoshi.parkourcalculator.gui.menu;
+package de.legoshi.parkourcalculator.gui.debug.menu;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,7 +13,7 @@ public class BlockSettings extends TitledPane {
     // update screen when block selected
     private ComboBox<String> facingSelector;
     private ComboBox<Integer> tiersSelector;
-    private Slider slipperinessSelector;
+    private ComboBox<String> slipperinessSelector;
     private ColorPicker colorSelector;
 
     public BlockSettings() {
@@ -23,16 +23,13 @@ public class BlockSettings extends TitledPane {
 
         // Create the selectors
         facingSelector = new ComboBox<>();
-        facingSelector.getItems().addAll("North", "West", "South", "East");
+        facingSelector.getItems().addAll("North", "West", "South", "East", "Top", "Bottom");
 
         tiersSelector = new ComboBox<>();
         tiersSelector.getItems().addAll(0, 1, 2, 3, 4, 5, 6, 7);
 
-        slipperinessSelector = new Slider(0, 1, 0.5);
-        slipperinessSelector.setShowTickLabels(true);
-        slipperinessSelector.setShowTickMarks(true);
-        slipperinessSelector.setMajorTickUnit(0.25);
-        slipperinessSelector.setBlockIncrement(0.1);
+        slipperinessSelector = new ComboBox<>();
+        slipperinessSelector.getItems().addAll("Block", "Ice", "Soulsand", "Air");
 
         colorSelector = new ColorPicker(Color.BLACK);
 
@@ -91,7 +88,7 @@ public class BlockSettings extends TitledPane {
         return tiersSelector.getValue();
     }
 
-    public double getSlipperiness() {
+    public String getSlipperiness() {
         return slipperinessSelector.getValue();
     }
 

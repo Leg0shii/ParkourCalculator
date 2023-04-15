@@ -429,10 +429,3 @@ public class MovementEngine {
     }
 
 }
-
-/*
-There is a difference in the X (and possible also Z) movement of around 0.0004 blocks regarding a movement change of 0.2364738321. My simulation lets the player get 0.0004 blocks fruther than the game when the player enteres the water. Can you find where that might happen?
-The player is holding space (jump) while in water, he is looking perfectly straight (-90) and holding W and the Sprint key.
-
-Where could the extra 0.0004 distance come from?
- */

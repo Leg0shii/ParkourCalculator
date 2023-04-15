@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.gui;
 
+import de.legoshi.parkourcalculator.Application;
 import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
@@ -10,6 +11,7 @@ import de.legoshi.parkourcalculator.util.fxyz.FPSController;
 import javafx.geometry.Bounds;
 import javafx.scene.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 
@@ -18,21 +20,32 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MinecraftScreen extends Observable {
+public class MinecraftGUI extends Observable {
 
     public static final double BLOCK_OFFSET_X = 0.5;
     public static final double BLOCK_OFFSET_Y = 0.5;
     public static final double BLOCK_OFFSET_Z = 0.5;
 
-    private final Group group;
+    private final BorderPane window;
     private final SubScene subScene;
+    private final Group group;
+
 
     private final ArrayList<Observer> observers = new ArrayList<>();
 
-    public MinecraftScreen(Group group, SubScene subScene) {
+    public MinecraftGUI(Application application, Group group) {
         this.group = group;
-        this.subScene = subScene;
+        this.subScene = application.minecraftSubScene;
+        this.window = application.window;
 
+        this.subScene.heightProperty().bind(window.heightProperty().subtract(application.menuGUI.heightProperty()).subtract(application.blockGUI.heightProperty()));
+        this.subScene.widthProperty().bind(window.widthProperty().subtract(application.inputTickGUI.widthProperty()).subtract(application.coordinateScreen.widthProperty()));
+
+        addObserver(application.environment);
+        addObserver(application.coordinateScreen);
+        addObserver(application.positionVisualizer);
+
+        addStartingBlock();
         registerCamera();
     }
 
@@ -139,7 +152,7 @@ public class MinecraftScreen extends Observable {
         arrayList.add(value);
         arrayList.add(aBlock);
         for (Observer observer : observers) {
-            observer.update(this, arrayList);
+            if (observer != null) observer.update(this, arrayList);
         }
     }
 
