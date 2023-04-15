@@ -117,7 +117,7 @@ public class MinecraftScreen extends Observable {
 
         camera.setController(controller);
         subScene.setCamera(camera);
-        subScene.setFill(Color.LIGHTBLUE);
+        subScene.setFill(Color.LIGHTGRAY);
 
         controller.setSubScene(subScene);
         controller.affine.setTz(-8);

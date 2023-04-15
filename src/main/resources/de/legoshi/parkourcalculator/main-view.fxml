@@ -35,7 +35,7 @@
         </MenuBar>
     </top>
     <left>
-        <ScrollPane fx:id="tickList" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500" prefWidth="325" BorderPane.alignment="CENTER">
+        <ScrollPane fx:id="tickList" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500" prefWidth="340.0" BorderPane.alignment="CENTER">
             <content>
                 <AnchorPane>
                     <children>
@@ -43,14 +43,38 @@
                             <children>
                                 <HBox spacing="25.0">
                                     <children>
-                                        <Label text="W" />
-                                        <Label text="A" />
-                                        <Label text="S" />
-                                        <Label text="D" />
-                                        <Label text="J" />
-                                        <Label text="P" />
-                                        <Label text="N" />
-                                        <Label text="F" />
+                                        <Label text="W">
+                                 <HBox.margin>
+                                    <Insets left="4.0" />
+                                 </HBox.margin></Label>
+                                        <Label text="A">
+                                 <HBox.margin>
+                                    <Insets left="4.0" />
+                                 </HBox.margin></Label>
+                                        <Label text="S">
+                                 <HBox.margin>
+                                    <Insets left="4.0" />
+                                 </HBox.margin></Label>
+                                        <Label text="D">
+                                 <HBox.margin>
+                                    <Insets left="4.0" />
+                                 </HBox.margin></Label>
+                                        <Label text="J">
+                                 <HBox.margin>
+                                    <Insets left="4.0" />
+                                 </HBox.margin></Label>
+                                        <Label text="P">
+                                 <HBox.margin>
+                                    <Insets left="4.0" />
+                                 </HBox.margin></Label>
+                                        <Label text="N">
+                                 <HBox.margin>
+                                    <Insets left="4.0" />
+                                 </HBox.margin></Label>
+                                        <Label text="F">
+                                 <HBox.margin>
+                                    <Insets left="4.0" />
+                                 </HBox.margin></Label>
                                     </children>
                                     <VBox.margin>
                                         <Insets />

@@ -3,6 +3,7 @@ package de.legoshi.parkourcalculator;
 import de.legoshi.parkourcalculator.gui.DebugScreen;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftScreen;
+import de.legoshi.parkourcalculator.gui.menu.MenuScreen;
 import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
@@ -12,11 +13,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Labeled;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -32,11 +32,13 @@ public class Application extends javafx.application.Application {
     private InputTickManager inputTickManager;
     private PositionVisualizer positionVisualizer;
     private DebugScreen debugScreen;
+    private MenuScreen menuScreen;
 
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 1000, true);
+        scene.getStylesheets().add(Application.class.getResource("darkmode.css").toExternalForm());
         this.controller = fxmlLoader.getController();
 
         this.environment = new Environment();
@@ -46,8 +48,11 @@ public class Application extends javafx.application.Application {
         InputTickGUI inputTickGUI = new InputTickGUI(inputTickManager, controller.addButton);
         inputTickGUI.setButtonAction(controller.vBox);
 
+        this.menuScreen = new MenuScreen();
         this.debugScreen = new DebugScreen(movementEngine);
-        this.controller.debugHolder.getChildren().add(debugScreen);
+
+        VBox vBox = new VBox(debugScreen, menuScreen);
+        this.controller.debugHolder.getChildren().add(vBox);
 
         registerBlocks();
 
@@ -69,8 +74,8 @@ public class Application extends javafx.application.Application {
     private void registerBlocks() {
         Insets insets2 = new Insets(3, 3, 3, 3);
         Insets insets0 = new Insets(0, 0, 0, 0);
-        Border blackBorder = new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3, 3, 3, 3)));
-        Border grayBorder = new Border(new BorderStroke(Color.LIGHTGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3, 3, 3, 3)));
+        Border blackBorder = new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(3, 3, 3, 3)));
+        Border grayBorder = new Border(new BorderStroke(Color.DARKGRAY, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(3, 3, 3, 3)));
 
         Environment.registeredBlocks.forEach(block -> {
             StackPane stackPane = new StackPane();

@@ -1,0 +1,42 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ParkourCalculator:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ParkourCalculator_jar</output-path>
+    <root id="archive" name="ParkourCalculator.jar">
+      <element id="module-output" name="ParkourCalculator" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-fxml/18/javafx-fxml-18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/gotson/webp-imageio/0.2.2/webp-imageio-0.2.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/eu/mihosoft/vvecmath/vvecmath/0.4.0/vvecmath-0.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/18/javafx-controls-18-win.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-swing/11-ea+24/javafx-swing-11-ea+24.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-swing/11-ea+24/javafx-swing-11-ea+24-win.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/orbisgis/poly2tri-core/0.1.2/poly2tri-core-0.1.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-controls/18/javafx-controls-18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-fxml/18/javafx-fxml-18-win.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-base/15.0.1/javafx-base-15.0.1-win.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/eu/mihosoft/vrl/jcsg/jcsg/0.5.7/jcsg-0.5.7.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/18/javafx-graphics-18-win.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-base/15.0.1/javafx-base-15.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/18/javafx-graphics-18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/fxyz3d/fxyz3d/0.5.4/fxyz3d-0.5.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.6.0/slf4j-api-1.6.0.jar" path-in-jar="/" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-controls:18" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-controls:win:18" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-graphics:18" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-graphics:win:18" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-fxml:18" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-fxml:win:18" />
+      <element id="library" level="project" name="Maven: org.fxyz3d:fxyz3d:0.5.4" />
+      <element id="library" level="project" name="Maven: eu.mihosoft.vrl.jcsg:jcsg:0.5.7" />
+      <element id="library" level="project" name="Maven: eu.mihosoft.vvecmath:vvecmath:0.4.0" />
+      <element id="library" level="project" name="Maven: org.orbisgis:poly2tri-core:0.1.2" />
+      <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.6.0" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-base:15.0.1" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-base:win:15.0.1" />
+      <element id="library" level="project" name="Maven: org.projectlombok:lombok:1.18.22" />
+      <element id="library" level="project" name="Maven: com.github.gotson:webp-imageio:0.2.2" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-swing:11-ea+24" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-swing:win:11-ea+24" />
+    </root>
+  </artifact>
+</component>

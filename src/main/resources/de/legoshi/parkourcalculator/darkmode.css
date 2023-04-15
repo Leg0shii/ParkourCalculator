@@ -1,0 +1,207 @@
+/* Set the background color for the application */
+.root {
+    -fx-background-color: #2e2e2e;
+}
+
+/* Style buttons */
+.button {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.button:hover {
+    -fx-background-color: #4a4a4a;
+}
+
+.button:pressed {
+    -fx-background-color: #1e1e1e;
+}
+
+/* Style labels, textfields, and textareas */
+.label, .text-field, .text-area, .text {
+    -fx-text-fill: #ffffff;
+}
+
+.text-field, .text-area {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #4a4a4a;
+    -fx-padding: 4px 8px;
+    -fx-border-radius: 4px;
+}
+
+/* Style titled panes and accordions */
+.titled-pane > .title {
+    -fx-background-color: #3a3a3a;
+    -fx-padding: 4px 8px;
+}
+
+.titled-pane > .content {
+    -fx-background-color: #2e2e2e;
+    -fx-border-width: 0px;
+}
+
+/* Style ListView, TableView, and TreeView */
+.list-view, .table-view, .tree-view {
+    -fx-background-color: #2e2e2e;
+    -fx-control-inner-background: #2e2e2e;
+    -fx-control-inner-background-alt: #3a3a3a;
+    -fx-text-fill: #ffffff;
+}
+
+.list-cell, .table-row-cell, .tree-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+}
+
+.list-cell:selected, .table-row-cell:selected, .tree-cell:selected {
+    -fx-background-color: #4a4a4a;
+    -fx-text-fill: #ffffff;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #4a4a4a;
+}
+
+/* Style CheckBox */
+.check-box {
+    -fx-text-fill: #ffffff;
+}
+
+.check-box > .box {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #4a4a4a;
+    -fx-border-width: 2px;
+    -fx-border-radius: 2px;
+}
+
+.check-box > .box:hover {
+    -fx-background-color: #4a4a4a;
+}
+
+.check-box:pressed > .box {
+    -fx-background-color: #1e1e1e;
+}
+
+.check-box:selected > .box > .mark {
+    -fx-shape: "M0 0 L2 2 L8 -8";
+    -fx-stroke: #ffffff;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+}
+
+.check-box:focused > .box {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 255, 0.6), 10, 0, 0, 0);
+}
+
+/* Style MenuBar, Menu, and MenuItem */
+.menu-bar {
+    -fx-background-color: #3a3a3a;
+}
+
+.menu {
+    -fx-background-color: #3a3a3a;
+}
+
+.menu .label {
+    -fx-text-fill: #ffffff;
+}
+
+.menu-item {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #ffffff;
+}
+
+.menu-item:hover {
+    -fx-background-color: #4a4a4a;
+}
+
+.context-menu {
+    -fx-background-color: #3a3a3a;
+}
+
+/* BorderPane */
+.border-pane {
+    -fx-background-color: #2e2e2e;
+}
+
+/* VBox */
+.v-box {
+    -fx-background-color: #2e2e2e;
+}
+
+/* HBox */
+.h-box {
+    -fx-background-color: #2e2e2e;
+}
+
+/* SubScene */
+.sub-scene {
+    -fx-background-color: #2e2e2e;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background-color: #2e2e2e;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* AnchorPane */
+.anchor-pane {
+    -fx-background-color: #2e2e2e;
+}
+
+/* Selectors */
+.choice-box, .combo-box-base {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #4a4a4a;
+    -fx-padding: 4px 8px;
+    -fx-border-radius: 4px;
+}
+
+/* Sliders */
+.slider {
+    -fx-background-color: #3a3a3a;
+}
+
+.slider .track {
+    -fx-fill: #4a4a4a;
+    -fx-stroke: none;
+    -fx-background-color: #4a4a4a;
+    -fx-border-color: #4a4a4a;
+    -fx-padding: 4px 8px;
+    -fx-border-radius: 4px;
+}
+
+.slider .thumb {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #4a4a4a;
+    -fx-padding: 4px 8px;
+    -fx-border-radius: 4px;
+}
+
+/* Color Picker */
+.color-picker {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #4a4a4a;
+    -fx-padding: 4px 8px;
+    -fx-border-radius: 4px;
+}
+
+.color-picker .color-box {
+    -fx-background-color: inherit;
+    -fx-border-color: inherit;
+    -fx-padding: inherit;
+    -fx-border-radius: inherit;
+}
+
+.color-picker .color-box .picker-color {
+    -fx-background-radius: 3px;
+}

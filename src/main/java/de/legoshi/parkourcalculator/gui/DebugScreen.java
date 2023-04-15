@@ -60,7 +60,7 @@ public class DebugScreen extends VBox implements Observer {
     }
 
     private void applyBackgroundColor() {
-        this.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, new Insets(0, 0, 0, 0))));
+        this.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, CornerRadii.EMPTY, new Insets(0, 0, 0, 0))));
     }
 
     private void addLabels() {
