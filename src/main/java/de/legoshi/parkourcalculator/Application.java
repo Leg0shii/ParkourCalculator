@@ -52,8 +52,6 @@ public class Application extends javafx.application.Application {
 
         // load the input manager and the UI
         this.inputTickManager = new InputTickManager();
-        this.inputTickManager.addObserver(positionVisualizer);
-        this.inputTickManager.addObserver(coordinateScreen);
         this.inputTickGUI = new InputTickGUI(inputTickManager);
         this.window.setLeft(inputTickGUI);
 
@@ -81,6 +79,9 @@ public class Application extends javafx.application.Application {
         Group pathGroup = new Group();
         this.positionVisualizer = new PositionVisualizer(pathGroup, movementEngine, inputTickManager);
         this.minecraftScreenGroup.getChildren().add(pathGroup);
+
+        this.inputTickManager.addObserver(positionVisualizer);
+        this.inputTickManager.addObserver(coordinateScreen);
 
         stage.setTitle("Parkour Simulator!");
         stage.setScene(scene);
