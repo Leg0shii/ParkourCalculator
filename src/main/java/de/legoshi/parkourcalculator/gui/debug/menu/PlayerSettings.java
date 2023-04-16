@@ -1,25 +1,43 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
+import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
+import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
+import de.legoshi.parkourcalculator.parkour.simulator.Player;
+import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
+import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+
 public class PlayerSettings extends TitledPane {
 
-    private TextField xPosField;
-    private TextField yPosField;
-    private TextField zPosField;
-    private TextField xVelField;
-    private TextField yVelField;
-    private TextField zVelField;
-    private TextField facingField;
+    private final MovementEngine movementEngine;
+    private final PositionVisualizer positionVisualizer;
 
-    public PlayerSettings() {
+    private final TextField xPosField;
+    private final TextField yPosField;
+    private final TextField zPosField;
+    private final TextField xVelField;
+    private final TextField yVelField;
+    private final TextField zVelField;
+
+    public PlayerSettings(MovementEngine movementEngine, PositionVisualizer positionVisualizer) {
+        this.movementEngine = movementEngine;
+        this.positionVisualizer = positionVisualizer;
+
         Text titleText = new Text("Player Settings");
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
@@ -43,9 +61,6 @@ public class PlayerSettings extends TitledPane {
         zVelField = new TextField();
         zVelField.setPromptText("Z Velocity");
 
-        facingField = new TextField();
-        facingField.setPromptText("Facing");
-
         // Create a GridPane to hold the text fields
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10));
@@ -63,31 +78,41 @@ public class PlayerSettings extends TitledPane {
         gridPane.add(yVelField, 1, 2);
         gridPane.add(zVelField, 1, 3);
 
-        gridPane.add(new Label("Facing:"), 0, 4);
-        gridPane.add(facingField, 0, 5);
-
         // Create the button to apply values
         Button getButton = new Button("Get values");
         getButton.setOnAction(event -> {
             // Get values from somewhere (e.g. a game engine) and set them in the text fields
-            xPosField.setText(Double.toString(10.5));
-            yPosField.setText(Double.toString(20.2));
-            zPosField.setText(Double.toString(30.9));
-            xVelField.setText(Double.toString(0.3));
-            yVelField.setText(Double.toString(1.2));
-            zVelField.setText(Double.toString(-0.5));
-            facingField.setText(Double.toString(1.3));
+            PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(0);
+            this.xPosField.setText(ptiC.getPosition().x + "");
+            this.yPosField.setText(ptiC.getPosition().y + "");
+            this.zPosField.setText(ptiC.getPosition().z + "");
+
+            Player player = movementEngine.player;
+            this.xVelField.setText(player.getVelocity().x + "");
+            this.yVelField.setText(player.getVelocity().y + "");
+            this.zVelField.setText(player.getVelocity().z + "");
         });
 
-        Button applyButton = new Button("Apply values");
-        applyButton.setOnAction(event -> {
+        Button copyButton = new Button("Copy to Clipboard");
+        copyButton.setOnAction(event -> {
+            double x = tryParseDouble(xPosField.getText());
+            double y = tryParseDouble(yPosField.getText());
+            double z = tryParseDouble(zPosField.getText());
+            double facing = movementEngine.playerTickInformations.get(0).getFacing();
 
+            String tpCommand = "/tp " + x + " " + y + " " + z + " " + facing + " 90";
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection stringSelection = new StringSelection(tpCommand);
+            clipboard.setContents(stringSelection, null);
         });
+
+        registerTextFieldChanges();
 
         // Add the GridPane and button to a VBox
-        HBox hBox = new HBox(getButton, applyButton);
+        HBox hBox = new HBox(getButton, copyButton);
         hBox.setSpacing(30);
         hBox.setAlignment(Pos.CENTER);
+        hBox.setPadding(new Insets(0, 5, 5, 0));
 
         VBox vBox = new VBox(gridPane, hBox);
         vBox.setAlignment(Pos.CENTER);
@@ -97,6 +122,59 @@ public class PlayerSettings extends TitledPane {
         ScrollPane scrollPane = new ScrollPane(vBox);
         scrollPane.setFitToWidth(true);
         setContent(scrollPane);
+    }
+
+    private void registerTextFieldChanges() {
+        this.xPosField.setOnKeyTyped(keyEvent -> {
+            double value = Double.parseDouble(xPosField.getText());
+            Vec3 oldPos = movementEngine.player.getStartPos().copy();
+            Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
+            movementEngine.player.setStartPos(newPos);
+            positionVisualizer.generatePlayerPath();
+        });
+        this.yPosField.setOnKeyTyped(keyEvent -> {
+            double value = Double.parseDouble(yPosField.getText());
+            Vec3 oldPos = movementEngine.player.getStartPos().copy();
+            Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
+            movementEngine.player.setStartPos(newPos);
+            positionVisualizer.generatePlayerPath();
+        });
+        this.zPosField.setOnKeyTyped(keyEvent -> {
+            double value = Double.parseDouble(zPosField.getText());
+            Vec3 oldPos = movementEngine.player.getStartPos().copy();
+            Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
+            movementEngine.player.setStartPos(newPos);
+            positionVisualizer.generatePlayerPath();
+        });
+        this.xVelField.setOnKeyTyped(keyEvent -> {
+            double value = Double.parseDouble(xVelField.getText());
+            Vec3 oldPos = movementEngine.player.getStartVel().copy();
+            Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
+            movementEngine.player.setStartVel(newPos);
+            positionVisualizer.generatePlayerPath();
+        });
+        this.yVelField.setOnKeyTyped(keyEvent -> {
+            double value = Double.parseDouble(yVelField.getText());
+            Vec3 oldPos = movementEngine.player.getStartVel().copy();
+            Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
+            movementEngine.player.setStartVel(newPos);
+            positionVisualizer.generatePlayerPath();
+        });
+        this.zVelField.setOnKeyTyped(keyEvent -> {
+            double value = Double.parseDouble(zVelField.getText());
+            Vec3 oldPos = movementEngine.player.getStartVel().copy();
+            Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
+            movementEngine.player.setStartVel(newPos);
+            positionVisualizer.generatePlayerPath();
+        });
+    }
+
+    private double tryParseDouble(String text) {
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException | NullPointerException e) {
+            return 0.0;
+        }
     }
 
 }

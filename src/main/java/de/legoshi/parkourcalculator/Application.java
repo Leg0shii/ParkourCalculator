@@ -55,6 +55,10 @@ public class Application extends javafx.application.Application {
         this.inputTickGUI = new InputTickGUI(inputTickManager);
         this.window.setLeft(inputTickGUI);
 
+        // load path group to display player-movement and bind to pos-visualizer
+        Group pathGroup = new Group();
+        this.positionVisualizer = new PositionVisualizer(pathGroup, movementEngine, inputTickManager);
+
         // load and register block gui
         this.blockGUI = new BlockGUI();
         this.window.setBottom(blockGUI);
@@ -65,7 +69,7 @@ public class Application extends javafx.application.Application {
 
         // load coordinate-screen and the menu-accordion
         this.coordinateScreen = new CoordinateScreen(movementEngine);
-        this.menuScreen = new MenuScreen(getMenuOffset(scene));
+        this.menuScreen = new MenuScreen(movementEngine, positionVisualizer, getMenuOffset(scene));
         this.debugUI = new DebugUI(coordinateScreen, menuScreen);
         this.window.setRight(debugUI);
 
@@ -74,10 +78,6 @@ public class Application extends javafx.application.Application {
         this.minecraftSubScene = new SubScene(minecraftScreenGroup, 500, 500, true, SceneAntialiasing.DISABLED);
         this.window.setCenter(this.minecraftSubScene);
         this.minecraftGUI = new MinecraftGUI(this, minecraftScreenGroup);
-
-        // load path group to display player-movement and bind to pos-visualizer
-        Group pathGroup = new Group();
-        this.positionVisualizer = new PositionVisualizer(pathGroup, movementEngine, inputTickManager);
         this.minecraftScreenGroup.getChildren().add(pathGroup);
 
         this.inputTickManager.addObserver(positionVisualizer);

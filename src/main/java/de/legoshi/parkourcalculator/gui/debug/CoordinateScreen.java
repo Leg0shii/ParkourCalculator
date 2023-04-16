@@ -22,7 +22,7 @@ public class CoordinateScreen extends VBox implements Observer {
     private final MovementEngine movementEngine;
     private final Player player;
 
-    private final Text generalLabelInfo = new Text("General Information");
+    private final Text generalLabelInfo = new Text("Start Coordinates");
     private final Label facing = new Label();
     private final Label xPos = new Label();
     private final Label yPos = new Label();
@@ -31,21 +31,14 @@ public class CoordinateScreen extends VBox implements Observer {
     private final Label yVel = new Label();
     private final Label zVel = new Label();
 
-    private final Text advancedInfo = new Text("Advanced Information");
-    private final Label jumpFacing = new Label();
-    private final Label xJumpPos = new Label();
-    private final Label yJumpPos = new Label();
-    private final Label zJumpPos = new Label();
-    private final Label landFacing = new Label();
-    private final Label xLandPos = new Label();
-    private final Label yLandPos = new Label();
-    private final Label zLandPos = new Label();
-
     private final Text tickLabelInfo = new Text("nth Tick Information");
     private final Label tickFacing = new Label();
     private final Label xTickPos = new Label();
     private final Label yTickPos = new Label();
     private final Label zTickPos = new Label();
+    private final Label xTickVel = new Label();
+    private final Label yTickVel = new Label();
+    private final Label zTickVel = new Label();
 
     public CoordinateScreen(MovementEngine movementEngine) {
         this.movementEngine = movementEngine;
@@ -64,14 +57,21 @@ public class CoordinateScreen extends VBox implements Observer {
     }
 
     private void addLabels() {
-        this.getChildren().addAll(generalLabelInfo, facing, getSpacer(), xPos, yPos, zPos, getSpacer(), xVel, yVel, zVel);
-        this.getChildren().addAll(getSpacer(), advancedInfo, jumpFacing, xJumpPos, yJumpPos, zJumpPos, getSpacer(), landFacing, xLandPos, yLandPos, zLandPos);
-        this.getChildren().addAll(getSpacer(), tickLabelInfo, tickFacing, xTickPos, yTickPos, zTickPos);
+        VBox posLabel = new VBox(xPos, yPos, zPos, facing);
+        VBox velLabel = new VBox(xVel, yVel, zVel);
+        HBox posContainer = new HBox(posLabel, velLabel);
+        posContainer.setSpacing(25);
+        this.getChildren().addAll(generalLabelInfo, posContainer);
+
+        VBox tickLabel = new VBox(xTickPos, yTickPos, zTickPos, tickFacing);
+        VBox tickVelLabel = new VBox(xTickVel, yTickVel, zTickVel);
+        HBox tickContainer = new HBox(tickLabel, tickVelLabel);
+        tickContainer.setSpacing(25);
+        this.getChildren().addAll(getSpacer(), tickLabelInfo, tickContainer);
     }
 
     private void updateLabels() {
         this.generalLabelInfo.setFont(boldFont);
-        this.advancedInfo.setFont(boldFont);
         this.tickLabelInfo.setFont(boldFont);
         this.facing.setText("F: " + setDecimals(this.player.getYAW()));
         this.xPos.setText("X-Pos: " + setDecimals(this.player.getPosition().x));
@@ -80,34 +80,6 @@ public class CoordinateScreen extends VBox implements Observer {
         this.xVel.setText("X-Vel: " + setDecimals(this.player.getVelocity().x));
         this.yVel.setText("Y-Vel: " + setDecimals(this.player.getVelocity().y));
         this.zVel.setText("Z-Vel: " + setDecimals(this.player.getVelocity().z));
-
-        PlayerTickInformation ptiJ = movementEngine.getJumpTick();
-        if (ptiJ != null) {
-            this.jumpFacing.setText("F-Jump: " + setDecimals(ptiJ.getFacing()));
-            this.xJumpPos.setText("X-Jump: " + setDecimals(ptiJ.getPosition().x));
-            this.yJumpPos.setText("Y-Jump: " + setDecimals(ptiJ.getPosition().y));
-            this.zJumpPos.setText("Z-Jump: " + setDecimals(ptiJ.getPosition().z));
-        } else {
-            this.jumpFacing.setText("F-Jump: -");
-            this.xJumpPos.setText("X-Jump: -");
-            this.yJumpPos.setText("Y-Jump: -");
-            this.zJumpPos.setText("Z-Jump: -");
-        }
-
-        PlayerTickInformation ptiL = movementEngine.getLandTick();
-        if(ptiL != null) {
-            if (!this.getChildren().contains(landFacing))
-                this.getChildren().addAll(landFacing, xLandPos, yLandPos, zLandPos);
-            this.landFacing.setText("F-Land: " + setDecimals(ptiL.getFacing()));
-            this.xLandPos.setText("X-Land: " + setDecimals(ptiL.getPosition().x));
-            this.yLandPos.setText("Y-Land: " + setDecimals(ptiL.getPosition().y));
-            this.zLandPos.setText("Z-Land: " + setDecimals(ptiL.getPosition().z));
-        } else {
-            this.landFacing.setText("F-Land: -");
-            this.xLandPos.setText("X-Land: -");
-            this.yLandPos.setText("Y-Land: -");
-            this.zLandPos.setText("Z-Land: -");
-        }
     }
 
     public void updateTickClick(int tickPos) {
@@ -116,6 +88,9 @@ public class CoordinateScreen extends VBox implements Observer {
             this.xTickPos.setText("X-Tick: -");
             this.yTickPos.setText("Y-Tick: -");
             this.zTickPos.setText("Z-Tick: -");
+            this.xTickVel.setText("X-Tick-Vel: -");
+            this.yTickVel.setText("Y-Tick-Vel: -");
+            this.zTickVel.setText("Z-Tick-Vel: -");
             return;
         }
         PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(tickPos);
@@ -124,6 +99,9 @@ public class CoordinateScreen extends VBox implements Observer {
         this.xTickPos.setText("X-Tick: " + setDecimals(ptiC.getPosition().x));
         this.yTickPos.setText("Y-Tick: " + setDecimals(ptiC.getPosition().y));
         this.zTickPos.setText("Z-Tick: " + setDecimals(ptiC.getPosition().z));
+        this.xTickVel.setText("X-Tick-Vel: " + setDecimals(ptiC.getVelocity().x));
+        this.yTickVel.setText("Y-Tick-Vel: " + setDecimals(ptiC.getVelocity().y));
+        this.zTickVel.setText("Z-Tick-Vel: " + setDecimals(ptiC.getVelocity().z));
     }
 
     private void indentLabels() {
