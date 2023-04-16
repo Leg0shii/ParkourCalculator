@@ -10,28 +10,30 @@ import javafx.scene.text.Text;
 
 public class BlockSettings extends TitledPane {
 
-    // update screen when block selected
-    private ComboBox<String> facingSelector;
-    private ComboBox<Integer> tiersSelector;
-    private ComboBox<String> slipperinessSelector;
-    private ColorPicker colorSelector;
+    private final Label floorLabel = new Label("Floor: ");
+    private final Label ceilingLabel = new Label("Ceiling: ");
+    private final Label northLabel = new Label("North: ");
+    private final Label eastLabel = new Label("East: ");
+    private final Label southLabel = new Label("South: ");
+    private final Label westLabel = new Label("West: ");
+
+    private static final CheckBox checkBoxFloor = new CheckBox();
+    private static final CheckBox checkBoxCeiling = new CheckBox();
+    private static final CheckBox checkBoxNorth = new CheckBox();
+    private static final CheckBox checkBoxEast = new CheckBox();
+    private static final CheckBox checkBoxSouth = new CheckBox();
+    private static final CheckBox checkBoxWest = new CheckBox();
+
+    private static final ComboBox<Integer> tiersSelector = new ComboBox<>();
+    private static final ColorPicker colorSelector = new ColorPicker(Color.LIGHTGRAY);
 
     public BlockSettings() {
         Text titleText = new Text("Block Settings");
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
 
-        // Create the selectors
-        facingSelector = new ComboBox<>();
-        facingSelector.getItems().addAll("North", "West", "South", "East", "Top", "Bottom");
-
-        tiersSelector = new ComboBox<>();
         tiersSelector.getItems().addAll(0, 1, 2, 3, 4, 5, 6, 7);
-
-        slipperinessSelector = new ComboBox<>();
-        slipperinessSelector.getItems().addAll("Block", "Ice", "Soulsand", "Air");
-
-        colorSelector = new ColorPicker(Color.BLACK);
+        tiersSelector.setValue(0);
 
         // Create a GridPane to hold the selectors
         GridPane gridPane = new GridPane();
@@ -40,59 +42,66 @@ public class BlockSettings extends TitledPane {
         gridPane.setHgap(10);
         gridPane.setAlignment(Pos.CENTER);
 
-        gridPane.add(new Label("Facing:"), 0, 0);
-        gridPane.add(facingSelector, 1, 0);
+        gridPane.add(new Label("Tiers:"), 0, 2, 5, 1);
+        gridPane.add(tiersSelector, 1, 2, 5, 1);
 
-        gridPane.add(new Label("Tiers:"), 0, 1);
-        gridPane.add(tiersSelector, 1, 1);
-
-        gridPane.add(new Label("Slipperiness:"), 0, 2);
-        gridPane.add(slipperinessSelector, 1, 2);
-
-        gridPane.add(new Label("Color:"), 0, 3);
-        gridPane.add(colorSelector, 1, 3);
+        gridPane.add(new Label("Color:"), 0, 3, 5, 1);
+        gridPane.add(colorSelector, 1, 3, 5, 1);
 
         // Add the GridPane to a VBox
         VBox vBox = new VBox(gridPane);
         vBox.setAlignment(Pos.CENTER);
 
+        setUPLabelCheckboxes(gridPane);
+
         // Set the content of the titledPane to the VBox
         setContent(vBox);
     }
 
-    // Method to exchange facing selector values
-    public void setFacingSelectorValues(String[] values) {
-        facingSelector.getItems().setAll(values);
+    private void setUPLabelCheckboxes(GridPane gridPane) {
+        gridPane.add(ceilingLabel, 0, 0);
+        gridPane.add(checkBoxCeiling, 1, 0);
+        gridPane.add(floorLabel, 0, 1);
+        gridPane.add(checkBoxFloor, 1, 1);
+        gridPane.add(northLabel, 2, 0);
+        gridPane.add(checkBoxNorth, 3, 0);
+        gridPane.add(eastLabel, 2, 1);
+        gridPane.add(checkBoxEast, 3, 1);
+        gridPane.add(southLabel, 4, 0);
+        gridPane.add(checkBoxSouth, 5, 0);
+        gridPane.add(westLabel, 4, 1);
+        gridPane.add(checkBoxWest, 5, 1);
     }
 
-    // Method to exchange tiers selector values based on an int value
-    public void setTiersSelectorValues(int numTiers) {
-        tiersSelector.getItems().setAll(createTiersSelectorValues(numTiers));
+    public static boolean isNorth() {
+        return checkBoxNorth.isSelected();
     }
 
-    // Private helper method to create the tiers selector values based on an int value
-    private Integer[] createTiersSelectorValues(int numTiers) {
-        Integer[] values = new Integer[numTiers + 1];
-        for (int i = 0; i <= numTiers; i++) {
-            values[i] = i;
-        }
-        return values;
+    public static boolean isEast() {
+        return checkBoxEast.isSelected();
     }
 
-    // Getters for the selectors
-    public String getFacing() {
-        return facingSelector.getValue();
+    public static boolean isSouth() {
+        return checkBoxSouth.isSelected();
     }
 
-    public int getTiers() {
+    public static boolean isWest() {
+        return checkBoxWest.isSelected();
+    }
+
+    public static boolean isFloor() {
+        return checkBoxFloor.isSelected();
+    }
+
+    public static boolean isFlip() {
+        return checkBoxCeiling.isSelected();
+    }
+
+    public static int getTier() {
         return tiersSelector.getValue();
     }
 
-    public String getSlipperiness() {
-        return slipperinessSelector.getValue();
-    }
-
-    public Color getColor() {
+    public static Color getColor() {
         return colorSelector.getValue();
     }
 

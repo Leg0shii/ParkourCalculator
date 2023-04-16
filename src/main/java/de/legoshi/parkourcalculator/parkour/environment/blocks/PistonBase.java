@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
-import de.legoshi.parkourcalculator.gui.ConnectionGUI;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -23,12 +23,12 @@ public class PistonBase extends FacingBlock {
     protected void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
-        if (ConnectionGUI.isNorth())  calcNorth();
-        else if (ConnectionGUI.isEast()) calcEast();
-        else if (ConnectionGUI.isSouth()) calcSouth();
-        else if (ConnectionGUI.isWest()) calcWest();
-        else if (ConnectionGUI.isFlip() && baseFlip != null) calcBaseFlip();
-        else if (!ConnectionGUI.isFlip() && base != null) calcBase();
+        if (BlockSettings.isNorth()) calcNorth();
+        else if (BlockSettings.isEast()) calcEast();
+        else if (BlockSettings.isSouth()) calcSouth();
+        else if (BlockSettings.isWest()) calcWest();
+        else if (BlockSettings.isFlip()) calcBaseFlip();
+        else if (BlockSettings.isFloor()) calcBase();
     }
 
     @Override

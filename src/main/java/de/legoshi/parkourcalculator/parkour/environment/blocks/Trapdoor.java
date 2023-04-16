@@ -16,7 +16,7 @@ public class Trapdoor extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 0.1875);
         Vec3 shift = new Vec3(0, 0, 0.40625);
-        this.north = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -24,7 +24,7 @@ public class Trapdoor extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0.8125, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0.40625, 0, 0);
-        this.east = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Trapdoor extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0.8125);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0, 0.40625);
-        this.south = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class Trapdoor extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(0.1875, 1, 1);
         Vec3 shift = new Vec3(0.40625, 0, 0);
-        this.west = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Trapdoor extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 0.1875, 1);
         Vec3 shift = new Vec3(0, 0.40625, 0);
-        this.base = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Trapdoor extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0.8125, 0);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0.40625, 0);
-        this.baseFlip = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override

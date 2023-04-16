@@ -1,7 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
-import de.legoshi.parkourcalculator.gui.ConnectionGUI;
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -24,12 +23,12 @@ public class PistonHead extends FacingBlock {
     protected void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
-        if (ConnectionGUI.isNorth()) calcNorth();
-        else if (ConnectionGUI.isEast()) calcEast();
-        else if (ConnectionGUI.isSouth()) calcSouth();
-        else if (ConnectionGUI.isWest()) calcWest();
-        else if (ConnectionGUI.isFlip()) calcBaseFlip();
-        else if (!ConnectionGUI.isFlip()) calcBase();
+        if (BlockSettings.isNorth()) calcNorth();
+        else if (BlockSettings.isEast()) calcEast();
+        else if (BlockSettings.isSouth()) calcSouth();
+        else if (BlockSettings.isWest()) calcWest();
+        else if (BlockSettings.isFlip()) calcBaseFlip();
+        else if (BlockSettings.isFloor()) calcBase();
     }
 
     // 0.5x0.25x1
@@ -51,7 +50,7 @@ public class PistonHead extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0.75, 0);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0.375, 0);
-        this.baseFlip = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
 
         Vec3 lowerEdgeRod = new Vec3(0.375, 0, 0.375);
         Vec3 upperEdgeRod = new Vec3(0.625, 1, 0.625);

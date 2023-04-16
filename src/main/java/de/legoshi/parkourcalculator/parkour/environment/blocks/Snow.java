@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Snow extends ABlock implements TierBlock {
 
-    private double height = 0.125;
+    private double height = 0;
 
     public Snow(Vec3 vec3) {
         super(vec3);
@@ -17,11 +17,12 @@ public class Snow extends ABlock implements TierBlock {
 
     @Override
     void updateBoundingBox() {
+        prepareBlock(BlockSettings.getTier());
+
         Vec3 lowerEdge = new Vec3(0, 0, 0);
-        Vec3 upperEdge = new Vec3(1, 0.125, 1);
-        Vec3 shift = new Vec3(0, 0.5-0.125/2, 0);
-        AxisVecTuple axisVecTuple = constructBlock(lowerEdge, upperEdge, shift);
-        this.axisVecTuples.add(axisVecTuple);
+        Vec3 upperEdge = new Vec3(1, height, 1);
+        Vec3 shift = new Vec3(0, 0.5-height/2, 0);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override

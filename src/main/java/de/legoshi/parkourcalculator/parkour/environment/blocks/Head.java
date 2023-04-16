@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
-import de.legoshi.parkourcalculator.gui.ConnectionGUI;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -18,11 +18,11 @@ public class Head extends FacingBlock {
     protected void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
-        if (!ConnectionGUI.isNorth() && !ConnectionGUI.isEast() && !ConnectionGUI.isSouth() && !ConnectionGUI.isWest()) calcBase();
-        else if (ConnectionGUI.isNorth()) calcNorth();
-        else if (ConnectionGUI.isEast()) calcEast();
-        else if (ConnectionGUI.isSouth()) calcSouth();
-        else if (ConnectionGUI.isWest()) calcWest();
+        if (!BlockSettings.isNorth() && !BlockSettings.isEast() && !BlockSettings.isSouth() && !BlockSettings.isWest()) calcBase();
+        else if (BlockSettings.isNorth()) calcNorth();
+        else if (BlockSettings.isEast()) calcEast();
+        else if (BlockSettings.isSouth()) calcSouth();
+        else if (BlockSettings.isWest()) calcWest();
     }
 
     @Override

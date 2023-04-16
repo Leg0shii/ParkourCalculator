@@ -1,7 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
-import de.legoshi.parkourcalculator.gui.ConnectionGUI;
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -21,32 +20,25 @@ public class Cobblewall extends FacingBlock {
 
         calcBase();
 
-        calcNorth();
-        calcEast();
-        calcSouth();
-        calcWest();
+        if (BlockSettings.isNorth()) calcNorth();
+        if (BlockSettings.isEast()) calcEast();
+        if (BlockSettings.isSouth()) calcSouth();
+        if (BlockSettings.isWest()) calcWest();
 
-        this.axisVecTuples.add(base);
-
-        if (ConnectionGUI.isNorth()) this.axisVecTuples.add(north);
-        if (ConnectionGUI.isEast()) this.axisVecTuples.add(east);
-        if (ConnectionGUI.isSouth()) this.axisVecTuples.add(south);
-        if (ConnectionGUI.isWest()) this.axisVecTuples.add(west);
-
-        if (ConnectionGUI.isNorth() && ConnectionGUI.isSouth() && !ConnectionGUI.isEast() && !ConnectionGUI.isWest()) {
+        if (BlockSettings.isNorth() && BlockSettings.isSouth() && !BlockSettings.isEast() && !BlockSettings.isWest()) {
             this.axisVecTuples = new ArrayList<>();
             calcThinNorth();
             return;
-        } else if (ConnectionGUI.isEast() && ConnectionGUI.isWest() && !ConnectionGUI.isNorth() && !ConnectionGUI.isSouth()) {
+        } else if (BlockSettings.isEast() && BlockSettings.isWest() && !BlockSettings.isNorth() && !BlockSettings.isSouth()) {
             this.axisVecTuples = new ArrayList<>();
             calcThinWest();
             return;
         }
 
-        if (ConnectionGUI.isNorth() && ConnectionGUI.isEast()) calcNorthEastCorner();
-        if (ConnectionGUI.isNorth() && ConnectionGUI.isWest()) calcNorthWestCorner();
-        if (ConnectionGUI.isSouth() && ConnectionGUI.isEast()) calcSouthEastCorner();
-        if (ConnectionGUI.isSouth() && ConnectionGUI.isWest()) calcSouthWestCorner();
+        if (BlockSettings.isNorth() && BlockSettings.isEast()) calcNorthEastCorner();
+        if (BlockSettings.isNorth() && BlockSettings.isWest()) calcNorthWestCorner();
+        if (BlockSettings.isSouth() && BlockSettings.isEast()) calcSouthEastCorner();
+        if (BlockSettings.isSouth() && BlockSettings.isWest()) calcSouthWestCorner();
 
     }
 
@@ -54,7 +46,7 @@ public class Cobblewall extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0.25, 0, 0.25);
         Vec3 upperEdge = new Vec3(0.75, 1.5, 0.75);
         Vec3 shift = new Vec3(0.25, -0.25, 0.25);
-        this.base = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -62,7 +54,7 @@ public class Cobblewall extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0.25, 0, 0);
         Vec3 upperEdge = new Vec3(0.75, 1.5, 0.5);
         Vec3 shift = new Vec3(0.25, -0.25, 0.25);
-        this.north = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -70,7 +62,7 @@ public class Cobblewall extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0.5, 0, 0.25);
         Vec3 upperEdge = new Vec3(1, 1.5, 0.75);
         Vec3 shift = new Vec3(0.25, -0.25, 0.25);
-        this.east = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -78,7 +70,7 @@ public class Cobblewall extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0.25, 0, 0.5);
         Vec3 upperEdge = new Vec3(0.75, 1.5, 1);
         Vec3 shift = new Vec3(0.25, -0.25, 0.25);
-        this.south = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
@@ -86,7 +78,7 @@ public class Cobblewall extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0.25);
         Vec3 upperEdge = new Vec3(0.5, 1.5, 0.75);
         Vec3 shift = new Vec3(0.25, -0.25, 0.25);
-        this.west = constructBlock(lowerEdge, upperEdge, shift);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     protected void calcNorthEastCorner() {

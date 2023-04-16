@@ -1,11 +1,10 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
 
-// WRONG
 @NoArgsConstructor
 public class Cake extends ABlock implements TierBlock {
 
@@ -17,12 +16,12 @@ public class Cake extends ABlock implements TierBlock {
 
     @Override
     void updateBoundingBox() {
+        prepareBlock(BlockSettings.getTier());
+
         Vec3 lowerEdge = new Vec3(0.0625+this.widthReduce, 0, 0.0625);
         Vec3 upperEdge = new Vec3(0.9375, 0.5, 0.9375);
         Vec3 shift = new Vec3(0.0625+this.widthReduce/2, 0.25, 0.0625);
-
-        AxisVecTuple axisVecTuple = constructBlock(lowerEdge, upperEdge, shift);
-        this.axisVecTuples.add(axisVecTuple);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
