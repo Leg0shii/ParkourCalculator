@@ -14,6 +14,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -21,7 +22,7 @@ import java.util.Observer;
 
 public class PositionVisualizer implements Observer {
 
-    private final MovementEngine movementEngine;
+    @Getter private final MovementEngine movementEngine;
     private final InputTickManager inputTickManager;
     private final Group group;
     private final Box box;

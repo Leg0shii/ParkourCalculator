@@ -45,6 +45,8 @@ public class MinecraftGUI extends Observable {
         addObserver(application.coordinateScreen);
         addObserver(application.positionVisualizer);
 
+        application.menuGUI.setMinecraftGUI(this);
+
         addStartingBlock();
         registerCamera();
     }

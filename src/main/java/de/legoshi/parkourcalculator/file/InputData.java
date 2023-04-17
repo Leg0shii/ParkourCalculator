@@ -1,23 +1,20 @@
-package de.legoshi.parkourcalculator.parkour.simulator;
+package de.legoshi.parkourcalculator.file;
 
+import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Getter
-public class PlayerTickInformation {
+public class InputData {
 
-    private float facing;
+    private InputTick inputTick;
     private Vec3 position;
     private Vec3 velocity;
-
-    private boolean collided;
-    private boolean ground;
-    private boolean jump;
 
 }

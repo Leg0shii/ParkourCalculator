@@ -64,7 +64,7 @@ public class Application extends javafx.application.Application {
         this.window.setBottom(blockGUI);
 
         // load the menu bar
-        this.menuGUI = new MenuGUI();
+        this.menuGUI = new MenuGUI(scene.getWindow(), this);
         this.window.setTop(menuGUI);
 
         // load coordinate-screen and the menu-accordion

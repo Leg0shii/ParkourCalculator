@@ -1,7 +1,7 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +10,16 @@ import java.util.ArrayList;
 @NoArgsConstructor
 public abstract class FacingBlock extends ABlock {
 
+    private boolean TOP, BOTTOM, NORTH, EAST, SOUTH, WEST;
+
     public FacingBlock(Vec3 vec3) {
         super(vec3);
+        this.BOTTOM = BlockSettings.isFloor();
+        this.TOP = BlockSettings.isFlip();
+        this.NORTH = BlockSettings.isNorth();
+        this.EAST = BlockSettings.isEast();
+        this.SOUTH = BlockSettings.isSouth();
+        this.WEST = BlockSettings.isWest();
     }
 
     @Override
@@ -25,6 +33,18 @@ public abstract class FacingBlock extends ABlock {
 
         if (BlockSettings.isFlip()) calcBaseFlip();
         if (BlockSettings.isFloor()) calcBase();
+    }
+
+    @Override
+    public BlockData toBlockData() {
+        BlockData blockData = super.toBlockData();
+        blockData.BOTTOM = this.BOTTOM;
+        blockData.TOP = this.TOP;
+        blockData.NORTH = this.NORTH;
+        blockData.EAST = this.EAST;
+        blockData.WEST = this.WEST;
+        blockData.SOUTH = this.SOUTH;
+        return blockData;
     }
 
     protected abstract void calcBase();

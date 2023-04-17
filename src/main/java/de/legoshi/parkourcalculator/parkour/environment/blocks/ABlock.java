@@ -1,10 +1,13 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.file.BlockData;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +24,7 @@ public abstract class ABlock {
 
     public ArrayList<Box> boxesArrayList;
     private Vec3 vec3;
+    private Color color;
 
     public ABlock() {
         updateImage();
@@ -31,6 +35,7 @@ public abstract class ABlock {
         this.vec3 = vec3;
         this.axisVecTuples = new ArrayList<>();
         this.boxesArrayList = new ArrayList<>();
+        this.color = BlockSettings.getColor();
         updateBoundingBox();
         updateBoxes();
         updateSlipperiness();
@@ -57,6 +62,14 @@ public abstract class ABlock {
 
         AxisAlignedBB axisAlignedBB = new AxisAlignedBB(lEdge, uEdge);
         return new AxisVecTuple(axisAlignedBB, shift);
+    }
+
+    public BlockData toBlockData() {
+        BlockData blockData = new BlockData();
+        blockData.blockType = this.getClass().getSimpleName();
+        blockData.pos = this.vec3;
+        blockData.color = this.color;
+        return blockData;
     }
 
 }

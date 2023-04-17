@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Cake extends ABlock implements TierBlock {
 
+    private int tier;
     private double widthReduce = 0;
 
     public Cake(Vec3 vec3) {
@@ -16,7 +18,8 @@ public class Cake extends ABlock implements TierBlock {
 
     @Override
     void updateBoundingBox() {
-        prepareBlock(BlockSettings.getTier());
+        this.tier = BlockSettings.getTier();
+        prepareBlock(this.tier);
 
         Vec3 lowerEdge = new Vec3(0.0625+this.widthReduce, 0, 0.0625);
         Vec3 upperEdge = new Vec3(0.9375, 0.5, 0.9375);
@@ -41,4 +44,12 @@ public class Cake extends ABlock implements TierBlock {
             case 6 -> this.widthReduce = 0.75;
         }
     }
+
+    @Override
+    public BlockData toBlockData() {
+        BlockData blockData = super.toBlockData();
+        blockData.tier = this.tier;
+        return blockData;
+    }
+
 }

@@ -10,17 +10,18 @@ import lombok.Getter;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class InputTickGUI extends ScrollPane {
 
     public static double PREF_HEIGHT = 500.0;
-    public static double PREF_WIDTH = 340.0;
+    public static double PREF_WIDTH = 350.0;
 
     private AnchorPane anchorPane;
     private VBox vBox;
 
     @Getter private final ArrayList<HBox> hBoxes = new ArrayList<>();
-    private final InputTickManager inputTicks;
+    @Getter private final InputTickManager inputTicks;
     private final Button button = new Button("+");
 
     public InputTickGUI(InputTickManager inputTickManager) {
@@ -38,15 +39,22 @@ public class InputTickGUI extends ScrollPane {
         anchorPane = new AnchorPane(vBox);
 
         addTextLabels();
-        duplicateRow();
+        duplicateRow(new InputTick());
         addButton();
 
         setContent(vBox);
     }
 
+    public void addAllTicks(List<InputTick> inputTicks) {
+        vBox.getChildren().clear();
+        addTextLabels();
+        for (InputTick inputTick : inputTicks) duplicateRow(inputTick);
+        addButton();
+    }
+
     private void addButton() {
         button.setOnAction((actionEvent -> {
-            duplicateRow();
+            duplicateRow(new InputTick());
             vBox.getChildren().remove(button);
             vBox.getChildren().add(button);
         }));
@@ -71,9 +79,7 @@ public class InputTickGUI extends ScrollPane {
         vBox.getChildren().add(hBox);
     }
 
-    private void duplicateRow() {
-        InputTick inputTick = new InputTick();
-
+    private void duplicateRow(InputTick inputTick) {
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(5, 5, 5, 5));
         hBox.setSpacing(16);
@@ -86,6 +92,15 @@ public class InputTickGUI extends ScrollPane {
         CheckBox p = registerAction("p", new CheckBox(), inputTick);
         CheckBox n = registerAction("n", new CheckBox(), inputTick);
         TextField facing = registerTextField(inputTick);
+
+        w.setSelected(inputTick.W);
+        a.setSelected(inputTick.A);
+        s.setSelected(inputTick.S);
+        d.setSelected(inputTick.D);
+        j.setSelected(inputTick.JUMP);
+        p.setSelected(inputTick.SPRINT);
+        n.setSelected(inputTick.SNEAK);
+        facing.setText(inputTick.YAW + "");
 
         hBox.getChildren().addAll(w, a, s, d, j, p, n, facing);
 

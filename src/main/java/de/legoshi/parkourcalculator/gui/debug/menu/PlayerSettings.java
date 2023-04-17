@@ -88,9 +88,9 @@ public class PlayerSettings extends TitledPane {
             this.zPosField.setText(ptiC.getPosition().z + "");
 
             Player player = movementEngine.player;
-            this.xVelField.setText(player.getVelocity().x + "");
-            this.yVelField.setText(player.getVelocity().y + "");
-            this.zVelField.setText(player.getVelocity().z + "");
+            this.xVelField.setText(player.getStartVel().x + "");
+            this.yVelField.setText(player.getStartVel().y + "");
+            this.zVelField.setText(player.getStartVel().z + "");
         });
 
         Button copyButton = new Button("Copy to Clipboard");

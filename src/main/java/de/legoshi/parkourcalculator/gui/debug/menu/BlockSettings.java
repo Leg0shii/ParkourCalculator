@@ -105,4 +105,36 @@ public class BlockSettings extends TitledPane {
         return colorSelector.getValue();
     }
 
+    public static boolean setNorth(boolean b) {
+        return checkBoxNorth.isSelected();
+    }
+
+    public static void setEast(boolean b) {
+        checkBoxEast.setSelected(b);
+    }
+
+    public static void setSouth(boolean b) {
+        checkBoxSouth.setSelected(b);
+    }
+
+    public static void setWest(boolean b) {
+        checkBoxWest.setSelected(b);
+    }
+
+    public static void setFloor(boolean b) {
+        checkBoxFloor.setSelected(b);
+    }
+
+    public static void setFlip(boolean b) {
+        checkBoxCeiling.setSelected(b);
+    }
+
+    public static void setTier(int n) {
+        tiersSelector.setValue(n);
+    }
+
+    public static void setColor(Color c) {
+        colorSelector.setValue(c);
+    }
+
 }

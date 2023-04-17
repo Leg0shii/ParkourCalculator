@@ -28,13 +28,13 @@ public class MovementEngine {
         this.playerTickInformations = new ArrayList<>();
     }
 
-    public PlayerTickInformation getLastTick(ArrayList<InputTick> inputTicks) {
+    public PlayerTickInformation getLastTick(List<InputTick> inputTicks) {
         player.resetPlayer();
         for (InputTick inputTick : inputTicks) calculateTick(inputTick);
         return player.getPlayerTickInformation();
     }
 
-    public ArrayList<PlayerTickInformation> updatePath(ArrayList<InputTick> inputTicks) {
+    public ArrayList<PlayerTickInformation> updatePath(List<InputTick> inputTicks) {
         playerTickInformations = new ArrayList<>();
         if (inputTicks.size() == 0) return playerTickInformations;
 

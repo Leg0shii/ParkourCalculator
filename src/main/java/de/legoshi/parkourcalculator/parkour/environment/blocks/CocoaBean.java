@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CocoaBean extends FacingBlock implements TierBlock {
 
+    private int tier;
     private double addedSize = 0;
 
     public CocoaBean(Vec3 vec3) {
@@ -16,7 +18,8 @@ public class CocoaBean extends FacingBlock implements TierBlock {
 
     @Override
     protected void updateBoundingBox() {
-        prepareBlock(BlockSettings.getTier());
+        this.tier = BlockSettings.getTier();
+        prepareBlock(this.tier);
         super.updateBoundingBox();
     }
 
@@ -71,4 +74,12 @@ public class CocoaBean extends FacingBlock implements TierBlock {
     public void prepareBlock(int tier) {
         this.addedSize = tier * 0.0625;
     }
+
+    @Override
+    public BlockData toBlockData() {
+        BlockData blockData = super.toBlockData();
+        blockData.tier = this.tier;
+        return blockData;
+    }
+
 }
