@@ -20,7 +20,7 @@ public class Player {
     protected float height = 1.8F;
 
     protected boolean GROUND = true;
-    protected boolean WEB;
+    @Setter protected boolean WEB;
     protected boolean WATER;
     protected boolean LAVA;
 

@@ -201,11 +201,20 @@ public class MovementEngine {
     }
 
     private void moveEntity(double x, double y, double z) {
+        // probably only used for sound calculations
+        double startX = player.position.x;
+        double startY = player.position.y;
+        double startZ = player.position.z;
 
         // apply player movement in web
         if (player.WEB) {
-            // update x, y, z values
-
+            player.WEB = false;
+            x *= 0.25D;
+            y *= 0.05000000074505806D;
+            z *= 0.25D;
+            player.velocity.x = 0.0D;
+            player.velocity.y = 0.0D;
+            player.velocity.z = 0.0D;
         }
 
         // save x, y, z temporarily
@@ -222,7 +231,7 @@ public class MovementEngine {
 
         // get all colliding BB from extending current position BB by x, y, z
         // NOTE: it takes all blocks for collision checks
-        List<AxisAlignedBB> allBlocks = environment.getAllNonLiquidBBs();
+        List<AxisAlignedBB> allBlocks = environment.getAllBlockHitboxes();
 
         // save playerBB temporarily
         AxisAlignedBB originalBB = player.playerBB;
@@ -256,7 +265,7 @@ public class MovementEngine {
 
             // get all colliding BB from extending current position BB by x, y=0.6, z
             // NOTE: it takes all blocks for collision checks
-            allBlocks = environment.getAllNonLiquidBBs();;
+            allBlocks = environment.getAllBlockHitboxes();
             AxisAlignedBB axisAlignedBBNoUpdate = player.playerBB;
 
             // get currentBB extend it by X and Z
@@ -369,6 +378,9 @@ public class MovementEngine {
 
         // on block landed
         if (yOriginal != y) block.onLanded(player);
+
+        // do block collisions
+        this.doBlockCollisions();
     }
 
     private void moveFlying(float strafe, float forward, float friction) {
@@ -455,6 +467,21 @@ public class MovementEngine {
     public boolean handleMaterialAcceleration(AxisAlignedBB bb, String type) {
         List<BlockLiquid> blocks = getCollidingBoundingBoxes(bb, type);
         return !blocks.isEmpty();
+    }
+
+    private void doBlockCollisions() {
+        Vec3 blockpos = new Vec3(player.playerBB.minX + 0.001D, player.playerBB.minY + 0.001D, player.playerBB.minZ + 0.001D);
+        Vec3 blockpos1 = new Vec3(player.playerBB.maxX - 0.001D, player.playerBB.maxY - 0.001D, player.playerBB.maxZ - 0.001D);
+
+        for (int i = MinecraftMathHelper.floor_double(blockpos.x); i <= MinecraftMathHelper.floor_double(blockpos1.x); ++i) {
+            for (int j = MinecraftMathHelper.floor_double(blockpos.y); j <= MinecraftMathHelper.floor_double(blockpos1.y); ++j) {
+                for (int k = MinecraftMathHelper.floor_double(blockpos.z); k <= MinecraftMathHelper.floor_double(blockpos1.z); ++k) {
+                    Vec3 blockpos2 = new Vec3(i, j, k);
+                    ABlock aBlock = Environment.getBlock(blockpos2.x, blockpos2.y, blockpos2.z);
+                    aBlock.onEntityCollidedWithBlock(player);
+                }
+            }
+        }
     }
 
 }

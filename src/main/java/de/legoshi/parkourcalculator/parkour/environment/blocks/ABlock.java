@@ -77,4 +77,8 @@ public abstract class ABlock {
         player.getVelocity().y = 0.0D;
     }
 
+    public void onEntityCollidedWithBlock(Player player) {
+
+    }
+
 }

@@ -17,8 +17,7 @@ public class Environment implements Observer {
 
     public Environment() {
         registeredBlocks.add(new Water());
-        // registeredBlocks.add(new Cobweb());
-
+        registeredBlocks.add(new Cobweb());
         registeredBlocks.add(new Slime());
         registeredBlocks.add(new Lava());
         registeredBlocks.add(new PistonHead());
@@ -73,11 +72,12 @@ public class Environment implements Observer {
         return boundingBoxes;
     }
 
-    public ArrayList<AxisAlignedBB> getAllNonLiquidBBs() {
+    public ArrayList<AxisAlignedBB> getAllBlockHitboxes() {
         ArrayList<AxisAlignedBB> boundingBoxes = new ArrayList<>();
         for (ABlock aBlock : aBlocks) {
             for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
-                if (!(aBlock instanceof BlockLiquid || aBlock instanceof Vine)) boundingBoxes.add(axisVecTuple.getBb());
+                if (!(aBlock instanceof BlockLiquid || aBlock instanceof Vine || aBlock instanceof Cobweb))
+                    boundingBoxes.add(axisVecTuple.getBb());
             }
         }
         return boundingBoxes;
