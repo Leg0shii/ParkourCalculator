@@ -72,7 +72,7 @@ public class CocoaBean extends FacingBlock implements TierBlock {
 
     @Override
     public void prepareBlock(int tier) {
-        this.addedSize = tier * 0.0625;
+        this.addedSize = (tier+1) * 0.0625;
     }
 
     @Override

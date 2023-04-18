@@ -83,9 +83,10 @@ public class MinecraftGUI extends Observable {
         Bounds bounds = clickedBox.getBoundsInLocal();
 
         Vec3 vec3Float = clickedBlock.getVec3().copy();
+        vec3Float.x = -vec3Float.x; // flipping the x axis
         Vec3 vec3Rounded = new Vec3(Math.floor(vec3Float.x), Math.floor(vec3Float.y), Math.floor(vec3Float.z));
-        if (bounds.getMinX() == clickX) vec3Rounded.addVector(-1, 0, 0);
-        else if (bounds.getMaxX() == clickX) vec3Rounded.addVector(1, 0, 0);
+        if (bounds.getMinX() == clickX) vec3Rounded.addVector(1, 0, 0);
+        else if (bounds.getMaxX() == clickX) vec3Rounded.addVector(-1, 0, 0);
         else if (bounds.getMinY() == clickY) vec3Rounded.addVector(0, 1, 0);
         else if (bounds.getMaxY() == clickY) vec3Rounded.addVector(0, -1, 0);
         else if (bounds.getMinZ() == clickZ) vec3Rounded.addVector(0, 0, -1);

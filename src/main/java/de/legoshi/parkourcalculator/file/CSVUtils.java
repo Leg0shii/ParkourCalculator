@@ -103,11 +103,11 @@ public class CSVUtils {
             while ((line = reader.readLine()) != null) {
                 String[] tokens = line.split(",");
                 BlockData blockData = new BlockData(
-                        tokens[0],
+                        tokens[3],
                         new Vec3(
+                                Double.parseDouble(tokens[0]),
                                 Double.parseDouble(tokens[1]),
-                                Double.parseDouble(tokens[2]),
-                                Double.parseDouble(tokens[3])
+                                Double.parseDouble(tokens[2])
                         ),
                         Integer.parseInt(tokens[4]),
                         Color.web(tokens[5]),
@@ -118,6 +118,7 @@ public class CSVUtils {
                         Boolean.parseBoolean(tokens[10]),
                         Boolean.parseBoolean(tokens[11])
                 );
+                System.out.println(tokens[4]);
                 blockDatas.add(blockData);
             }
         } catch (IOException e) {

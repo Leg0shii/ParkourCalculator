@@ -11,12 +11,10 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 
 @Getter
-@Setter
 public abstract class ABlock {
 
     public Image image;
@@ -34,6 +32,7 @@ public abstract class ABlock {
 
     public ABlock(Vec3 vec3) {
         this.vec3 = vec3;
+        this.vec3.x = -this.vec3.x; // flipping the x axis
         this.axisVecTuples = new ArrayList<>();
         this.boxesArrayList = new ArrayList<>();
         this.color = BlockSettings.getColor();
@@ -79,6 +78,11 @@ public abstract class ABlock {
 
     public void onEntityCollidedWithBlock(Player player) {
 
+    }
+
+    public void setColor(Color color) {
+        // BlockSettings.setColor(color);
+        this.color = color;
     }
 
 }

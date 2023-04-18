@@ -32,7 +32,7 @@ public class BlockSettings extends TitledPane {
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
 
-        tiersSelector.getItems().addAll(0, 1, 2, 3, 4, 5, 6, 7);
+        tiersSelector.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8);
         tiersSelector.setValue(0);
 
         // Create a GridPane to hold the selectors
@@ -98,7 +98,7 @@ public class BlockSettings extends TitledPane {
     }
 
     public static int getTier() {
-        return tiersSelector.getValue();
+        return tiersSelector.getValue()-1;
     }
 
     public static Color getColor() {
