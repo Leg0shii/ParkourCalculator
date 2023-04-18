@@ -1,6 +1,5 @@
 package de.legoshi.parkourcalculator.parkour.simulator;
 
-import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.*;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
@@ -8,7 +7,6 @@ import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
-import javafx.scene.paint.Material;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -445,23 +443,13 @@ public class MovementEngine {
         return list;
     }
 
-    public boolean handleWaterMovement() {
-        if (handleMaterialAcceleration(player.playerBB.expand(0.0D, -0.4000000059604645D, 0.0D).contract(0.001D, 0.001D, 0.001D), "Water")) {
-            player.WATER = true;
-            // this.fire = 0;
-        } else {
-            player.WATER = false;
-        }
-        return player.WATER;
+    public void handleWaterMovement() {
+        // this.fire = 0;
+        player.WATER = handleMaterialAcceleration(player.playerBB.expand(0.0D, -0.4000000059604645D, 0.0D).contract(0.001D, 0.001D, 0.001D), "Water");
     }
 
-    public boolean handleLavaMovement() {
-        if (handleMaterialAcceleration(player.playerBB.expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), "Lava")) {
-            player.LAVA = true;
-        } else {
-            player.LAVA = false;
-        }
-        return player.LAVA;
+    public void handleLavaMovement() {
+        player.LAVA = handleMaterialAcceleration(player.playerBB.expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), "Lava");
     }
 
     public boolean handleMaterialAcceleration(AxisAlignedBB bb, String type) {
