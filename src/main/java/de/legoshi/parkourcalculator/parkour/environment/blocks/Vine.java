@@ -23,22 +23,34 @@ public class Vine extends FacingBlock {
 
     @Override
     protected void calcNorth() {
-
+        Vec3 lowerEdge = new Vec3(0, 0, 0);
+        Vec3 upperEdge = new Vec3(1, 1, 0.0625);
+        Vec3 shift = new Vec3(0, 0, 0.5-0.0625/2);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
     protected void calcEast() {
-
+        Vec3 lowerEdge = new Vec3(0.9375, 0, 0);
+        Vec3 upperEdge = new Vec3(1, 1, 1);
+        Vec3 shift = new Vec3(0.5-0.0625/2, 0, 0);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
     protected void calcSouth() {
-
+        Vec3 lowerEdge = new Vec3(0, 0, 0.9375);
+        Vec3 upperEdge = new Vec3(1, 1, 1);
+        Vec3 shift = new Vec3(0, 0, 0.5-0.0625/2);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override
     protected void calcWest() {
-
+        Vec3 lowerEdge = new Vec3(0, 0, 0);
+        Vec3 upperEdge = new Vec3(0.0625, 1, 1);
+        Vec3 shift = new Vec3(0.5-0.0625/2, 0, 0);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
     @Override

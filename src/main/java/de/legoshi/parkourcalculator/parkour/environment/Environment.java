@@ -77,7 +77,7 @@ public class Environment implements Observer {
         ArrayList<AxisAlignedBB> boundingBoxes = new ArrayList<>();
         for (ABlock aBlock : aBlocks) {
             for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
-                if (!(aBlock instanceof BlockLiquid)) boundingBoxes.add(axisVecTuple.getBb());
+                if (!(aBlock instanceof BlockLiquid || aBlock instanceof Vine)) boundingBoxes.add(axisVecTuple.getBb());
             }
         }
         return boundingBoxes;
