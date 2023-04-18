@@ -105,8 +105,8 @@ public class BlockSettings extends TitledPane {
         return colorSelector.getValue();
     }
 
-    public static boolean setNorth(boolean b) {
-        return checkBoxNorth.isSelected();
+    public static void setNorth(boolean b) {
+        checkBoxNorth.setSelected(b);
     }
 
     public static void setEast(boolean b) {
