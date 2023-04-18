@@ -25,7 +25,7 @@ public class Player {
     protected boolean LAVA;
 
     protected boolean SPRINT;
-    protected boolean SNEAK;
+    @Getter protected boolean SNEAK;
     protected boolean JUMP;
 
     @Setter @Getter protected float YAW;

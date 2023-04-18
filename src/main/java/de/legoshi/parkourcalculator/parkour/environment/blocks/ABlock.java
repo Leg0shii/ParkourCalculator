@@ -2,6 +2,7 @@ package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
 import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
+import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Movement;
@@ -70,6 +71,10 @@ public abstract class ABlock {
         blockData.pos = this.vec3;
         blockData.color = this.color;
         return blockData;
+    }
+
+    public void onLanded(Player player) {
+        player.getVelocity().y = 0.0D;
     }
 
 }

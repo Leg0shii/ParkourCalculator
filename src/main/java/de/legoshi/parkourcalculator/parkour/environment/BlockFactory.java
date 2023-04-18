@@ -10,7 +10,7 @@ public class BlockFactory {
         return switch (type) {
             // not implemented
             // case "Cobweb" -> new Cobweb();
-            // case "Slime" -> new Slime();
+            case "Slime" -> new Slime(vec3);
 
             // flipable
             case "Stair" -> new Stair(vec3);

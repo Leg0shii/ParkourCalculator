@@ -2,13 +2,13 @@ package de.legoshi.parkourcalculator.parkour.simulator;
 
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.BlockLiquid;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.*;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
+import javafx.scene.paint.Material;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -340,7 +340,18 @@ public class MovementEngine {
         player.GROUND = player.isCollidedVertically && yOriginal < 0.0D;
         player.isCollided = player.isCollidedHorizontally || player.isCollidedVertically;
 
-        // update block below player?
+        // update block below player
+        int i = MinecraftMathHelper.floor_double(player.position.x);
+        int j = MinecraftMathHelper.floor_double(player.position.y - 0.20000000298023224D);
+        int k = MinecraftMathHelper.floor_double(player.position.z);
+        ABlock block = Environment.getBlock(i, j, k);
+
+        if (block instanceof Air) {
+            ABlock lowerBlock = Environment.getBlock(i, j-1, k);
+            if (lowerBlock instanceof Fence || lowerBlock instanceof Cobblewall) {
+                block = lowerBlock;
+            }
+        }
 
         if (!player.WATER) {
             handleWaterMovement();
@@ -353,11 +364,11 @@ public class MovementEngine {
         // if movedX != updatedX -> motionX = 0
         if (xOriginal != x) player.velocity.x = 0.0D;
 
-        // if movedY != updatedY -> motionY = 0
-        if (yOriginal != y) player.velocity.y = 0.0D;
-
         // if movedZ != updatedZ -> motionZ = 0
         if (zOriginal != z) player.velocity.z = 0.0D;
+
+        // on block landed
+        if (yOriginal != y) block.onLanded(player);
     }
 
     private void moveFlying(float strafe, float forward, float friction) {
