@@ -82,7 +82,7 @@ public class CSVUtils {
 
             // Write the content
             for (BlockData b : blockDatas) {
-                writer.write(String.format(Locale.US, "%s,%.1f,%.1f,%.1f,%d,%s,%b,%b,%b,%b,%b,%b",
+                writer.write(String.format(Locale.US, "%.1f,%.1f,%.1f,%s,%d,%s,%b,%b,%b,%b,%b,%b",
                         b.blockType, b.pos.x, b.pos.y, b.pos.z, b.tier, b.color.toString(), b.TOP, b.BOTTOM, b.NORTH, b.EAST, b.SOUTH, b.WEST));
                 writer.newLine();
             }

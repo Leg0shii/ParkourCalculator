@@ -90,9 +90,9 @@ public class MovementEngine {
                 if (player.GROUND) mult = mult * block.slipperiness.value;
                 float acceleration = 0.16277136F / (mult * mult * mult);
 
+                // error could be here possibly?
                 float movement;
                 if (player.SPRINT) movement = 0.130000010133F;
-                else if (player.SNEAK) movement = 0.03F;
                 else movement = 0.1F;
 
                 float movementFactor;
@@ -170,7 +170,6 @@ public class MovementEngine {
 
             float movement;
             if (player.SPRINT) movement = 0.130000010133F;
-            else if (player.SNEAK) movement = 0.03F;
             else movement = 0.1F;
 
             if (f3 > 0.0F) {
@@ -220,11 +219,37 @@ public class MovementEngine {
         double yOriginal = y;
         double zOriginal = z;
 
-        // do some things to x, y, z when player sneaks...
+        // do sneak to x, y, z when player sneaks
         boolean GROUND_SNEAK = player.GROUND && player.SNEAK;
         if (GROUND_SNEAK) {
-            // do calculation when player on ground and sneaking
+            double d6 = 0.05D;
 
+            // if player collided with x: go back by 0.05 until no collision...
+            while (x != 0.0D && getCollidingBoundingBoxes(player.playerBB.offset(x, -1.0D, 0.0D)).isEmpty()) {
+                if (x < d6 && x >= -d6) x = 0.0D;
+                else if (x > 0.0D)  x -= d6;
+                else x += d6;
+                xOriginal = x;
+            }
+
+            while (z != 0.0D && getCollidingBoundingBoxes(player.playerBB.offset(0.0D, -1.0D, z)).isEmpty()) {
+                if (z < d6 && z >= -d6) z = 0.0D;
+                else if (z > 0.0D) z -= d6;
+                else z += d6;
+                zOriginal = z;
+            }
+
+            while (x != 0.0D && z != 0.0D && getCollidingBoundingBoxes(player.playerBB.offset(x, -1.0D, z)).isEmpty()) {
+                if (x < d6 && x >= -d6) x = 0.0D;
+                else if (x > 0.0D) x -= d6;
+                else x += d6;
+                xOriginal = x;
+
+                if (z < d6 && z >= -d6) z = 0.0D;
+                else if (z > 0.0D) z -= d6;
+                else z += d6;
+                zOriginal = z;
+            }
         }
 
         // get all colliding BB from extending current position BB by x, y, z
@@ -378,7 +403,11 @@ public class MovementEngine {
         if (yOriginal != y) block.onLanded(player);
 
         // do block collisions
-        this.doBlockCollisions();
+        /*if (!GROUND_SNEAK && player.GROUND) {
+            block.onEntityCollidedWithBlock(player);
+        }*/
+
+        doBlockCollisions();
     }
 
     private void moveFlying(float strafe, float forward, float friction) {
@@ -428,7 +457,7 @@ public class MovementEngine {
     }
 
     public List<BlockLiquid> getCollidingBoundingBoxes(AxisAlignedBB bb, String type) {
-        List<ABlock> placedBlocks = Environment.aBlocks;
+        List<ABlock> placedBlocks = getCollidingBoundingBoxes(bb);
         List<BlockLiquid> list = new ArrayList<>();
 
         for (ABlock aBlock : placedBlocks) {
@@ -440,6 +469,19 @@ public class MovementEngine {
             }
         }
 
+        return list;
+    }
+
+    public List<ABlock> getCollidingBoundingBoxes(AxisAlignedBB bb) {
+        List<ABlock> placedBlocks = Environment.aBlocks;
+        List<ABlock> list = new ArrayList<>();
+        for (ABlock aBlock : placedBlocks) {
+            for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
+                if (bb.intersectsWith(axisVecTuple.getBb())) {
+                    list.add(aBlock);
+                }
+            }
+        }
         return list;
     }
 

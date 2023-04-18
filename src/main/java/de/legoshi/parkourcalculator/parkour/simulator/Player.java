@@ -57,6 +57,10 @@ public class Player {
     }
 
     protected void updateTick(InputTick inputTick) {
+        boolean flag = inputTick.JUMP;
+        boolean isSNEAK = inputTick.SNEAK;
+        boolean flag2 = moveForward >= 0.8F;
+
         moveStrafe = 0F;
         moveForward = 0F;
 
@@ -65,12 +69,27 @@ public class Player {
         if (inputTick.A) moveStrafe++;
         if (inputTick.D) moveStrafe--;
 
+        JUMP = inputTick.JUMP;
+        SNEAK = inputTick.SNEAK;
+
         if (SNEAK) {
             moveStrafe = (float) ((double) moveStrafe * 0.3D);
             moveForward = (float) ((double) moveForward * 0.3D);
         }
 
-        if (moveForward < 0.8F) this.SPRINT = false;
+        if (GROUND && !isSNEAK && !flag2 && moveForward >= 0.8F && !SPRINT) {
+            if (inputTick.SPRINT) {
+                SPRINT = true;
+            }
+        }
+
+        if (!SPRINT && moveForward >= 0.8F && inputTick.SPRINT) {
+            SPRINT = true;
+        }
+
+        if (SPRINT && (moveForward < 0.8F || this.isCollidedHorizontally)) {
+            SPRINT = false;
+        }
     }
 
     protected void resetPlayer() {
@@ -96,9 +115,7 @@ public class Player {
     protected void applyInput(InputTick inputTick) {
         updateTick(inputTick);
         YAW = YAW + inputTick.YAW;
-        JUMP = inputTick.JUMP; //&& GROUND;
         SPRINT = inputTick.SPRINT || SPRINT;
-        SNEAK = inputTick.SNEAK;
     }
 
     protected void updatePlayerBB() {
