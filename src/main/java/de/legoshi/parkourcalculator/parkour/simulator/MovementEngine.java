@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.simulator;
 
+import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.BlockLiquid;
@@ -81,8 +82,14 @@ public class MovementEngine {
                     player.SPRINT = false;
                 }
 
-                float mult = 0.91F;
-                if (player.GROUND) mult = mult * player.slipperiness.value;
+                ABlock block = Environment.getBlock(
+                        MinecraftMathHelper.floor_double(player.position.x),
+                        MinecraftMathHelper.floor_double(player.position.y-1),
+                        MinecraftMathHelper.floor_double(player.position.z)
+                );
+
+                float mult =  0.91F;
+                if (player.GROUND) mult = mult * block.slipperiness.value;
                 float acceleration = 0.16277136F / (mult * mult * mult);
 
                 float movement;
@@ -95,6 +102,17 @@ public class MovementEngine {
                 else movementFactor = player.jumpMovementFactor;
 
                 moveFlying(player.moveStrafe, player.moveForward, movementFactor);
+                mult = 0.91F;
+
+                block = Environment.getBlock(
+                        MinecraftMathHelper.floor_double(player.position.x),
+                        MinecraftMathHelper.floor_double(player.position.y-1),
+                        MinecraftMathHelper.floor_double(player.position.z)
+                );
+
+                if (player.GROUND) {
+                    mult = block.slipperiness.value * 0.91F;
+                }
 
                 // calculate ladder
                 if (player.isOnLadder()) {
