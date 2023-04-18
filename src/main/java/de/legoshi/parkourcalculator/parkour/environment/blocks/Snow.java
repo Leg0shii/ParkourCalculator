@@ -43,7 +43,6 @@ public class Snow extends ABlock implements TierBlock {
             case 4 -> this.height = 0.625;
             case 5 -> this.height = 0.75;
             case 6 -> this.height = 0.875;
-            case 7 -> this.height = 1.0;
         }
     }
 

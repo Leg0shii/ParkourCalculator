@@ -30,7 +30,7 @@ public class Vine extends FacingBlock {
     }
 
     @Override
-    protected void calcEast() {
+    protected void calcWest() {
         Vec3 lowerEdge = new Vec3(0.9375, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0.5-0.0625/2, 0, 0);
@@ -46,7 +46,7 @@ public class Vine extends FacingBlock {
     }
 
     @Override
-    protected void calcWest() {
+    protected void calcEast() {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(0.0625, 1, 1);
         Vec3 shift = new Vec3(0.5-0.0625/2, 0, 0);

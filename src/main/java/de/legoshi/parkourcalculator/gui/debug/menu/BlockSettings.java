@@ -98,7 +98,7 @@ public class BlockSettings extends TitledPane {
     }
 
     public static int getTier() {
-        return tiersSelector.getValue()-1;
+        return tiersSelector.getValue();
     }
 
     public static Color getColor() {

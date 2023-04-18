@@ -72,15 +72,15 @@ public class PistonHead extends FacingBlock {
     }
 
     @Override
-    protected void calcEast() {
+    protected void calcWest() {
         Vec3 lowerEdge = new Vec3(0.75, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0.375, 0, 0);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
 
-        Vec3 lowerEdgeRod = new Vec3(0, 0.375, 0.25);
-        Vec3 upperEdgeRod = new Vec3(1, 0.625, 0.75);
-        Vec3 shiftRod = new Vec3(0, 0.375, 0.25);
+        Vec3 lowerEdgeRod = new Vec3(0.375, 0.375, 0.25);
+        Vec3 upperEdgeRod = new Vec3(1, 0.625, 1);
+        Vec3 shiftRod = new Vec3(0.375/2, 0.375, 0.25/2);
         this.axisVecTuples.add(constructBlock(lowerEdgeRod, upperEdgeRod, shiftRod));
     }
 
@@ -98,15 +98,15 @@ public class PistonHead extends FacingBlock {
     }
 
     @Override
-    protected void calcWest() {
+    protected void calcEast() {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(0.25, 1, 1);
         Vec3 shift = new Vec3(0.375, 0, 0);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
 
         Vec3 lowerEdgeRod = new Vec3(0, 0.375, 0.25);
-        Vec3 upperEdgeRod = new Vec3(0.625, 0.625, 0.75);
-        Vec3 shiftRod = new Vec3(0.375/2, 0.375, 0.25);
+        Vec3 upperEdgeRod = new Vec3(1, 0.625, 0.75);
+        Vec3 shiftRod = new Vec3(0, 0.375, 0.25);
         this.axisVecTuples.add(constructBlock(lowerEdgeRod, upperEdgeRod, shiftRod));
     }
 }

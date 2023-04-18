@@ -22,7 +22,7 @@ public class Ladder extends FacingBlock {
     }
 
     @Override
-    protected void calcNorth() {
+    protected void calcSouth() {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 0.125);
         Vec3 shift = new Vec3(0, 0, 0.4375);
@@ -38,7 +38,7 @@ public class Ladder extends FacingBlock {
     }
 
     @Override
-    protected void calcSouth() {
+    protected void calcNorth() {
         Vec3 lowerEdge = new Vec3(0, 0, 0.875);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0, 0.4375);

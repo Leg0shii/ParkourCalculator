@@ -19,10 +19,11 @@ public class Cake extends ABlock implements TierBlock {
     @Override
     void updateBoundingBox() {
         this.tier = BlockSettings.getTier();
+        System.out.println(this.tier);
         prepareBlock(this.tier);
 
-        Vec3 lowerEdge = new Vec3(0.0625+this.widthReduce, 0, 0.0625);
-        Vec3 upperEdge = new Vec3(0.9375, 0.5, 0.9375);
+        Vec3 lowerEdge = new Vec3(0.0625, 0, 0.0625);
+        Vec3 upperEdge = new Vec3(0.9375-this.widthReduce, 0.5, 0.9375);
         Vec3 shift = new Vec3(0.0625+this.widthReduce/2, 0.25, 0.0625);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
@@ -48,7 +49,7 @@ public class Cake extends ABlock implements TierBlock {
     @Override
     public BlockData toBlockData() {
         BlockData blockData = super.toBlockData();
-        blockData.tier = this.tier;
+        blockData.tier = this.tier-1;
         return blockData;
     }
 

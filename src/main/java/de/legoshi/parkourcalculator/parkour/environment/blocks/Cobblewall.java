@@ -58,7 +58,7 @@ public class Cobblewall extends FacingBlock {
     }
 
     @Override
-    protected void calcEast() {
+    protected void calcWest() {
         Vec3 lowerEdge = new Vec3(0.5, 0, 0.25);
         Vec3 upperEdge = new Vec3(1, 1.5, 0.75);
         Vec3 shift = new Vec3(0.25, -0.25, 0.25);
@@ -74,35 +74,35 @@ public class Cobblewall extends FacingBlock {
     }
 
     @Override
-    protected void calcWest() {
+    protected void calcEast() {
         Vec3 lowerEdge = new Vec3(0, 0, 0.25);
         Vec3 upperEdge = new Vec3(0.5, 1.5, 0.75);
         Vec3 shift = new Vec3(0.25, -0.25, 0.25);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
-    protected void calcNorthEastCorner() {
+    protected void calcNorthWestCorner() {
         Vec3 lowerEdge = new Vec3(0.25, 0, 0.0);
         Vec3 upperEdge = new Vec3(1, 1.5, 0.75);
         Vec3 shift = new Vec3(0.25 / 2, -0.25, 0.25 / 2);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
-    protected void calcNorthWestCorner() {
+    protected void calcNorthEastCorner() {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(0.75, 1.5, 0.75);
         Vec3 shift = new Vec3(0.25 / 2, -0.25, 0.25 / 2);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
-    protected void calcSouthEastCorner() {
+    protected void calcSouthWestCorner() {
         Vec3 lowerEdge = new Vec3(0.25, 0, 0.25);
         Vec3 upperEdge = new Vec3(1, 1.5, 1);
         Vec3 shift = new Vec3(0.25 / 2, -0.25, 0.25 / 2);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
-    protected void calcSouthWestCorner() {
+    protected void calcSouthEastCorner() {
         Vec3 lowerEdge = new Vec3(0, 0, 0.25);
         Vec3 upperEdge = new Vec3(0.75, 1.5, 1);
         Vec3 shift = new Vec3(0.25 / 2, -0.25, 0.25 / 2);

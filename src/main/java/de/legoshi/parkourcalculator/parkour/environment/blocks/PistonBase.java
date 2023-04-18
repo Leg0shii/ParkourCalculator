@@ -48,7 +48,7 @@ public class PistonBase extends FacingBlock {
     }
 
     @Override
-    protected void calcNorth() {
+    protected void calcSouth() {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 0.75);
         Vec3 shift = new Vec3(0, 0, 0.125);
@@ -64,7 +64,7 @@ public class PistonBase extends FacingBlock {
     }
 
     @Override
-    protected void calcSouth() {
+    protected void calcNorth() {
         Vec3 lowerEdge = new Vec3(0, 0, 0.25);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0, 0.125);
