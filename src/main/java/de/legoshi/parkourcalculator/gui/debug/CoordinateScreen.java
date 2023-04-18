@@ -73,7 +73,7 @@ public class CoordinateScreen extends VBox implements Observer {
     private void updateLabels() {
         this.generalLabelInfo.setFont(boldFont);
         this.tickLabelInfo.setFont(boldFont);
-        this.facing.setText("F: " + setDecimals(this.player.getYAW()));
+        this.facing.setText("F: " + setDecimals(-this.player.getYAW())); // flips facing on x-axis
         this.xPos.setText("X-Pos: " + setDecimals(this.player.getPosition().x));
         this.yPos.setText("Y-Pos: " + setDecimals(this.player.getPosition().y));
         this.zPos.setText("Z-Pos: " + setDecimals(this.player.getPosition().z));
@@ -95,7 +95,7 @@ public class CoordinateScreen extends VBox implements Observer {
         }
         PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(tickPos);
         this.tickLabelInfo.setText(tickPos + ". Tick Information");
-        this.tickFacing.setText("F-Tick: " + setDecimals(ptiC.getFacing()));
+        this.tickFacing.setText("F-Tick: " + setDecimals(-ptiC.getFacing())); // flips facing on x-axis
         this.xTickPos.setText("X-Tick: " + setDecimals(ptiC.getPosition().x));
         this.yTickPos.setText("Y-Tick: " + setDecimals(ptiC.getPosition().y));
         this.zTickPos.setText("Z-Tick: " + setDecimals(ptiC.getPosition().z));

@@ -114,7 +114,7 @@ public class Player {
 
     protected void applyInput(InputTick inputTick) {
         updateTick(inputTick);
-        YAW = YAW + inputTick.YAW;
+        YAW = YAW + (-1) * inputTick.YAW; // flips facing on x-axis
         SPRINT = inputTick.SPRINT || SPRINT;
     }
 
