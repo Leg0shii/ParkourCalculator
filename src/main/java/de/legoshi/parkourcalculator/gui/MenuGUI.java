@@ -63,16 +63,13 @@ public class MenuGUI extends MenuBar {
             List<InputData> inputDatas = FileHandler.loadInputs(window);
             if (inputDatas == null || inputDatas.size() == 0) return;
 
-            // clear all current ticks
-            inputTickGUI.getHBoxes().clear();
-
             // add all ticks to the side
             List<InputTick> inputTicks = new ArrayList<>();
             for (InputData inputData : inputDatas) inputTicks.add(inputData.getInputTick());
             inputTickGUI.importTicks(inputTicks);
 
             // update player path
-            positionVisualizer.generatePlayerPath();
+            positionVisualizer.update(null, null);
         });
     }
 

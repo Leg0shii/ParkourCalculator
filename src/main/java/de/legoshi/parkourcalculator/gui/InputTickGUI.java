@@ -55,7 +55,8 @@ public class InputTickGUI extends ScrollPane {
     }
 
     private void clearAllTicks() {
-        vBox.getChildren().clear();
+        this.getHBoxes().clear();
+        this.vBox.getChildren().clear();
         this.inputTicks.getInputTicks().clear();
     }
 
