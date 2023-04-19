@@ -12,11 +12,13 @@ import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import javafx.beans.binding.NumberBinding;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application {
@@ -86,6 +88,15 @@ public class Application extends javafx.application.Application {
         stage.setTitle("Parkour Simulator!");
         stage.setScene(scene);
         stage.show();
+
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        if (screenBounds.getHeight() - 100 < stage.getHeight()
+                || screenBounds.getWidth() - 100 < stage.getWidth()) {
+            stage.setX(20);
+            stage.setY(20);
+            stage.setWidth(screenBounds.getWidth() - 150);
+            stage.setHeight(screenBounds.getHeight() - 150);
+        }
     }
 
     public static void main(String[] args) {
