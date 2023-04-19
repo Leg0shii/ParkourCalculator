@@ -69,7 +69,7 @@ public class MenuGUI extends MenuBar {
             // add all ticks to the side
             List<InputTick> inputTicks = new ArrayList<>();
             for (InputData inputData : inputDatas) inputTicks.add(inputData.getInputTick());
-            inputTickGUI.addAllTicks(inputTicks);
+            inputTickGUI.importTicks(inputTicks);
 
             // update player path
             positionVisualizer.generatePlayerPath();
