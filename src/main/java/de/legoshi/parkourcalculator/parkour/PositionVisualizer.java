@@ -38,7 +38,7 @@ public class PositionVisualizer implements Observer {
         this.group = group;
 
         box = new Box(400, 1, 400);
-        box.setTranslateY(-movementEngine.player.getStartPos().y/2);
+        box.setTranslateY(MinecraftGUI.BLOCK_OFFSET_Y - movementEngine.player.getStartPos().y);
         box.setOpacity(0);
         box.setMouseTransparent(true);
         group.getChildren().add(box);
@@ -112,12 +112,13 @@ public class PositionVisualizer implements Observer {
         Point3D coords = event.getPickResult().getIntersectedPoint();
         Vec3 pOffset = movementEngine.player.getStartPos().copy();
 
-        DecimalFormat df = new DecimalFormat("#.###");
+        DecimalFormat df = new DecimalFormat("#.########");
         double yCoordinate = Double.parseDouble(df.format(coords.getY()).replace(",", "."));
         double zCoordinate = Double.parseDouble(df.format(coords.getZ()).replace(",", "."));
+        double decimalNumber = Math.round(movementEngine.player.getStartPos().y * 10000000.0) / 10000000.0;
 
         if (zCoordinate == 0) return;
-        if (yCoordinate != -0.5) return;
+        if (yCoordinate != -decimalNumber/2 && yCoordinate != -0.5) return;
 
         Node node = event.getPickResult().getIntersectedNode();
         if (!node.equals(this.box)) {

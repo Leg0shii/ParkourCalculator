@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Sphere;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -155,6 +156,11 @@ public class MinecraftGUI extends Observable {
             subScene.requestFocus();
             e.consume();
         });
+    }
+
+    public void clearScreen() {
+        group.getChildren().removeIf(node -> !(node instanceof Group)); // remove all blocks, keep path group
+        Environment.aBlocks = new ArrayList<>();
     }
 
     public void addObserver(Observer observer) {

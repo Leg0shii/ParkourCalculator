@@ -104,25 +104,18 @@ public class MenuGUI extends MenuBar {
 
     private void registerOpenBlockMenu(MenuItem menuItem) {
         menuItem.setOnAction(event -> {
-            /*List<ABlock> aBlocks = Environment.aBlocks;
-            for (ABlock aBlock : aBlocks) minecraftGUI.removeBlock(aBlock);*/
-
             List<List<BlockData>> blockDataList = FileHandler.loadBlocks(window);
             if (blockDataList == null || blockDataList.size() == 0) return;
+
+            minecraftGUI.clearScreen();
 
             // load solid blocks first
             BlockSettings.enableCustomColors();
             for (List<BlockData> blockDatas : blockDataList) {
                 for (BlockData blockData : blockDatas) {
-                    BlockSettings.setFlip(blockData.TOP);
-                    BlockSettings.setFloor(blockData.BOTTOM);
-                    BlockSettings.setNorth(blockData.NORTH);
-                    BlockSettings.setEast(blockData.EAST);
-                    BlockSettings.setWest(blockData.WEST);
-                    BlockSettings.setSouth(blockData.SOUTH);
-                    BlockSettings.setTier(blockData.tier);
-                    BlockSettings.setColor(blockData.color);
-                    minecraftGUI.addBlock(BlockFactory.createBlock(blockData.pos, blockData.blockType));
+                    BlockFactory.applyValues(blockData);
+                    ABlock aBlock = BlockFactory.createBlock(blockData.pos, blockData.blockType);
+                    minecraftGUI.addBlock(aBlock);
                 }
             }
             BlockSettings.disableCustomColors();
