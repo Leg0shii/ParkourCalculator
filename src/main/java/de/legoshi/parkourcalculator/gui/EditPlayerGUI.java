@@ -21,28 +21,9 @@ public class EditPlayerGUI extends GridPane {
     private PositionVisualizer positionVisualizer;
     private InputTickGUI inputTickGUI;
 
-    private Label xLabel = new Label("xPos: ");
-    private TextField xTextField = new TextField();
     private Button xButton = new Button("Opt. X Jump");
-
-    private Label yLabel = new Label("yPos: ");
-    private TextField yTextField = new TextField();
     private Button yButton = new Button("Opt. Y Jump");
-
-    private Label zLabel = new Label("zPos: ");
-    private TextField zTextField = new TextField();
     private Button zButton = new Button("Opt. Z Jump");
-
-    private Label xVelLabel = new Label("xVel: ");
-    private TextField xVelTextField = new TextField();
-
-    private Label yVelLabel = new Label("yVel: ");
-    private TextField yVelTextField = new TextField();
-
-    private Label zVelLabel = new Label("zVel: ");
-    private TextField zVelTextField = new TextField();
-
-    private Button button = new Button("Get Pos");
 
     private Separator separator = new Separator();
 
@@ -79,29 +60,6 @@ public class EditPlayerGUI extends GridPane {
 
 
     public EditPlayerGUI(MovementEngine movementEngine, PositionVisualizer positionVisualizer, InputTickGUI inputTickGUI) {
-        this.movementEngine = movementEngine;
-        this.positionVisualizer = positionVisualizer;
-        this.inputTickGUI = inputTickGUI;
-
-        this.add(xLabel, 0, 0);
-        this.add(xTextField, 1, 0);
-        this.add(xButton, 2, 0);
-        this.add(yLabel, 0, 1);
-        this.add(yTextField, 1, 1);
-        this.add(yButton, 2, 1);
-        this.add(zLabel, 0, 2);
-        this.add(zTextField, 1, 2);
-        this.add(zButton, 2, 2);
-        this.add(xVelLabel, 0, 3);
-        this.add(xVelTextField, 1, 3);
-        this.add(yVelLabel, 0, 4);
-        this.add(yVelTextField, 1, 4);
-        this.add(zVelLabel, 0, 5);
-        this.add(zVelTextField, 1, 5);
-        this.add(button, 0, 6);
-
-        registerTextFieldChanges();
-        button.setOnMouseClicked(mouseEvent -> updateLabels());
 
         this.xButton.setDisable(true);
         this.yButton.setDisable(true);
@@ -233,74 +191,6 @@ public class EditPlayerGUI extends GridPane {
             positionVisualizer.generatePlayerPath();
         });
         this.yButton.setDisable(true);
-    }
-
-    private void registerTextFieldChanges() {
-        this.xTextField.setOnKeyTyped(keyEvent -> {
-            double value = Double.parseDouble(xTextField.getText());
-            Vec3 oldPos = movementEngine.player.getStartPos().copy();
-            Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
-            movementEngine.player.setStartPos(newPos);
-            positionVisualizer.generatePlayerPath();
-        });
-        this.yTextField.setOnKeyTyped(keyEvent -> {
-            double value = Double.parseDouble(yTextField.getText());
-            Vec3 oldPos = movementEngine.player.getStartPos().copy();
-            Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
-            movementEngine.player.setStartPos(newPos);
-            positionVisualizer.generatePlayerPath();
-        });
-        this.zTextField.setOnKeyTyped(keyEvent -> {
-            double value = Double.parseDouble(zTextField.getText());
-            Vec3 oldPos = movementEngine.player.getStartPos().copy();
-            Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
-            movementEngine.player.setStartPos(newPos);
-            positionVisualizer.generatePlayerPath();
-        });
-        this.xVelTextField.setOnKeyTyped(keyEvent -> {
-            double value = Double.parseDouble(xVelTextField.getText());
-            Vec3 oldPos = movementEngine.player.getStartVel().copy();
-            Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
-            movementEngine.player.setStartVel(newPos);
-            positionVisualizer.generatePlayerPath();
-        });
-        this.yVelTextField.setOnKeyTyped(keyEvent -> {
-            double value = Double.parseDouble(yVelTextField.getText());
-            Vec3 oldPos = movementEngine.player.getStartVel().copy();
-            Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
-            movementEngine.player.setStartVel(newPos);
-            positionVisualizer.generatePlayerPath();
-        });
-        this.zVelTextField.setOnKeyTyped(keyEvent -> {
-            double value = Double.parseDouble(zVelTextField.getText());
-            Vec3 oldPos = movementEngine.player.getStartVel().copy();
-            Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
-            movementEngine.player.setStartVel(newPos);
-            positionVisualizer.generatePlayerPath();
-        });
-    }
-
-    public void show() {
-        if (stage == null) {
-            this.stage = new Stage();
-            stage.setTitle("Player Settings");
-            stage.setScene(new Scene(this, 450, 450));
-            stage.show();
-            return;
-        }
-        stage.show();
-        this.separator.prefWidthProperty().bind(this.stage.widthProperty());
-    }
-
-    private void updateLabels() {
-        PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(0);
-        this.xTextField.setText(ptiC.getPosition().x + "");
-        this.yTextField.setText(ptiC.getPosition().y + "");
-        this.zTextField.setText(ptiC.getPosition().z + "");
-
-        this.xVelTextField.setText(ptiC.getVelocity().x + "");
-        this.yVelTextField.setText(ptiC.getVelocity().y + "");
-        this.zVelTextField.setText(ptiC.getVelocity().z + "");
     }
 
 }
