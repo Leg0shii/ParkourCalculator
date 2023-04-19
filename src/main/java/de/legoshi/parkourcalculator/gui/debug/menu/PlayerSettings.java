@@ -130,42 +130,42 @@ public class PlayerSettings extends TitledPane {
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
             movementEngine.player.setStartPos(newPos);
-            positionVisualizer.generatePlayerPath();
+            positionVisualizer.update(null, null);
         });
         this.yPosField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(yPosField.getText());
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
             movementEngine.player.setStartPos(newPos);
-            positionVisualizer.generatePlayerPath();
+            positionVisualizer.update(null, null);
         });
         this.zPosField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(zPosField.getText());
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
             movementEngine.player.setStartPos(newPos);
-            positionVisualizer.generatePlayerPath();
+            positionVisualizer.update(null, null);
         });
         this.xVelField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(xVelField.getText());
             Vec3 oldPos = movementEngine.player.getStartVel().copy();
             Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
             movementEngine.player.setStartVel(newPos);
-            positionVisualizer.generatePlayerPath();
+            positionVisualizer.update(null, null);
         });
         this.yVelField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(yVelField.getText());
             Vec3 oldPos = movementEngine.player.getStartVel().copy();
             Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
             movementEngine.player.setStartVel(newPos);
-            positionVisualizer.generatePlayerPath();
+            positionVisualizer.update(null, null);
         });
         this.zVelField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(zVelField.getText());
             Vec3 oldPos = movementEngine.player.getStartVel().copy();
             Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
             movementEngine.player.setStartVel(newPos);
-            positionVisualizer.generatePlayerPath();
+            positionVisualizer.update(null, null);
         });
     }
 

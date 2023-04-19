@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour;
 
+import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
@@ -16,6 +17,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import lombok.Getter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
@@ -35,9 +37,8 @@ public class PositionVisualizer implements Observer {
         this.movementEngine = movementEngine;
         this.group = group;
 
-        this.box = new Box(400, 1, 400);
-        // box.translateYProperty().bind(movementEngine.player.); // setTranslateY(-0.5);
-        box.setTranslateY(-0.5);
+        box = new Box(400, 1, 400);
+        box.setTranslateY(-movementEngine.player.getStartPos().y/2);
         box.setOpacity(0);
         box.setMouseTransparent(true);
         group.getChildren().add(box);
@@ -111,8 +112,12 @@ public class PositionVisualizer implements Observer {
         Point3D coords = event.getPickResult().getIntersectedPoint();
         Vec3 pOffset = movementEngine.player.getStartPos().copy();
 
-        if (coords.getZ() == 0) return;
-        if (coords.getY() != (-1)*(pOffset.y - 0.5)) return;
+        DecimalFormat df = new DecimalFormat("#.###");
+        double yCoordinate = Double.parseDouble(df.format(coords.getY()).replace(",", "."));
+        double zCoordinate = Double.parseDouble(df.format(coords.getZ()).replace(",", "."));
+
+        if (zCoordinate == 0) return;
+        if (yCoordinate != -0.5) return;
 
         Node node = event.getPickResult().getIntersectedNode();
         if (!node.equals(this.box)) {
@@ -155,6 +160,7 @@ public class PositionVisualizer implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        box.setTranslateY(MinecraftGUI.BLOCK_OFFSET_Y - movementEngine.player.getStartPos().y);
         generatePlayerPath();
     }
 
