@@ -3,10 +3,7 @@ package de.legoshi.parkourcalculator.parkour.environment.blocks;
 import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
-import de.legoshi.parkourcalculator.util.AxisAlignedBB;
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
-import de.legoshi.parkourcalculator.util.Movement;
-import de.legoshi.parkourcalculator.util.Vec3;
+import de.legoshi.parkourcalculator.util.*;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
@@ -35,13 +32,17 @@ public abstract class ABlock {
         this.vec3.x = -this.vec3.x; // flipping the x axis
         this.axisVecTuples = new ArrayList<>();
         this.boxesArrayList = new ArrayList<>();
-        this.color = BlockSettings.getColor();
+        updateColor();
         updateBoundingBox();
         updateBoxes();
         updateSlipperiness();
     }
 
     abstract void updateBoundingBox();
+
+    public void updateColor() {
+        setColor(BlockColors.STONE.get());
+    }
 
     public void updateSlipperiness() {
         this.slipperiness = Movement.Slipperiness.BLOCK;
@@ -50,7 +51,7 @@ public abstract class ABlock {
 
     private void updateBoxes() {
         for (AxisVecTuple axisVecTuple : this.axisVecTuples) {
-            this.boxesArrayList.add(axisVecTuple.getBox());
+            this.boxesArrayList.add(axisVecTuple.getBox(this));
         }
     }
 
@@ -81,7 +82,6 @@ public abstract class ABlock {
     }
 
     public void setColor(Color color) {
-        // BlockSettings.setColor(color);
         this.color = color;
     }
 

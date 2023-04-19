@@ -1,8 +1,10 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
+import javafx.scene.paint.Color;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -31,6 +33,11 @@ public class Anvil extends FacingBlock {
         if (BlockSettings.isNorth() || BlockSettings.isSouth()) calcNorth();
         else if (BlockSettings.isEast() || BlockSettings.isWest()) calcEast();
         else calcNorth();
+    }
+
+    @Override
+    public void updateColor() {
+        setColor(BlockColors.DARK_IRON.get());
     }
 
     @Override

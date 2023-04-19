@@ -11,11 +11,17 @@ public class StandardBlock extends ABlock {
     }
 
     @Override
+    public void updateColor() {
+        setColor(BlockColors.STONE.get());
+    }
+
+    @Override
     void updateBoundingBox() {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0, 0);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
+        setColor(BlockColors.STONE.get());
     }
 
     @Override

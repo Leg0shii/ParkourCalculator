@@ -17,6 +17,7 @@ import javafx.scene.shape.Box;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -30,11 +31,15 @@ public class MinecraftGUI extends Observable {
     private final SubScene subScene;
     private final Group group;
 
+    public final Comparator<Node> depthComparator;
+
 
     private final ArrayList<Observer> observers = new ArrayList<>();
 
     public MinecraftGUI(Application application, Group group) {
         this.group = group;
+        this.group.setDepthTest(DepthTest.ENABLE);
+
         this.subScene = application.minecraftSubScene;
         this.window = application.window;
 
@@ -49,6 +54,12 @@ public class MinecraftGUI extends Observable {
 
         addStartingBlock();
         registerCamera();
+
+        this.depthComparator = (node1, node2) -> {
+            double z1 = node1.localToSceneTransformProperty().get().getTz();
+            double z2 = node2.localToSceneTransformProperty().get().getTz();
+            return Double.compare(z2, z1);
+        };
     }
 
     public void addStartingBlock() {

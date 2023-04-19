@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,11 @@ public class Cactus extends ABlock {
 
     public Cactus(Vec3 vec3) {
         super(vec3);
+    }
+
+    @Override
+    public void updateColor() {
+        setColor(BlockColors.CACTUS.get());
     }
 
     @Override

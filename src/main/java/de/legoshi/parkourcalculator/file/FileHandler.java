@@ -41,7 +41,7 @@ public class FileHandler {
         }
     }
 
-    public static List<BlockData> loadBlocks(Window window) {
+    public static List<List<BlockData>> loadBlocks(Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Inputs");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.bcsv)", "*.bcsv"));

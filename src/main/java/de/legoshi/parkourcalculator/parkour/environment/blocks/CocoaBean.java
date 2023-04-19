@@ -2,6 +2,7 @@ package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
 import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,11 @@ public class CocoaBean extends FacingBlock implements TierBlock {
 
     public CocoaBean(Vec3 vec3) {
         super(vec3);
+    }
+
+    @Override
+    public void updateColor() {
+        setColor(BlockColors.COCOA_BEAN.get());
     }
 
     @Override

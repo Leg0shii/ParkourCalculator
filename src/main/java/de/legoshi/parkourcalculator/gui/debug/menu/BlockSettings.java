@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
+import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -16,6 +17,7 @@ public class BlockSettings extends TitledPane {
     private final Label eastLabel = new Label("East: ");
     private final Label southLabel = new Label("South: ");
     private final Label westLabel = new Label("West: ");
+    private final Label cCLabel = new Label("Enable: ");
 
     private static final CheckBox checkBoxFloor = new CheckBox();
     private static final CheckBox checkBoxCeiling = new CheckBox();
@@ -26,6 +28,7 @@ public class BlockSettings extends TitledPane {
 
     private static final ComboBox<Integer> tiersSelector = new ComboBox<>();
     private static final ColorPicker colorSelector = new ColorPicker(Color.LIGHTGRAY);
+    private static final CheckBox customColorCB = new CheckBox();
 
     public BlockSettings() {
         Text titleText = new Text("Block Settings");
@@ -47,6 +50,13 @@ public class BlockSettings extends TitledPane {
 
         gridPane.add(new Label("Color:"), 0, 3, 5, 1);
         gridPane.add(colorSelector, 1, 3, 5, 1);
+        colorSelector.setDisable(true);
+
+        gridPane.add(cCLabel, 5, 3);
+        gridPane.add(customColorCB, 6, 3);
+        cCLabel.setPadding(new Insets(0, 0, 0, 10));
+        customColorCB.setPadding(new Insets(10, 10, 10, 0));
+        customColorCB.setOnAction((event) -> colorSelector.setDisable(!customColorCB.isSelected()));
 
         // Add the GridPane to a VBox
         VBox vBox = new VBox(gridPane);
@@ -73,6 +83,16 @@ public class BlockSettings extends TitledPane {
         gridPane.add(checkBoxWest, 5, 1);
     }
 
+    public static void enableCustomColors() {
+        customColorCB.setSelected(true);
+        colorSelector.setDisable(false);
+    }
+
+    public static void disableCustomColors() {
+        customColorCB.setSelected(false);
+        colorSelector.setDisable(true);
+    }
+
     public static boolean isNorth() {
         return checkBoxNorth.isSelected();
     }
@@ -97,12 +117,11 @@ public class BlockSettings extends TitledPane {
         return checkBoxCeiling.isSelected();
     }
 
-    public static int getTier() {
-        return tiersSelector.getValue();
-    }
+    public static int getTier() { return tiersSelector.getValue(); }
 
-    public static Color getColor() {
-        return colorSelector.getValue();
+    public static Color getColor(ABlock block) {
+        if (customColorCB.isSelected()) return colorSelector.getValue();
+        else return block.getColor();
     }
 
     public static void setNorth(boolean b) {

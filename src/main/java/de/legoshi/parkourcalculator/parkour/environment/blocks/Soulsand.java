@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -11,6 +12,11 @@ public class Soulsand extends ABlock {
 
     public Soulsand(Vec3 vec3) {
         super(vec3);
+    }
+
+    @Override
+    public void updateColor() {
+        setColor(BlockColors.SOUL_SAND.get());
     }
 
     @Override

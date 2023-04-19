@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -10,6 +11,11 @@ public class Ice extends ABlock {
 
     public Ice(Vec3 vec3) {
         super(vec3);
+    }
+
+    @Override
+    public void updateColor() {
+        setColor(BlockColors.ICE.get());
     }
 
     @Override

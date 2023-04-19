@@ -2,6 +2,7 @@ package de.legoshi.parkourcalculator.file;
 
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.paint.Color;
 
@@ -91,14 +92,13 @@ public class CSVUtils {
         }
     }
 
-    public static List<BlockData> loadBlocksFromCSV(String filePath) {
-        List<BlockData> blockDatas = new ArrayList<>();
+    public static List<List<BlockData>> loadBlocksFromCSV(String filePath) {
+        List<List<BlockData>> lists = new ArrayList<>();
+        List<BlockData> solidBlocks = new ArrayList<>();
+        List<BlockData> transparentBlocks = new ArrayList<>();
 
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
-            // Skip the header
             reader.readLine();
-
-            // Read the content
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] tokens = line.split(",");
@@ -110,7 +110,7 @@ public class CSVUtils {
                                 Double.parseDouble(tokens[2])
                         ),
                         Integer.parseInt(tokens[4]),
-                        Color.web(tokens[5]),
+                        BlockColors.parse(tokens[5]),
                         Boolean.parseBoolean(tokens[6]),
                         Boolean.parseBoolean(tokens[7]),
                         Boolean.parseBoolean(tokens[8]),
@@ -118,14 +118,17 @@ public class CSVUtils {
                         Boolean.parseBoolean(tokens[10]),
                         Boolean.parseBoolean(tokens[11])
                 );
-                System.out.println(tokens[4]);
-                blockDatas.add(blockData);
+                if (blockData.color.getOpacity() == 1.0) solidBlocks.add(blockData);
+                else transparentBlocks.add(blockData);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return blockDatas;
+        lists.add(solidBlocks);
+        lists.add(transparentBlocks);
+
+        return lists;
     }
 
 }

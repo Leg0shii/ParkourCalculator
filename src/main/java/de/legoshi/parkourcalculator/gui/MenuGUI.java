@@ -11,6 +11,7 @@ import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -106,24 +107,25 @@ public class MenuGUI extends MenuBar {
             /*List<ABlock> aBlocks = Environment.aBlocks;
             for (ABlock aBlock : aBlocks) minecraftGUI.removeBlock(aBlock);*/
 
-            List<BlockData> blockDataList = FileHandler.loadBlocks(window);
+            List<List<BlockData>> blockDataList = FileHandler.loadBlocks(window);
             if (blockDataList == null || blockDataList.size() == 0) return;
 
-            for (BlockData blockData : blockDataList) {
-
-                // update BlockSettings
-                BlockSettings.setFlip(blockData.TOP);
-                BlockSettings.setFloor(blockData.BOTTOM);
-                BlockSettings.setNorth(blockData.NORTH);
-                BlockSettings.setEast(blockData.EAST);
-                BlockSettings.setWest(blockData.WEST);
-                BlockSettings.setSouth(blockData.SOUTH);
-                BlockSettings.setTier(blockData.tier);
-                BlockSettings.setColor(blockData.color);
-
-                ABlock aBlock = BlockFactory.createBlock(blockData.pos, blockData.blockType);
-                minecraftGUI.addBlock(aBlock);
+            // load solid blocks first
+            BlockSettings.enableCustomColors();
+            for (List<BlockData> blockDatas : blockDataList) {
+                for (BlockData blockData : blockDatas) {
+                    BlockSettings.setFlip(blockData.TOP);
+                    BlockSettings.setFloor(blockData.BOTTOM);
+                    BlockSettings.setNorth(blockData.NORTH);
+                    BlockSettings.setEast(blockData.EAST);
+                    BlockSettings.setWest(blockData.WEST);
+                    BlockSettings.setSouth(blockData.SOUTH);
+                    BlockSettings.setTier(blockData.tier);
+                    BlockSettings.setColor(blockData.color);
+                    minecraftGUI.addBlock(BlockFactory.createBlock(blockData.pos, blockData.blockType));
+                }
             }
+            BlockSettings.disableCustomColors();
         });
     }
 

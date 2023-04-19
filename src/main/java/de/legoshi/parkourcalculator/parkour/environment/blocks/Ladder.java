@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,11 @@ public class Ladder extends FacingBlock {
 
     public Ladder(Vec3 vec3) {
         super(vec3);
+    }
+
+    @Override
+    public void updateColor() {
+        setColor(BlockColors.WOOD.get());
     }
 
     @Override

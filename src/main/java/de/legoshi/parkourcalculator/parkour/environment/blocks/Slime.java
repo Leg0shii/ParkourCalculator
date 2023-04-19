@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
+import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -11,6 +12,11 @@ public class Slime extends ABlock {
 
     public Slime(Vec3 vec3) {
         super(vec3);
+    }
+
+    @Override
+    public void updateColor() {
+        setColor(BlockColors.SLIME.get());
     }
 
     @Override
