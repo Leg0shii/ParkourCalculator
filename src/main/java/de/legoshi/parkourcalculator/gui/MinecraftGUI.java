@@ -15,7 +15,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Sphere;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -54,6 +53,8 @@ public class MinecraftGUI extends Observable {
 
         application.menuGUI.setMinecraftGUI(this);
 
+        application.minecraftSubScene.setOnMouseMoved(this::handleBackgroundMouseMove);
+
         addStartingBlock();
         registerCamera();
 
@@ -90,15 +91,22 @@ public class MinecraftGUI extends Observable {
         }
     }
 
-    public void handleMouseMove(MouseEvent mouseEvent) {
+    public void handleBackgroundMouseMove(MouseEvent mouseEvent) {
+        for(Box box : previewBlockBoxes) {
+            group.getChildren().remove(box);
+        }
+        previewBlockBoxes = new ArrayList<>();
+    }
+
+    public void handleBoxMouseMove(MouseEvent mouseEvent) {
         if (!(mouseEvent.getTarget() instanceof Box)) return;
         mouseEvent.consume();
         ABlock newBlock = getNewBlockFromPos(mouseEvent);
 
         if (newBlock == null) return;
         Color newBlockColor = newBlock.getColor();
-        double PREVIEW_BLOCK_OPACITY = 0.3;
-        Color transparentColor = new Color(newBlockColor.getRed(), newBlockColor.getGreen(), newBlockColor.getBlue(), newBlockColor.getOpacity() * PREVIEW_BLOCK_OPACITY);
+        double PREVIEW_BLOCK_OPACITY = 0.2;
+        Color transparentColor = new Color(newBlockColor.getRed(), newBlockColor.getGreen(), newBlockColor.getBlue(), PREVIEW_BLOCK_OPACITY);
         newBlock.setColor(transparentColor);
         previewBlock(newBlock);
     }
@@ -157,7 +165,7 @@ public class MinecraftGUI extends Observable {
         }
         for (Box box : aBlock.getBoxesArrayList()) {
             box.setOnMouseClicked(this::handleMouseClick);
-            box.setOnMouseMoved(this::handleMouseMove);
+            box.setOnMouseMoved(this::handleBoxMouseMove);
             group.getChildren().add(box);
         }
         notifyObservers(aBlock, "add");
@@ -170,7 +178,7 @@ public class MinecraftGUI extends Observable {
         previewBlockBoxes = new ArrayList<>();
         if (aBlock.getBoxesArrayList().size() == 0) return;
         for (Box box : aBlock.getBoxesArrayList()) {
-            box.setOnMouseMoved(this::handleMouseMove);
+            box.setOnMouseMoved(this::handleBoxMouseMove);
             box.setMouseTransparent(true);
             group.getChildren().add(box);
             previewBlockBoxes.add(box);
