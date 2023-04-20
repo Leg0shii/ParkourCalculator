@@ -36,7 +36,7 @@ public class BlockSettings extends TitledPane {
         setGraphic(titleText);
 
         tiersSelector.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8);
-        tiersSelector.setValue(0);
+        tiersSelector.setValue(1);
 
         // Create a GridPane to hold the selectors
         GridPane gridPane = new GridPane();
@@ -117,7 +117,9 @@ public class BlockSettings extends TitledPane {
         return checkBoxCeiling.isSelected();
     }
 
-    public static int getTier() { return tiersSelector.getValue(); }
+    public static int getTier() {
+        return tiersSelector.getValue();
+    }
 
     public static Color getColor(ABlock block) {
         if (customColorCB.isSelected()) return colorSelector.getValue();
