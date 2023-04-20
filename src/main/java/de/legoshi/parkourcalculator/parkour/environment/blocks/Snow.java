@@ -43,13 +43,13 @@ public class Snow extends ABlock implements TierBlock {
     @Override
     public void prepareBlock(int tier) {
         switch (tier) {
-            case 0 -> this.height = 0.125;
-            case 1 -> this.height = 0.25;
-            case 2 -> this.height = 0.375;
-            case 3 -> this.height = 0.5;
-            case 4 -> this.height = 0.625;
-            case 5 -> this.height = 0.75;
-            case 6 -> this.height = 0.875;
+            case 1 -> this.height = 0.125;
+            case 2 -> this.height = 0.25;
+            case 3 -> this.height = 0.375;
+            case 4 -> this.height = 0.5;
+            case 5 -> this.height = 0.625;
+            case 6 -> this.height = 0.75;
+            default -> this.height = 0.875;
         }
     }
 
