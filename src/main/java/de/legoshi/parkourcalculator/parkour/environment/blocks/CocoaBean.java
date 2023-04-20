@@ -27,7 +27,11 @@ public class CocoaBean extends FacingBlock implements TierBlock {
     protected void updateBoundingBox() {
         this.tier = BlockSettings.getTier();
         prepareBlock(this.tier);
-        super.updateBoundingBox();
+
+        if (BlockSettings.isNorth()) calcNorth();
+        else if (BlockSettings.isEast()) calcEast();
+        else if (BlockSettings.isSouth()) calcSouth();
+        else calcWest();
     }
 
     @Override
@@ -79,7 +83,9 @@ public class CocoaBean extends FacingBlock implements TierBlock {
 
     @Override
     public void prepareBlock(int tier) {
-        this.addedSize = (tier+1) * 0.0625;
+        tier--;
+        if (tier > 2) tier = 2;
+        this.addedSize = (tier) * 0.0625;
     }
 
     @Override
