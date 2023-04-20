@@ -35,7 +35,7 @@ public class MinecraftGUI extends Observable {
 
     public final Comparator<Node> depthComparator;
 
-
+    private ArrayList<Box> previewBlockBoxes = new ArrayList<>();
     private final ArrayList<Observer> observers = new ArrayList<>();
 
     public MinecraftGUI(Application application, Group group) {
@@ -88,6 +88,19 @@ public class MinecraftGUI extends Observable {
                 if (block != null) removeBlock(block);
             }
         }
+    }
+
+    public void handleMouseMove(MouseEvent mouseEvent) {
+        if (!(mouseEvent.getTarget() instanceof Box)) return;
+        mouseEvent.consume();
+        ABlock newBlock = getNewBlockFromPos(mouseEvent);
+
+        if (newBlock == null) return;
+        Color newBlockColor = newBlock.getColor();
+        double PREVIEW_BLOCK_OPACITY = 0.3;
+        Color transparentColor = new Color(newBlockColor.getRed(), newBlockColor.getGreen(), newBlockColor.getBlue(), newBlockColor.getOpacity() * PREVIEW_BLOCK_OPACITY);
+        newBlock.setColor(transparentColor);
+        previewBlock(newBlock);
     }
 
     private Vec3 getCoordinatesFromMouseEvent(MouseEvent mouseEvent) {
@@ -144,9 +157,24 @@ public class MinecraftGUI extends Observable {
         }
         for (Box box : aBlock.getBoxesArrayList()) {
             box.setOnMouseClicked(this::handleMouseClick);
+            box.setOnMouseMoved(this::handleMouseMove);
             group.getChildren().add(box);
         }
         notifyObservers(aBlock, "add");
+    }
+
+    private void previewBlock(ABlock aBlock) {
+        for(Box box : previewBlockBoxes) {
+            group.getChildren().remove(box);
+        }
+        previewBlockBoxes = new ArrayList<>();
+        if (aBlock.getBoxesArrayList().size() == 0) return;
+        for (Box box : aBlock.getBoxesArrayList()) {
+            box.setOnMouseMoved(this::handleMouseMove);
+            box.setMouseTransparent(true);
+            group.getChildren().add(box);
+            previewBlockBoxes.add(box);
+        }
     }
 
     public void removeBlock(ABlock aBlock) {

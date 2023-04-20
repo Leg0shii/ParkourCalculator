@@ -50,6 +50,7 @@ public abstract class ABlock {
     abstract void updateImage();
 
     private void updateBoxes() {
+        this.boxesArrayList.clear();
         for (AxisVecTuple axisVecTuple : this.axisVecTuples) {
             this.boxesArrayList.add(axisVecTuple.getBox(this));
         }
@@ -83,6 +84,7 @@ public abstract class ABlock {
 
     public void setColor(Color color) {
         this.color = color;
+        this.updateBoxes();
     }
 
 }
