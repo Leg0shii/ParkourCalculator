@@ -42,20 +42,20 @@ public class Cake extends ABlock implements TierBlock {
     @Override
     public void prepareBlock(int tier) {
         switch (tier) {
-            case 0 -> this.widthReduce = 0;
-            case 1 -> this.widthReduce = 0.125;
-            case 2 -> this.widthReduce = 0.25;
-            case 3 -> this.widthReduce = 0.375;
-            case 4 -> this.widthReduce = 0.5;
-            case 5 -> this.widthReduce = 0.625;
-            case 6 -> this.widthReduce = 0.75;
+            case 2 -> this.widthReduce = 0.125;
+            case 3 -> this.widthReduce = 0.25;
+            case 4 -> this.widthReduce = 0.375;
+            case 5 -> this.widthReduce = 0.5;
+            case 6 -> this.widthReduce = 0.625;
+            case 7 -> this.widthReduce = 0.75;
+            default -> this.widthReduce = 0;
         }
     }
 
     @Override
     public BlockData toBlockData() {
         BlockData blockData = super.toBlockData();
-        blockData.tier = this.tier-1;
+        blockData.tier = this.tier;
         return blockData;
     }
 
