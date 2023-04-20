@@ -25,12 +25,11 @@ public class BlockGUI extends ScrollPane {
         hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
         hBox.setSpacing(5.0);
-        hBox.setPadding(new Insets(8, 8, 8, 8));
+        hBox.setPadding(new Insets(8, 8, 20, 8));
 
         anchorPane = new AnchorPane(hBox);
         setContent(anchorPane);
 
-        setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         registerBlocks();
