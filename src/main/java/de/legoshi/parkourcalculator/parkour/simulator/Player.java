@@ -125,6 +125,13 @@ public class Player {
         );
     }
 
+    public AxisAlignedBB getStartBB() {
+        return new AxisAlignedBB(
+                startPos.x - this.width, startPos.y, startPos.z - this.width,
+                startPos.x + this.width, startPos.y + this.height, startPos.z + this.width
+        );
+    }
+
     protected void resetPositionToBB() {
         this.position.x = (this.playerBB.minX + this.playerBB.maxX) / 2.0D;
         this.position.y = this.playerBB.minY;

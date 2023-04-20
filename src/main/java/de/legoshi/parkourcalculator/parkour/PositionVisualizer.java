@@ -2,6 +2,7 @@ package de.legoshi.parkourcalculator.parkour;
 
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
+import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
@@ -141,7 +142,17 @@ public class PositionVisualizer extends Observable implements Observer {
             coords = coords.add(node.getTranslateX(), 0, node.getTranslateZ());
         }
 
+        Vec3 oldStartVec = movementEngine.player.getStartPos().copy();
         movementEngine.player.setStartPos(new Vec3(coords.getX(), pOffset.y, coords.getZ()));
+
+        // resets movement if player is inside a block
+        if (ScreenSettings.isPathCollision() &&
+                !movementEngine.getCollidingBoundingBoxes(movementEngine.player.getStartBB()).isEmpty()) {
+            // only reset colliding axis
+            // best is to reset the axis exactly to the block hit box
+            movementEngine.player.setStartPos(oldStartVec);
+        }
+
         generatePlayerPath();
     }
 
