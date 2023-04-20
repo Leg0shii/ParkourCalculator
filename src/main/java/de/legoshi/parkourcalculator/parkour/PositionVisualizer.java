@@ -112,13 +112,16 @@ public class PositionVisualizer implements Observer {
         Point3D coords = event.getPickResult().getIntersectedPoint();
         Vec3 pOffset = movementEngine.player.getStartPos().copy();
 
-        DecimalFormat df = new DecimalFormat("#.########");
+        DecimalFormat df = new DecimalFormat("#.##########");
         double yCoordinate = Double.parseDouble(df.format(coords.getY()).replace(",", "."));
         double zCoordinate = Double.parseDouble(df.format(coords.getZ()).replace(",", "."));
-        double decimalNumber = Math.round(movementEngine.player.getStartPos().y * 10000000.0) / 10000000.0;
+        double decimalNumber = movementEngine.player.getStartPos().y % 1;
+        double roundedDecimalNumber = Double.parseDouble(df.format(-decimalNumber/2).replace(",", "."));
+
+        System.out.println(yCoordinate + "==" + roundedDecimalNumber +"||"+ yCoordinate +"=="+ -0.5);
 
         if (zCoordinate == 0) return;
-        if (yCoordinate != -decimalNumber/2 && yCoordinate != -0.5) return;
+        if (yCoordinate != roundedDecimalNumber && yCoordinate != -0.5) return;
 
         Node node = event.getPickResult().getIntersectedNode();
         if (!node.equals(this.box)) {
