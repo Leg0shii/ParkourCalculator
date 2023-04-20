@@ -14,7 +14,8 @@ public class Water extends BlockLiquid {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.WATER.get());
+        setMaterialColor(BlockColors.WATER.get());
+        setSpecularColor(BlockColors.IRON_SPEC.get());
     }
 
     @Override

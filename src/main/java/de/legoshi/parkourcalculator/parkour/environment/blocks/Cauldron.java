@@ -14,7 +14,8 @@ public class Cauldron extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.DARK_IRON.get());
+        setMaterialColor(BlockColors.DARK_IRON.get());
+        setSpecularColor(BlockColors.IRON_SPEC.get());
     }
 
     @Override

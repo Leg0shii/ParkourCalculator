@@ -13,7 +13,8 @@ public class Carpet extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.CARPET.get());
+        setMaterialColor(BlockColors.CARPET.get());
+        setSpecularColor(BlockColors.PLANT_SPEC.get());
     }
 
     @Override

@@ -19,7 +19,8 @@ public class CocoaBean extends FacingBlock implements TierBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.COCOA_BEAN.get());
+        setMaterialColor(BlockColors.COCOA_BEAN.get());
+        setSpecularColor(BlockColors.PLANT_SPEC.get());
     }
 
     @Override

@@ -4,7 +4,6 @@ import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
-import javafx.scene.paint.Color;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -37,7 +36,8 @@ public class Anvil extends FacingBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.DARK_IRON.get());
+        setMaterialColor(BlockColors.DARK_IRON.get());
+        setSpecularColor(BlockColors.IRON_SPEC.get());
     }
 
     @Override

@@ -18,7 +18,8 @@ public class PistonBase extends FacingBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.STONE.get());
+        setMaterialColor(BlockColors.STONE.get());
+        setSpecularColor(BlockColors.STONE_SPEC.get());
     }
 
     @Override

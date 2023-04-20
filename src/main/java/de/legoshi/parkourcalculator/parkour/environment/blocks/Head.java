@@ -17,7 +17,8 @@ public class Head extends FacingBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.HEAD.get());
+        setMaterialColor(BlockColors.HEAD.get());
+        setSpecularColor(BlockColors.STONE_SPEC.get());
     }
 
     @Override

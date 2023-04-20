@@ -104,10 +104,10 @@ public class MinecraftGUI extends Observable {
         ABlock newBlock = getNewBlockFromPos(mouseEvent);
 
         if (newBlock == null) return;
-        Color newBlockColor = newBlock.getColor();
+        Color newBlockColor = newBlock.getMaterialColor();
         double PREVIEW_BLOCK_OPACITY = 0.2;
         Color transparentColor = new Color(newBlockColor.getRed(), newBlockColor.getGreen(), newBlockColor.getBlue(), PREVIEW_BLOCK_OPACITY);
-        newBlock.setColor(transparentColor);
+        newBlock.setMaterialColor(transparentColor);
         previewBlock(newBlock);
     }
 
@@ -195,10 +195,6 @@ public class MinecraftGUI extends Observable {
     private void registerCamera() {
         AdvancedCamera camera = new AdvancedCamera();
         FPSController controller = new FPSController();
-
-        camera.setNearClip(0.1);
-        camera.setFarClip(10000.0);
-        camera.setFieldOfView(42);
 
         camera.setController(controller);
         subScene.setCamera(camera);

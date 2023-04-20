@@ -15,7 +15,8 @@ public class Cobweb extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.COBWEB.get());
+        setMaterialColor(BlockColors.COBWEB.get());
+        setSpecularColor(BlockColors.PLANT_SPEC.get());
     }
 
     @Override

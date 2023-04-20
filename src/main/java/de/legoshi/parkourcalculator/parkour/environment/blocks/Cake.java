@@ -18,6 +18,12 @@ public class Cake extends ABlock implements TierBlock {
     }
 
     @Override
+    public void updateColor() {
+        setMaterialColor(BlockColors.CAKE.get());
+        setSpecularColor(BlockColors.PLANT_SPEC.get());
+    }
+
+    @Override
     void updateBoundingBox() {
         this.tier = BlockSettings.getTier();
         prepareBlock(this.tier);
@@ -26,11 +32,6 @@ public class Cake extends ABlock implements TierBlock {
         Vec3 upperEdge = new Vec3(0.9375-this.widthReduce, 0.5, 0.9375);
         Vec3 shift = new Vec3(0.0625+this.widthReduce/2, 0.25, 0.0625);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
-    }
-
-    @Override
-    public void updateColor() {
-        setColor(BlockColors.CAKE.get());
     }
 
     @Override

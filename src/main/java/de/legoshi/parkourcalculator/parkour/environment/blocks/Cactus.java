@@ -14,7 +14,8 @@ public class Cactus extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.CACTUS.get());
+        setMaterialColor(BlockColors.CACTUS.get());
+        setSpecularColor(BlockColors.PLANT_SPEC.get());
     }
 
     @Override

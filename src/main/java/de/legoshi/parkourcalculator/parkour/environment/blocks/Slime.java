@@ -16,7 +16,8 @@ public class Slime extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.SLIME.get());
+        setMaterialColor(BlockColors.SLIME.get());
+        setSpecularColor(BlockColors.IRON_SPEC.get());
     }
 
     @Override

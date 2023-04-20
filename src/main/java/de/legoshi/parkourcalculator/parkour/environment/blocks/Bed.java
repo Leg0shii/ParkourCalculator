@@ -14,7 +14,8 @@ public class Bed extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.BED.get());
+        setMaterialColor(BlockColors.BED.get());
+        setSpecularColor(BlockColors.WOOD.get());
     }
 
     @Override

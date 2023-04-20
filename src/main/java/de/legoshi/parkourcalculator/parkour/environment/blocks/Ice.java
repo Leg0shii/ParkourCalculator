@@ -15,7 +15,8 @@ public class Ice extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.ICE.get());
+        setMaterialColor(BlockColors.ICE.get());
+        setSpecularColor(BlockColors.IRON_SPEC.get());
     }
 
     @Override

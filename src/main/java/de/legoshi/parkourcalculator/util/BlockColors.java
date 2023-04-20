@@ -4,6 +4,11 @@ import javafx.scene.paint.Color;
 
 public enum BlockColors {
 
+    PLANT_SPEC("0x004000ff"),
+    STONE_SPEC("0x404040ff"),
+    WOOD_SPEC("0x45220Aff"),
+    IRON_SPEC("0xffffffff"),
+
     DARK_IRON("0x272727ff"),
     WOOD("0xc8961eff"),
     STONE("0x999999ff"),
@@ -19,7 +24,7 @@ public enum BlockColors {
     END_PORTAL("0xd8d92dff"),
     ICE("0x97fff2ff"),
     LAVA("0xd9343455"),
-    SLIME("0x009915ff"),
+    SLIME("0x009915aa"),
     WATER("0x00a46a55"),
     PANE("0xc3c3c388"),
     SNOW("0xffffffff"),

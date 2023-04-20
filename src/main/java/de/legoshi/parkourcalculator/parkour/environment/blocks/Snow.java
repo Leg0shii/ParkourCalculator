@@ -20,7 +20,8 @@ public class Snow extends ABlock implements TierBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.SNOW.get());
+        setMaterialColor(BlockColors.SNOW.get());
+        setSpecularColor(BlockColors.PLANT_SPEC.get());
     }
 
     @Override

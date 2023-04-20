@@ -14,7 +14,8 @@ public class BrewingStand extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.BREWING_STAND.get());
+        setMaterialColor(BlockColors.BREWING_STAND.get());
+        setSpecularColor(BlockColors.WOOD.get());
     }
 
     @Override

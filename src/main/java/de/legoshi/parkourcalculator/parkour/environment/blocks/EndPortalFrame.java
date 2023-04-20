@@ -17,7 +17,8 @@ public class EndPortalFrame extends ABlock implements TierBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.END_PORTAL.get());
+        setMaterialColor(BlockColors.END_PORTAL.get());
+        setSpecularColor(BlockColors.STONE_SPEC.get());
     }
 
     @Override

@@ -15,7 +15,8 @@ public class Lava extends BlockLiquid {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.LAVA.get());
+        setMaterialColor(BlockColors.LAVA.get());
+        setSpecularColor(BlockColors.IRON_SPEC.get());
     }
 
     @Override

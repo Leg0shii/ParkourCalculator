@@ -1,7 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.environment.blocks;
 
 import de.legoshi.parkourcalculator.file.BlockData;
-import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.util.*;
 import javafx.scene.image.Image;
@@ -20,7 +19,10 @@ public abstract class ABlock {
 
     public ArrayList<Box> boxesArrayList;
     private Vec3 vec3;
-    private Color color;
+
+    private Color materialColor;
+    private Color specularColor;
+    private int specularPower;
 
     public ABlock() {
         updateImage();
@@ -41,7 +43,9 @@ public abstract class ABlock {
     abstract void updateBoundingBox();
 
     public void updateColor() {
-        setColor(BlockColors.STONE.get());
+        setMaterialColor(BlockColors.STONE.get());
+        setSpecularColor(BlockColors.STONE_SPEC.get());
+        this.specularPower = 5;
     }
 
     public void updateSlipperiness() {
@@ -70,7 +74,7 @@ public abstract class ABlock {
         BlockData blockData = new BlockData();
         blockData.blockType = this.getClass().getSimpleName();
         blockData.pos = this.vec3;
-        blockData.color = this.color;
+        blockData.color = this.materialColor;
         return blockData;
     }
 
@@ -82,8 +86,17 @@ public abstract class ABlock {
 
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public void setMaterialColor(Color materialColor) {
+        this.materialColor = materialColor;
+        this.updateBoxes();
+    }
+
+    public void setSpecularColor(Color specularColor) {
+        if (specularColor.equals(BlockColors.IRON_SPEC.get())) this.specularPower = 50;
+        else if (specularColor.equals(BlockColors.STONE_SPEC.get())) this.specularPower = 20;
+        else if (specularColor.equals(BlockColors.WOOD_SPEC.get())) this.specularPower = 10;
+        else this.specularPower = 5;
+        this.specularColor = specularColor;
         this.updateBoxes();
     }
 

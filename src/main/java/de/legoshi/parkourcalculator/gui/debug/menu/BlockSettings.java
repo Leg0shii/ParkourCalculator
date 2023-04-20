@@ -121,7 +121,11 @@ public class BlockSettings extends TitledPane {
 
     public static Color getColor(ABlock block) {
         if (customColorCB.isSelected()) return colorSelector.getValue();
-        else return block.getColor();
+        else return block.getMaterialColor();
+    }
+
+    public static Color getSpecularColor(ABlock block) {
+        return block.getSpecularColor();
     }
 
     public static void setNorth(boolean b) {

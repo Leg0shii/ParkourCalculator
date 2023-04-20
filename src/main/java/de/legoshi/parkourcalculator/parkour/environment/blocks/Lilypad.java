@@ -14,7 +14,8 @@ public class Lilypad extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.PLANT.get());
+        setMaterialColor(BlockColors.PLANT.get());
+        setSpecularColor(BlockColors.PLANT_SPEC.get());
     }
 
     @Override

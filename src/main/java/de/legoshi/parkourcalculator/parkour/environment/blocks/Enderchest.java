@@ -3,7 +3,6 @@ package de.legoshi.parkourcalculator.parkour.environment.blocks;
 import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
-import javafx.scene.paint.Color;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -15,7 +14,8 @@ public class Enderchest extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.ENDER_CHEST.get());
+        setMaterialColor(BlockColors.ENDER_CHEST.get());
+        setSpecularColor(BlockColors.STONE_SPEC.get());
     }
 
     @Override

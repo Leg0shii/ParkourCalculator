@@ -14,7 +14,8 @@ public class Trapdoor extends FacingBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.STONE.get());
+        setMaterialColor(BlockColors.WOOD.get());
+        setSpecularColor(BlockColors.WOOD_SPEC.get());
     }
 
     @Override

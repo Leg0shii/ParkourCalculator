@@ -14,7 +14,8 @@ public class DragonEgg extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.DRAGON_EGG.get());
+        setMaterialColor(BlockColors.DRAGON_EGG.get());
+        setSpecularColor(BlockColors.STONE_SPEC.get());
     }
 
     @Override

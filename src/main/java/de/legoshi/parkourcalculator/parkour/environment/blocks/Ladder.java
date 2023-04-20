@@ -14,7 +14,8 @@ public class Ladder extends FacingBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.WOOD.get());
+        setMaterialColor(BlockColors.WOOD.get());
+        setSpecularColor(BlockColors.WOOD_SPEC.get());
     }
 
     @Override

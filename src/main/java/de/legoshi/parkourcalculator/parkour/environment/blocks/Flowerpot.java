@@ -14,7 +14,8 @@ public class Flowerpot extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.FLOWER_POT.get());
+        setMaterialColor(BlockColors.FLOWER_POT.get());
+        setSpecularColor(BlockColors.WOOD_SPEC.get());
     }
 
     @Override

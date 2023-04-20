@@ -12,7 +12,8 @@ public class StandardBlock extends ABlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.STONE.get());
+        setMaterialColor(BlockColors.STONE.get());
+        setSpecularColor(BlockColors.STONE_SPEC.get());
     }
 
     @Override
@@ -21,7 +22,6 @@ public class StandardBlock extends ABlock {
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0, 0);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
-        setColor(BlockColors.STONE.get());
     }
 
     @Override

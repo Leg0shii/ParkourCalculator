@@ -17,7 +17,8 @@ public class Pane extends FacingBlock {
 
     @Override
     public void updateColor() {
-        setColor(BlockColors.PANE.get());
+        setMaterialColor(BlockColors.PANE.get());
+        setSpecularColor(BlockColors.IRON_SPEC.get());
     }
 
     @Override
