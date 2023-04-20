@@ -1,6 +1,8 @@
 package de.legoshi.parkourcalculator.gui;
 
 import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
+import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
@@ -99,6 +101,7 @@ public class MinecraftGUI extends Observable {
     }
 
     public void handleBoxMouseMove(MouseEvent mouseEvent) {
+        if (!ScreenSettings.isPreviewMode()) return;
         if (!(mouseEvent.getTarget() instanceof Box)) return;
         mouseEvent.consume();
         ABlock newBlock = getNewBlockFromPos(mouseEvent);

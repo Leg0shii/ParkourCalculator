@@ -11,13 +11,15 @@ public class MenuScreen extends VBox {
 
     public BlockSettings blockSettings;
     public PlayerSettings playerSettings;
+    public ScreenSettings screenSeetings;
 
     public MenuScreen(MovementEngine movementEngine, PositionVisualizer positionVisualizer, NumberBinding remainingHeight) {
         this.blockSettings = new BlockSettings();
         this.playerSettings = new PlayerSettings(movementEngine, positionVisualizer);
+        this.screenSeetings = new ScreenSettings();
 
         Accordion accordion = new Accordion();
-        accordion.getPanes().addAll(blockSettings, playerSettings);
+        accordion.getPanes().addAll(blockSettings, playerSettings, screenSeetings);
 
         ScrollPane scrollPane = new ScrollPane(accordion);
         scrollPane.setFitToWidth(true);
