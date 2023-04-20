@@ -4,6 +4,7 @@ import de.legoshi.parkourcalculator.Application;
 import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.Air;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
 import de.legoshi.parkourcalculator.util.Vec3;
 import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
@@ -73,8 +74,14 @@ public class MinecraftGUI extends Observable {
         mouseEvent.consume();
         switch (mouseEvent.getButton()) {
             case PRIMARY -> {
-                ABlock block = getNewBlockFromPos(mouseEvent);
-                if (block != null) addBlock(block);
+                Vec3 newBlockPos = getRoundedCoordinatesFromMouseEvent(mouseEvent);
+                if(newBlockPos != null) {
+                    newBlockPos.x *= -1; // flipping the x axis ??
+                    ABlock curBlock = Environment.getBlock(newBlockPos.x, newBlockPos.y, newBlockPos.z);
+                    if (!(curBlock instanceof Air)) return;
+                }
+                ABlock newBlock = getNewBlockFromPos(mouseEvent);
+                if (newBlock != null) addBlock(newBlock);
             }
             case SECONDARY -> {
                 ABlock block = getExistingBlockFromPos(mouseEvent);
@@ -83,7 +90,7 @@ public class MinecraftGUI extends Observable {
         }
     }
 
-    private ABlock getNewBlockFromPos(MouseEvent mouseEvent) {
+    private Vec3 getCoordinatesFromMouseEvent(MouseEvent mouseEvent) {
         if (!(mouseEvent.getTarget() instanceof Box clickedBox)) return null;
         ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
         if (clickedBlock == null) return null;
@@ -96,13 +103,27 @@ public class MinecraftGUI extends Observable {
 
         Vec3 vec3Float = clickedBlock.getVec3().copy();
         vec3Float.x = -vec3Float.x; // flipping the x axis
-        Vec3 vec3Rounded = new Vec3(Math.floor(vec3Float.x), Math.floor(vec3Float.y), Math.floor(vec3Float.z));
-        if (bounds.getMinX() == clickX) vec3Rounded.addVector(1, 0, 0);
-        else if (bounds.getMaxX() == clickX) vec3Rounded.addVector(-1, 0, 0);
-        else if (bounds.getMinY() == clickY) vec3Rounded.addVector(0, 1, 0);
-        else if (bounds.getMaxY() == clickY) vec3Rounded.addVector(0, -1, 0);
-        else if (bounds.getMinZ() == clickZ) vec3Rounded.addVector(0, 0, -1);
-        else if (bounds.getMaxZ() == clickZ) vec3Rounded.addVector(0, 0, 1);
+
+        if (bounds.getMinX() == clickX) vec3Float.addVector(1, 0, 0);
+        else if (bounds.getMaxX() == clickX) vec3Float.addVector(-1, 0, 0);
+        else if (bounds.getMinY() == clickY) vec3Float.addVector(0, 1, 0);
+        else if (bounds.getMaxY() == clickY) vec3Float.addVector(0, -1, 0);
+        else if (bounds.getMinZ() == clickZ) vec3Float.addVector(0, 0, -1);
+        else if (bounds.getMaxZ() == clickZ) vec3Float.addVector(0, 0, 1);
+
+        return vec3Float;
+    }
+
+    private Vec3 getRoundedCoordinatesFromMouseEvent(MouseEvent mouseEvent) {
+        Vec3 vec3Float = getCoordinatesFromMouseEvent(mouseEvent);
+        if (vec3Float == null) return null;
+        return new Vec3(Math.floor(vec3Float.x), Math.floor(vec3Float.y), Math.floor(vec3Float.z));
+    }
+
+    private ABlock getNewBlockFromPos(MouseEvent mouseEvent) {
+        Vec3 vec3Rounded = getRoundedCoordinatesFromMouseEvent(mouseEvent);
+        if (vec3Rounded == null) return null;
+
         return BlockFactory.createBlock(vec3Rounded, Environment.currentBlock.getClass().getSimpleName());
     }
 
