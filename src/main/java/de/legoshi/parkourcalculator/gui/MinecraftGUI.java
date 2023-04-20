@@ -77,6 +77,7 @@ public class MinecraftGUI extends Observable {
 
     public void resetScreen() {
         clearScreen();
+        addStartingBlock();
     }
 
     public void handleMouseClick(MouseEvent mouseEvent) {
