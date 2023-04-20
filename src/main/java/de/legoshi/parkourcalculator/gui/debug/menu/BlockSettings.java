@@ -11,8 +11,8 @@ import javafx.scene.text.Text;
 
 public class BlockSettings extends TitledPane {
 
-    private final Label floorLabel = new Label("Floor: ");
-    private final Label ceilingLabel = new Label("Ceiling: ");
+    private final Label floorLabel = new Label("Top: ");
+    private final Label ceilingLabel = new Label("Bottom: ");
     private final Label northLabel = new Label("North: ");
     private final Label eastLabel = new Label("East: ");
     private final Label southLabel = new Label("South: ");

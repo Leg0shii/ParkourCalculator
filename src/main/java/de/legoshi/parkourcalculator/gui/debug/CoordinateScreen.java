@@ -11,63 +11,40 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CoordinateScreen extends VBox implements Observer {
 
     private final MovementEngine movementEngine;
     private final Player player;
 
-    private final Label generalLabelInfo = new Label("Start Coordinates");
-    private final Label facing = new Label();
-    private final Label xPos = new Label();
-    private final Label yPos = new Label();
-    private final Label zPos = new Label();
-    private final Label xVel = new Label();
-    private final Label yVel = new Label();
-    private final Label zVel = new Label();
+    private final Label startLabelInfo = new Label("First Tick Coordinates");
+    private List<Label> start = new ArrayList<>();
 
-    private final Label tickLabelInfo = new Label("nth Tick Information");
-    private final Label tickFacing = new Label();
-    private final Label xTickPos = new Label();
-    private final Label yTickPos = new Label();
-    private final Label zTickPos = new Label();
-    private final Label xTickVel = new Label();
-    private final Label yTickVel = new Label();
-    private final Label zTickVel = new Label();
+    private final Label tickLabelInfo = new Label("nth Tick Coordinate");
+    private List<Label> tick = new ArrayList<>();
+
+    private final Label lastLabelInfo = new Label("Last Tick Coordinates");
+    private List<Label> last = new ArrayList<>();
+
+    @Getter private int tickClicked = -1;
 
     public CoordinateScreen(MovementEngine movementEngine) {
         this.movementEngine = movementEngine;
         this.player = movementEngine.player;
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setMinWidth(200);
-
         this.getStyleClass().add("coordinate-field");
-        this.generalLabelInfo.getStyleClass().add("coords-title");
-        this.tickLabelInfo.getStyleClass().add("coords-title");
+        this.setSpacing(15);
 
-        updateLabels();
-        updateTickClick(-1); // init
-        addLabels();
+        initLabels();
+        update(null, null);
         indentLabels();
-    }
-
-    private void addLabels() {
-        VBox posLabel = new VBox(xPos, yPos, zPos, facing);
-        VBox velLabel = new VBox(xVel, yVel, zVel);
-        HBox posContainer = new HBox(posLabel, velLabel);
-        posContainer.setSpacing(25);
-        this.getChildren().addAll(generalLabelInfo, posContainer);
-
-        VBox tickLabel = new VBox(xTickPos, yTickPos, zTickPos, tickFacing);
-        VBox tickVelLabel = new VBox(xTickVel, yTickVel, zTickVel);
-        HBox tickContainer = new HBox(tickLabel, tickVelLabel);
-        tickContainer.setSpacing(25);
-        this.getChildren().addAll(getSpacer(), tickLabelInfo, tickContainer);
-
-        addTextClass(posLabel, velLabel, tickLabel, tickVelLabel);
     }
 
     private void addTextClass(VBox... vBoxes) {
@@ -76,36 +53,30 @@ public class CoordinateScreen extends VBox implements Observer {
         }
     }
 
-    private void updateLabels() {
-        this.facing.setText("F-Pos: " + setDecimals(-this.player.getYAW())); // flips facing on x-axis
-        this.xPos.setText("X-Pos: " + setDecimals(-this.player.getPosition().x)); // flips pos on x-axis
-        this.yPos.setText("Y-Pos: " + setDecimals(this.player.getPosition().y));
-        this.zPos.setText("Z-Pos: " + setDecimals(this.player.getPosition().z));
-        this.xVel.setText("X-Vel: " + setDecimals(-this.player.getVelocity().x)); // flips vel on x-axis
-        this.yVel.setText("Y-Vel: " + setDecimals(this.player.getVelocity().y));
-        this.zVel.setText("Z-Vel: " + setDecimals(this.player.getVelocity().z));
-    }
-
-    public void updateTickClick(int tickPos) {
-        if (tickPos == -1) {
-            this.tickFacing.setText("F-Tick: -");
-            this.xTickPos.setText("X-Tick: -");
-            this.yTickPos.setText("Y-Tick: -");
-            this.zTickPos.setText("Z-Tick: -");
-            this.xTickVel.setText("X-Tick-Vel: -");
-            this.yTickVel.setText("Y-Tick-Vel: -");
-            this.zTickVel.setText("Z-Tick-Vel: -");
+    public void updateSpecificTick(Label title, List<Label> labels, String name, int tickPos) {
+        if (tickPos == -1 || tickPos >= movementEngine.playerTickInformations.size()) {
+            labels.get(0).setText("F-" + name + ": -");
+            labels.get(1).setText("X-" + name + ": -");
+            labels.get(2).setText("Y-" + name + ": -");
+            labels.get(3).setText("Z-" + name + ": -");
+            labels.get(4).setText("X-" + name + "-Vel: -");
+            labels.get(5).setText("Y-" + name + "-Vel: -");
+            labels.get(6).setText("Z-" + name + "-Vel: -");
             return;
         }
         PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(tickPos);
-        this.tickLabelInfo.setText(tickPos + ". Tick Information");
-        this.tickFacing.setText("F-Tick: " + setDecimals(-ptiC.getFacing())); // flips facing on x-axis
-        this.xTickPos.setText("X-Tick: " + setDecimals(-ptiC.getPosition().x)); // flips pos on x-axis
-        this.yTickPos.setText("Y-Tick: " + setDecimals(ptiC.getPosition().y));
-        this.zTickPos.setText("Z-Tick: " + setDecimals(ptiC.getPosition().z));
-        this.xTickVel.setText("X-Tick-Vel: " + setDecimals(-ptiC.getVelocity().x)); // flips vel on x-axis
-        this.yTickVel.setText("Y-Tick-Vel: " + setDecimals(ptiC.getVelocity().y));
-        this.zTickVel.setText("Z-Tick-Vel: " + setDecimals(ptiC.getVelocity().z));
+        title.setText(tickPos + ". Tick Information");
+        labels.get(0).setText("F-" + name + ": " + setDecimals(-ptiC.getFacing())); // flips facing on x-axis
+        labels.get(1).setText("X-" + name + ": " + setDecimals(-ptiC.getPosition().x)); // flips pos on x-axis
+        labels.get(2).setText("Y-" + name + ": " + setDecimals(ptiC.getPosition().y));
+        labels.get(3).setText("Z-" + name + ": " + setDecimals(ptiC.getPosition().z));
+        labels.get(4).setText("X-" + name + "-Vel: " + setDecimals(-ptiC.getVelocity().x)); // flips vel on x-axis
+        labels.get(5).setText("Y-" + name + "-Vel: " + setDecimals(ptiC.getVelocity().y));
+        labels.get(6).setText("Z-" + name + "-Vel: " + setDecimals(ptiC.getVelocity().z));
+    }
+
+    public void setClickedTick(int tick) {
+        this.tickClicked = tick;
     }
 
     private void indentLabels() {
@@ -127,7 +98,29 @@ public class CoordinateScreen extends VBox implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        updateLabels();
+        updateSpecificTick(startLabelInfo, start, "Start", 0);
+        updateSpecificTick(tickLabelInfo, tick, "Tick", tickClicked);
+        updateSpecificTick(lastLabelInfo, last, "Last", movementEngine.getPlayerTickInformations().size()-1);
+    }
+
+    private void initLabels() {
+        this.start = Stream.of("", "", "", "", "", "", "").map(Label::new).collect(Collectors.toList());
+        this.tick = Stream.of("", "", "", "", "", "", "").map(Label::new).collect(Collectors.toList());
+        this.last = Stream.of("", "", "", "", "", "", "").map(Label::new).collect(Collectors.toList());
+        initLabel(start, startLabelInfo);
+        initLabel(tick, tickLabelInfo);
+        initLabel(last, lastLabelInfo);
+    }
+
+    private void initLabel(List<Label> labels, Label title) {
+        VBox posLabel = new VBox(labels.get(0), labels.get(1), labels.get(2), labels.get(3));
+        VBox velLabel = new VBox(labels.get(4), labels.get(5), labels.get(6));
+        HBox posContainer = new HBox(posLabel, velLabel);
+        posContainer.setSpacing(25);
+        posContainer.setPadding(new Insets(5, 5, 5, 5));
+        addTextClass(posLabel, velLabel);
+        title.getStyleClass().add("coords-title");
+        this.getChildren().addAll(new VBox(title, posContainer));
     }
 
 }

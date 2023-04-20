@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
+import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
@@ -26,6 +27,7 @@ public class PlayerSettings extends TitledPane {
 
     private final MovementEngine movementEngine;
     private final PositionVisualizer positionVisualizer;
+    private final CoordinateScreen coordinateScreen;
 
     private final TextField xPosField;
     private final TextField yPosField;
@@ -34,9 +36,10 @@ public class PlayerSettings extends TitledPane {
     private final TextField yVelField;
     private final TextField zVelField;
 
-    public PlayerSettings(MovementEngine movementEngine, PositionVisualizer positionVisualizer) {
+    public PlayerSettings(CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer) {
         this.movementEngine = movementEngine;
         this.positionVisualizer = positionVisualizer;
+        this.coordinateScreen = coordinateScreen;
 
         Text titleText = new Text("Player Settings");
         titleText.setFill(Color.WHITE);
@@ -130,42 +133,42 @@ public class PlayerSettings extends TitledPane {
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
             movementEngine.player.setStartPos(newPos);
-            positionVisualizer.update(null, null);
+            syncPathAndScreen();
         });
         this.yPosField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(yPosField.getText());
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
             movementEngine.player.setStartPos(newPos);
-            positionVisualizer.update(null, null);
+            syncPathAndScreen();
         });
         this.zPosField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(zPosField.getText());
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
             movementEngine.player.setStartPos(newPos);
-            positionVisualizer.update(null, null);
+            syncPathAndScreen();
         });
         this.xVelField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(xVelField.getText())*(-1);
             Vec3 oldPos = movementEngine.player.getStartVel().copy();
             Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
             movementEngine.player.setStartVel(newPos);
-            positionVisualizer.update(null, null);
+            syncPathAndScreen();
         });
         this.yVelField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(yVelField.getText());
             Vec3 oldPos = movementEngine.player.getStartVel().copy();
             Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
             movementEngine.player.setStartVel(newPos);
-            positionVisualizer.update(null, null);
+            syncPathAndScreen();
         });
         this.zVelField.setOnKeyTyped(keyEvent -> {
             double value = Double.parseDouble(zVelField.getText());
             Vec3 oldPos = movementEngine.player.getStartVel().copy();
             Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
             movementEngine.player.setStartVel(newPos);
-            positionVisualizer.update(null, null);
+            syncPathAndScreen();
         });
     }
 
@@ -175,6 +178,11 @@ public class PlayerSettings extends TitledPane {
         } catch (NumberFormatException | NullPointerException e) {
             return 0.0;
         }
+    }
+
+    private void syncPathAndScreen() {
+        positionVisualizer.update(null, null);
+        coordinateScreen.update(null, null);
     }
 
 }

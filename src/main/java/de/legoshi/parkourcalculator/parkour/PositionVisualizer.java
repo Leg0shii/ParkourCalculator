@@ -2,6 +2,7 @@ package de.legoshi.parkourcalculator.parkour;
 
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
+import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PositionVisualizer implements Observer {
+public class PositionVisualizer extends Observable implements Observer {
 
     @Getter private final MovementEngine movementEngine;
     private final InputTickManager inputTickManager;
@@ -31,6 +32,10 @@ public class PositionVisualizer implements Observer {
 
     public ArrayList<Sphere> spheres = new ArrayList<>();
     public ArrayList<Cylinder> lines = new ArrayList<>();
+
+    private final ArrayList<Observer> observers = new ArrayList<>();
+
+    private int tickClicked = -1;
 
     public PositionVisualizer(Group group, MovementEngine movementEngine, InputTickManager inputTickManager) {
         this.inputTickManager = inputTickManager;
@@ -63,6 +68,7 @@ public class PositionVisualizer implements Observer {
         int posCounter = 0;
         for (Vec3 pos : playerPos) {
             Sphere sphere = new Sphere(0.03);
+            if (posCounter == tickClicked) sphere.setMaterial(new PhongMaterial(Color.RED));
             sphere.setTranslateX(pos.x);
             sphere.setTranslateY(pos.y*-1);
             sphere.setTranslateZ(pos.z);
@@ -83,6 +89,8 @@ public class PositionVisualizer implements Observer {
         }
         group.setOnMouseDragged(this::onMouseDrag);
         group.setOnMouseReleased(this::onMouseDragReleased);
+
+        notifyObservers();
     }
 
     public PlayerTickInformation calcLastTick() {
@@ -123,7 +131,7 @@ public class PositionVisualizer implements Observer {
         double decimalNumber = movementEngine.player.getStartPos().y % 1;
         double roundedDecimalNumber = Double.parseDouble(df.format(-decimalNumber/2).replace(",", "."));
 
-        System.out.println(yCoordinate + "==" + roundedDecimalNumber +"||"+ yCoordinate +"=="+ -0.5);
+        // System.out.println(yCoordinate + "==" + roundedDecimalNumber +"||"+ yCoordinate +"=="+ -0.5);
 
         if (zCoordinate == 0) return;
         if (yCoordinate != roundedDecimalNumber && yCoordinate != -0.5) return;
@@ -138,6 +146,7 @@ public class PositionVisualizer implements Observer {
     }
 
     private void onMouseClick(MouseEvent event, int tickPos) {
+        if (event.getClickCount() <= 1) return;
         if (!(event.getTarget() instanceof Sphere sphere)) return;
         PhongMaterial white = new PhongMaterial();
         white.setDiffuseColor(Color.WHITE);
@@ -145,7 +154,8 @@ public class PositionVisualizer implements Observer {
         sphere.setMaterial(new PhongMaterial(Color.RED));
         for (Observer observer : inputTickManager.getObservers()) {
             if (observer instanceof CoordinateScreen) {
-                ((CoordinateScreen) observer).updateTickClick(tickPos);
+                setTickClicked((CoordinateScreen) observer, tickPos);
+                observer.update(null, null);
             }
         }
     }
@@ -167,10 +177,25 @@ public class PositionVisualizer implements Observer {
         return line;
     }
 
+    public void addObserver(Observer observer) {
+        this.observers.add(observer);
+    }
+
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(null, null);
+        }
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         box.setTranslateY(MinecraftGUI.BLOCK_OFFSET_Y - movementEngine.player.getStartPos().y);
         generatePlayerPath();
+    }
+
+    private void setTickClicked(CoordinateScreen coordinateScreen, int tick) {
+        coordinateScreen.setClickedTick(tick);
+        this.tickClicked = tick;
     }
 
 }

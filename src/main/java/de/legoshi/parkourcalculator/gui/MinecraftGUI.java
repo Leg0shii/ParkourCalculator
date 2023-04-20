@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.gui;
 
 import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.gui.debug.InformationScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
@@ -8,6 +9,7 @@ import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.Air;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
+import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.util.Vec3;
 import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
 import de.legoshi.parkourcalculator.util.fxyz.FPSController;
@@ -52,6 +54,7 @@ public class MinecraftGUI extends Observable {
         addObserver(application.environment);
         addObserver(application.coordinateScreen);
         addObserver(application.positionVisualizer);
+        addObserver(application.informationScreen);
 
         application.menuGUI.setMinecraftGUI(this);
 
@@ -74,7 +77,6 @@ public class MinecraftGUI extends Observable {
 
     public void resetScreen() {
         clearScreen();
-        addStartingBlock();
     }
 
     public void handleMouseClick(MouseEvent mouseEvent) {
@@ -117,6 +119,11 @@ public class MinecraftGUI extends Observable {
         Color transparentColor = new Color(newBlockColor.getRed(), newBlockColor.getGreen(), newBlockColor.getBlue(), PREVIEW_BLOCK_OPACITY);
         newBlock.setMaterialColor(transparentColor);
         previewBlock(newBlock);
+        for (Observer observer : observers) {
+            if (observer instanceof InformationScreen) {
+                observer.update(null, getFacingAsString(mouseEvent));
+            }
+        }
     }
 
     private Vec3 getCoordinatesFromMouseEvent(MouseEvent mouseEvent) {
@@ -139,8 +146,26 @@ public class MinecraftGUI extends Observable {
         else if (bounds.getMaxY() == clickY) vec3Float.addVector(0, -1, 0);
         else if (bounds.getMinZ() == clickZ) vec3Float.addVector(0, 0, -1);
         else if (bounds.getMaxZ() == clickZ) vec3Float.addVector(0, 0, 1);
-
         return vec3Float;
+    }
+
+    private String getFacingAsString(MouseEvent mouseEvent) {
+        if (!(mouseEvent.getTarget() instanceof Box clickedBox)) return null;
+        ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
+        if (clickedBlock == null) return null;
+
+        DecimalFormat df = new DecimalFormat("#.#########");
+        double clickX = Double.parseDouble(df.format(mouseEvent.getX()).replace(",", "."));
+        double clickY = Double.parseDouble(df.format(mouseEvent.getY()).replace(",", "."));
+        double clickZ = Double.parseDouble(df.format(mouseEvent.getZ()).replace(",", "."));
+        Bounds bounds = clickedBox.getBoundsInLocal();
+
+        if (bounds.getMinX() == clickX) return "west";
+        else if (bounds.getMaxX() == clickX) return "east";
+        else if (bounds.getMinY() == clickY) return "top";
+        else if (bounds.getMaxY() == clickY) return "bottom";
+        else if (bounds.getMinZ() == clickZ) return "south";
+        else return "north";
     }
 
     private Vec3 getRoundedCoordinatesFromMouseEvent(MouseEvent mouseEvent) {

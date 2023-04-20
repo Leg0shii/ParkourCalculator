@@ -6,11 +6,13 @@ import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.DebugUI;
+import de.legoshi.parkourcalculator.gui.debug.InformationScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.MenuScreen;
 import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
+import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.beans.binding.NumberBinding;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -18,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -32,6 +35,7 @@ public class Application extends javafx.application.Application {
     public MinecraftGUI minecraftGUI;
     public SubScene minecraftSubScene;
     public CoordinateScreen coordinateScreen;
+    public InformationScreen informationScreen;
 
     public MenuScreen menuScreen;
     public Group minecraftScreenGroup;
@@ -70,9 +74,10 @@ public class Application extends javafx.application.Application {
         this.window.setTop(menuGUI);
 
         // load coordinate-screen and the menu-accordion
+        this.informationScreen = new InformationScreen();
         this.coordinateScreen = new CoordinateScreen(movementEngine);
-        this.menuScreen = new MenuScreen(movementEngine, positionVisualizer, getMenuOffset(scene));
-        this.debugUI = new DebugUI(coordinateScreen, menuScreen);
+        this.menuScreen = new MenuScreen(coordinateScreen, movementEngine, positionVisualizer, getMenuOffset(scene));
+        this.debugUI = new DebugUI(informationScreen, coordinateScreen, menuScreen);
         this.window.setRight(debugUI);
 
         // load groups for blocks, bind to minecraft screen, apply to borderpane
@@ -84,6 +89,8 @@ public class Application extends javafx.application.Application {
 
         this.inputTickManager.addObserver(positionVisualizer);
         this.inputTickManager.addObserver(coordinateScreen);
+
+        this.positionVisualizer.addObserver(coordinateScreen);
 
         stage.setTitle("Parkour Simulator!");
         stage.setScene(scene);

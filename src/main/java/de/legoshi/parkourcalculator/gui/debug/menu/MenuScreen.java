@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
+import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import javafx.beans.binding.NumberBinding;
@@ -13,9 +14,9 @@ public class MenuScreen extends VBox {
     public PlayerSettings playerSettings;
     public ScreenSettings screenSeetings;
 
-    public MenuScreen(MovementEngine movementEngine, PositionVisualizer positionVisualizer, NumberBinding remainingHeight) {
+    public MenuScreen(CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer, NumberBinding remainingHeight) {
         this.blockSettings = new BlockSettings();
-        this.playerSettings = new PlayerSettings(movementEngine, positionVisualizer);
+        this.playerSettings = new PlayerSettings(coordinateScreen, movementEngine, positionVisualizer);
         this.screenSeetings = new ScreenSettings();
 
         Accordion accordion = new Accordion();
