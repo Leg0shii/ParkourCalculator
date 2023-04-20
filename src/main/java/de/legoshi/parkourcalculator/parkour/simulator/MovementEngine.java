@@ -21,8 +21,11 @@ public class MovementEngine {
     public Environment environment;
     public ArrayList<PlayerTickInformation> playerTickInformations;
 
+    private static final Vec3 DEFAULT_START = new Vec3(0.5, 1.0, 0.5);
+    private static final Vec3 DEFAULT_VELOCITY = new Vec3(0, -0.0784000015258789, 0);
+
     public MovementEngine(Environment environment) {
-        this.player = new Player(new Vec3(0.5, 1.0, 0.5), new Vec3(0, -0.0784000015258789, 0));
+        this.player = new Player(DEFAULT_START, DEFAULT_VELOCITY);
         this.environment = environment;
         this.playerTickInformations = new ArrayList<>();
     }
@@ -31,6 +34,12 @@ public class MovementEngine {
         player.resetPlayer();
         for (InputTick inputTick : inputTicks) calculateTick(inputTick);
         return player.getPlayerTickInformation();
+    }
+
+    public void resetPlayer() {
+        player.setStartPos(DEFAULT_START);
+        player.setStartVel(DEFAULT_VELOCITY);
+        player.resetPlayer();
     }
 
     public ArrayList<PlayerTickInformation> updatePath(List<InputTick> inputTicks) {

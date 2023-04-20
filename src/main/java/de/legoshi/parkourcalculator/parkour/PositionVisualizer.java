@@ -44,6 +44,11 @@ public class PositionVisualizer implements Observer {
         group.getChildren().add(box);
     }
 
+    public void resetPlayer() {
+        movementEngine.resetPlayer();
+        generatePlayerPath();
+    }
+
     public void generatePlayerPath() {
         ArrayList<PlayerTickInformation> playerTI = getUpdatedPlayerPos();
         ArrayList<Vec3> playerPos = new ArrayList<>();

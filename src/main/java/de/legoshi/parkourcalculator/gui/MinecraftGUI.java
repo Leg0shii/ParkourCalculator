@@ -72,6 +72,11 @@ public class MinecraftGUI extends Observable {
         addBlock(aBlock);
     }
 
+    public void resetScreen() {
+        clearScreen();
+        addStartingBlock();
+    }
+
     public void handleMouseClick(MouseEvent mouseEvent) {
         if (!(mouseEvent.getTarget() instanceof Box)) return;
         mouseEvent.consume();

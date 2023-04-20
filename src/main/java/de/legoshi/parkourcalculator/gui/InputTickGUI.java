@@ -81,6 +81,14 @@ public class InputTickGUI extends ScrollPane {
         this.inputTicks.getInputTicks().clear();
     }
 
+    public void resetTicks() {
+        clearAllTicks();
+        addTextLabels();
+        duplicateRow(new InputTick());
+        addButtons();
+        inputTicks.notifyObservers();
+    }
+
     private void addButtons() {
         countTF.setMaxWidth(40);
         duplicateButton.setMinWidth(138);
@@ -154,7 +162,7 @@ public class InputTickGUI extends ScrollPane {
         vBox.getChildren().add(hBox);
     }
 
-    private void duplicateRow(InputTick inputTick) {
+    public void duplicateRow(InputTick inputTick) {
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(5, 5, 5, 5));
         hBox.setSpacing(15);

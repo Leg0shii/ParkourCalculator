@@ -29,7 +29,8 @@ public class MenuGUI extends MenuBar {
     private final InputTickGUI inputTickGUI;
     private final MovementEngine movementEngine;
     private final PositionVisualizer positionVisualizer;
-    @Setter private MinecraftGUI minecraftGUI;
+    @Setter
+    private MinecraftGUI minecraftGUI;
 
     public MenuGUI(Window window, Application application) {
         this.window = window;
@@ -39,95 +40,105 @@ public class MenuGUI extends MenuBar {
         this.movementEngine = positionVisualizer.getMovementEngine();
 
         Menu fileMenu = new Menu("File");
+        Menu helpMenu = new Menu("Help");
 
         MenuItem openInputMenuItem = new MenuItem("Open Inputs");
-        MenuItem saveInputMenuItem = new Menu("Save Inputs");
         MenuItem openBlockMenuItem = new MenuItem("Open Blocks");
-        MenuItem saveBlockMenuItem = new Menu("Save Blocks");
+        MenuItem saveInputMenuItem = new MenuItem("Save Inputs");
+        MenuItem saveBlockMenuItem = new MenuItem("Save Blocks");
 
-        registerOpenInputMenu(openInputMenuItem);
-        registerSaveInputMenu(saveInputMenuItem);
-        registerOpenBlockMenu(openBlockMenuItem);
-        registerSaveBlockMenu(saveBlockMenuItem);
+        openInputMenuItem.setOnAction(event -> openInputMenu());
+        openBlockMenuItem.setOnAction(event -> openBlockMenu());
+        saveInputMenuItem.setOnAction(event -> saveInputMenu());
+        saveBlockMenuItem.setOnAction(event -> saveBlockMenu());
 
-        fileMenu.getItems().add(openInputMenuItem);
-        fileMenu.getItems().add(saveInputMenuItem);
-        fileMenu.getItems().add(openBlockMenuItem);
-        fileMenu.getItems().add(saveBlockMenuItem);
+        fileMenu.getItems().addAll(openInputMenuItem, openBlockMenuItem, saveInputMenuItem, saveBlockMenuItem);
 
-        getMenus().add(fileMenu);
+        MenuItem helpBlocksResetMenuItem = new MenuItem("Reset Blocks");
+        MenuItem helpTicksResetMenuItem = new MenuItem("Reset Ticks");
+        MenuItem helpPlayerResetMenuItem = new MenuItem("Reset Player");
+
+        helpPlayerResetMenuItem.setOnAction(event -> resetPlayer());
+        helpTicksResetMenuItem.setOnAction(event -> resetTicks());
+        helpBlocksResetMenuItem.setOnAction(event -> resetBlocks());
+
+        helpMenu.getItems().addAll(helpBlocksResetMenuItem, helpTicksResetMenuItem, helpPlayerResetMenuItem);
+        getMenus().addAll(fileMenu, helpMenu);
     }
 
-    private void registerOpenInputMenu(MenuItem menuItem) {
-        menuItem.setOnAction(event -> {
-            List<InputData> inputDatas = FileHandler.loadInputs(window);
-            if (inputDatas == null || inputDatas.size() == 0) return;
-
-            // add all ticks to the side
-            List<InputTick> inputTicks = new ArrayList<>();
-            for (InputData inputData : inputDatas) inputTicks.add(inputData.getInputTick());
-            inputTickGUI.importTicks(inputTicks);
-
-            // update player path
-            positionVisualizer.update(null, null);
-        });
+    private void resetPlayer() {
+        positionVisualizer.resetPlayer();
     }
 
-    private void registerSaveInputMenu(MenuItem menuItem) {
-        menuItem.setOnAction(event -> {
-            List<InputData> inputDatas = new ArrayList<>();
+    private void resetTicks() {
+        inputTickGUI.resetTicks();
+    }
 
-            Vec3 playerStart = movementEngine.player.getStartPos();
-            Vec3 playerStartVel = movementEngine.player.getStartVel();
+    private void resetBlocks() {
+        minecraftGUI.resetScreen();
+    }
 
-            int i = 0;
-            for (InputTick inputTick : inputTickGUI.getInputTicks().getInputTicks()) {
-                InputData inputData = new InputData();
-                inputData.setInputTick(inputTick);
-                if (i == 0) {
-                    inputData.setPosition(playerStart);
-                    inputData.setVelocity(playerStartVel);
-                } else {
-                    inputData.setPosition(new Vec3(0, 0, 0));
-                    inputData.setVelocity(new Vec3(0, 0, 0));
-                }
-                inputDatas.add(inputData);
-                i++;
+    private void openInputMenu() {
+        List<InputData> inputDatas = FileHandler.loadInputs(window);
+        if (inputDatas == null || inputDatas.size() == 0) return;
+
+        // add all ticks to the side
+        List<InputTick> inputTicks = new ArrayList<>();
+        for (InputData inputData : inputDatas) inputTicks.add(inputData.getInputTick());
+        inputTickGUI.importTicks(inputTicks);
+
+        // update player path
+        positionVisualizer.update(null, null);
+    }
+
+    private void openBlockMenu() {
+        List<List<BlockData>> blockDataList = FileHandler.loadBlocks(window);
+        if (blockDataList == null || blockDataList.size() == 0) return;
+
+        minecraftGUI.clearScreen();
+
+        // load solid blocks first
+        BlockSettings.enableCustomColors();
+        for (List<BlockData> blockDatas : blockDataList) {
+            for (BlockData blockData : blockDatas) {
+                BlockFactory.applyValues(blockData);
+                ABlock aBlock = BlockFactory.createBlock(blockData.pos, blockData.blockType);
+                minecraftGUI.addBlock(aBlock);
             }
-
-            FileHandler.saveInputs(inputDatas, window);
-        });
+        }
+        BlockSettings.disableCustomColors();
     }
 
-    private void registerOpenBlockMenu(MenuItem menuItem) {
-        menuItem.setOnAction(event -> {
-            List<List<BlockData>> blockDataList = FileHandler.loadBlocks(window);
-            if (blockDataList == null || blockDataList.size() == 0) return;
+    private void saveInputMenu() {
+        List<InputData> inputDatas = new ArrayList<>();
 
-            minecraftGUI.clearScreen();
+        Vec3 playerStart = movementEngine.player.getStartPos();
+        Vec3 playerStartVel = movementEngine.player.getStartVel();
 
-            // load solid blocks first
-            BlockSettings.enableCustomColors();
-            for (List<BlockData> blockDatas : blockDataList) {
-                for (BlockData blockData : blockDatas) {
-                    BlockFactory.applyValues(blockData);
-                    ABlock aBlock = BlockFactory.createBlock(blockData.pos, blockData.blockType);
-                    minecraftGUI.addBlock(aBlock);
-                }
+        int i = 0;
+        for (InputTick inputTick : inputTickGUI.getInputTicks().getInputTicks()) {
+            InputData inputData = new InputData();
+            inputData.setInputTick(inputTick);
+            if (i == 0) {
+                inputData.setPosition(playerStart);
+                inputData.setVelocity(playerStartVel);
+            } else {
+                inputData.setPosition(new Vec3(0, 0, 0));
+                inputData.setVelocity(new Vec3(0, 0, 0));
             }
-            BlockSettings.disableCustomColors();
-        });
+            inputDatas.add(inputData);
+            i++;
+        }
+        FileHandler.saveInputs(inputDatas, window);
     }
 
-    private void registerSaveBlockMenu(MenuItem menuItem) {
-        menuItem.setOnAction(event -> {
-            List<ABlock> aBlocks = Environment.aBlocks;
-            List<BlockData> blockDataList = new ArrayList<>();
-            for (ABlock aBlock : aBlocks) {
-                blockDataList.add(aBlock.toBlockData());
-            }
-            FileHandler.saveBlocks(blockDataList, window);
-        });
+    private void saveBlockMenu() {
+        List<ABlock> aBlocks = Environment.aBlocks;
+        List<BlockData> blockDataList = new ArrayList<>();
+        for (ABlock aBlock : aBlocks) {
+            blockDataList.add(aBlock.toBlockData());
+        }
+        FileHandler.saveBlocks(blockDataList, window);
     }
 
 }
