@@ -1,5 +1,7 @@
 package de.legoshi.parkourcalculator.parkour.environment;
 
+import de.legoshi.parkourcalculator.file.BlockData;
+import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.*;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -47,6 +49,17 @@ public class BlockFactory {
             case "Vine" -> new Vine(vec3);
             default -> new StandardBlock(vec3);
         };
+    }
+
+    public static void applyValues(BlockData blockData) {
+        BlockSettings.setFlip(blockData.TOP);
+        BlockSettings.setFloor(blockData.BOTTOM);
+        BlockSettings.setNorth(blockData.NORTH);
+        BlockSettings.setEast(blockData.EAST);
+        BlockSettings.setWest(blockData.WEST);
+        BlockSettings.setSouth(blockData.SOUTH);
+        BlockSettings.setTier(blockData.tier);
+        BlockSettings.setColor(blockData.color);
     }
 
 }

@@ -45,11 +45,19 @@ public class InputTickGUI extends ScrollPane {
         setContent(vBox);
     }
 
-    public void addAllTicks(List<InputTick> inputTicks) {
-        vBox.getChildren().clear();
+    public void importTicks(List<InputTick> inputTicks) {
+        clearAllTicks();
         addTextLabels();
-        for (InputTick inputTick : inputTicks) duplicateRow(inputTick);
+        for (InputTick inputTick : inputTicks) {
+            duplicateRow(inputTick);
+        }
         addButton();
+    }
+
+    private void clearAllTicks() {
+        this.getHBoxes().clear();
+        this.vBox.getChildren().clear();
+        this.inputTicks.getInputTicks().clear();
     }
 
     private void addButton() {
