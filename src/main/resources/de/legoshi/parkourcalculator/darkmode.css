@@ -153,7 +153,33 @@
     -fx-background-color: transparent;
 }
 
-/* AnchorPane */
+/* Style buttons */
+.button {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+/* Dark mode for scrollbars */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #2a2a2a;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #3a3a3a;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+    /* AnchorPane */
 .anchor-pane {
     -fx-background-color: #2e2e2e;
 }
