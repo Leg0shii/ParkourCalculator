@@ -17,12 +17,10 @@ import java.util.Observer;
 
 public class CoordinateScreen extends VBox implements Observer {
 
-    private final Font boldFont = Font.font("Arial", FontWeight.BOLD, 12);
-
     private final MovementEngine movementEngine;
     private final Player player;
 
-    private final Text generalLabelInfo = new Text("Start Coordinates");
+    private final Label generalLabelInfo = new Label("Start Coordinates");
     private final Label facing = new Label();
     private final Label xPos = new Label();
     private final Label yPos = new Label();
@@ -31,7 +29,7 @@ public class CoordinateScreen extends VBox implements Observer {
     private final Label yVel = new Label();
     private final Label zVel = new Label();
 
-    private final Text tickLabelInfo = new Text("nth Tick Information");
+    private final Label tickLabelInfo = new Label("nth Tick Information");
     private final Label tickFacing = new Label();
     private final Label xTickPos = new Label();
     private final Label yTickPos = new Label();
@@ -45,15 +43,15 @@ public class CoordinateScreen extends VBox implements Observer {
         this.player = movementEngine.player;
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setMinWidth(200);
-        applyBackgroundColor();
+
+        this.getStyleClass().add("coordinate-field");
+        this.generalLabelInfo.getStyleClass().add("coords-title");
+        this.tickLabelInfo.getStyleClass().add("coords-title");
+
         updateLabels();
         updateTickClick(-1); // init
         addLabels();
         indentLabels();
-    }
-
-    private void applyBackgroundColor() {
-        this.setBackground(new Background(new BackgroundFill(Color.DARKGRAY, CornerRadii.EMPTY, new Insets(0, 0, 0, 0))));
     }
 
     private void addLabels() {
@@ -68,12 +66,18 @@ public class CoordinateScreen extends VBox implements Observer {
         HBox tickContainer = new HBox(tickLabel, tickVelLabel);
         tickContainer.setSpacing(25);
         this.getChildren().addAll(getSpacer(), tickLabelInfo, tickContainer);
+
+        addTextClass(posLabel, velLabel, tickLabel, tickVelLabel);
+    }
+
+    private void addTextClass(VBox... vBoxes) {
+        for (VBox vBox : vBoxes) {
+            for (Node n : vBox.getChildren()) n.getStyleClass().add("coords-text");
+        }
     }
 
     private void updateLabels() {
-        this.generalLabelInfo.setFont(boldFont);
-        this.tickLabelInfo.setFont(boldFont);
-        this.facing.setText("F: " + setDecimals(-this.player.getYAW())); // flips facing on x-axis
+        this.facing.setText("F-Pos: " + setDecimals(-this.player.getYAW())); // flips facing on x-axis
         this.xPos.setText("X-Pos: " + setDecimals(-this.player.getPosition().x)); // flips pos on x-axis
         this.yPos.setText("Y-Pos: " + setDecimals(this.player.getPosition().y));
         this.zPos.setText("Z-Pos: " + setDecimals(this.player.getPosition().z));

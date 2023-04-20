@@ -153,15 +153,6 @@
     -fx-background-color: transparent;
 }
 
-/* Style buttons */
-.button {
-    -fx-background-color: #3a3a3a;
-    -fx-text-fill: #ffffff;
-    -fx-padding: 8px 16px;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
-}
-
 /* Dark mode for scrollbars */
 .scroll-bar {
     -fx-background-color: transparent;
@@ -230,4 +221,29 @@
 
 .color-picker .color-box .picker-color {
     -fx-background-radius: 3px;
+}
+
+/* Coordinate field background */
+.coordinate-field {
+    -fx-background-color: #333333;
+    -fx-padding: 10px;
+    -fx-border-color: #4a4a4a;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+/* Coordinate field text */
+.coords-text {
+    -fx-text-fill: #d1d1d1;
+    -fx-font-size: 12px;
+    -fx-font-family: "Arial";
+}
+
+/* Coordinate field title */
+.coords-title {
+    -fx-text-fill: #b3b3b3;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Arial";
 }
