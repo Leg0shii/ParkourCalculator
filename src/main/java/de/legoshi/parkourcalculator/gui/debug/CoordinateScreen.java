@@ -74,10 +74,10 @@ public class CoordinateScreen extends VBox implements Observer {
         this.generalLabelInfo.setFont(boldFont);
         this.tickLabelInfo.setFont(boldFont);
         this.facing.setText("F: " + setDecimals(-this.player.getYAW())); // flips facing on x-axis
-        this.xPos.setText("X-Pos: " + setDecimals(this.player.getPosition().x));
+        this.xPos.setText("X-Pos: " + setDecimals(-this.player.getPosition().x)); // flips pos on x-axis
         this.yPos.setText("Y-Pos: " + setDecimals(this.player.getPosition().y));
         this.zPos.setText("Z-Pos: " + setDecimals(this.player.getPosition().z));
-        this.xVel.setText("X-Vel: " + setDecimals(this.player.getVelocity().x));
+        this.xVel.setText("X-Vel: " + setDecimals(-this.player.getVelocity().x)); // flips vel on x-axis
         this.yVel.setText("Y-Vel: " + setDecimals(this.player.getVelocity().y));
         this.zVel.setText("Z-Vel: " + setDecimals(this.player.getVelocity().z));
     }
@@ -96,10 +96,10 @@ public class CoordinateScreen extends VBox implements Observer {
         PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(tickPos);
         this.tickLabelInfo.setText(tickPos + ". Tick Information");
         this.tickFacing.setText("F-Tick: " + setDecimals(-ptiC.getFacing())); // flips facing on x-axis
-        this.xTickPos.setText("X-Tick: " + setDecimals(ptiC.getPosition().x));
+        this.xTickPos.setText("X-Tick: " + setDecimals(-ptiC.getPosition().x)); // flips pos on x-axis
         this.yTickPos.setText("Y-Tick: " + setDecimals(ptiC.getPosition().y));
         this.zTickPos.setText("Z-Tick: " + setDecimals(ptiC.getPosition().z));
-        this.xTickVel.setText("X-Tick-Vel: " + setDecimals(ptiC.getVelocity().x));
+        this.xTickVel.setText("X-Tick-Vel: " + setDecimals(-ptiC.getVelocity().x)); // flips vel on x-axis
         this.yTickVel.setText("Y-Tick-Vel: " + setDecimals(ptiC.getVelocity().y));
         this.zTickVel.setText("Z-Tick-Vel: " + setDecimals(ptiC.getVelocity().z));
     }

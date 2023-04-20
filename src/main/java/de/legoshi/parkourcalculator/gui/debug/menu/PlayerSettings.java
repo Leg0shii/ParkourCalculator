@@ -83,19 +83,19 @@ public class PlayerSettings extends TitledPane {
         getButton.setOnAction(event -> {
             // Get values from somewhere (e.g. a game engine) and set them in the text fields
             PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(0);
-            this.xPosField.setText(ptiC.getPosition().x + "");
+            this.xPosField.setText(-ptiC.getPosition().x + "");
             this.yPosField.setText(ptiC.getPosition().y + "");
             this.zPosField.setText(ptiC.getPosition().z + "");
 
             Player player = movementEngine.player;
-            this.xVelField.setText(player.getStartVel().x + "");
+            this.xVelField.setText(-player.getStartVel().x + "");
             this.yVelField.setText(player.getStartVel().y + "");
             this.zVelField.setText(player.getStartVel().z + "");
         });
 
         Button copyButton = new Button("Copy to Clipboard");
         copyButton.setOnAction(event -> {
-            double x = tryParseDouble(xPosField.getText());
+            double x = tryParseDouble(xPosField.getText())*(-1);
             double y = tryParseDouble(yPosField.getText());
             double z = tryParseDouble(zPosField.getText());
             double facing = movementEngine.playerTickInformations.get(0).getFacing();
@@ -126,7 +126,7 @@ public class PlayerSettings extends TitledPane {
 
     private void registerTextFieldChanges() {
         this.xPosField.setOnKeyTyped(keyEvent -> {
-            double value = Double.parseDouble(xPosField.getText());
+            double value = Double.parseDouble(xPosField.getText())*(-1);
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
             movementEngine.player.setStartPos(newPos);
@@ -147,7 +147,7 @@ public class PlayerSettings extends TitledPane {
             positionVisualizer.update(null, null);
         });
         this.xVelField.setOnKeyTyped(keyEvent -> {
-            double value = Double.parseDouble(xVelField.getText());
+            double value = Double.parseDouble(xVelField.getText())*(-1);
             Vec3 oldPos = movementEngine.player.getStartVel().copy();
             Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
             movementEngine.player.setStartVel(newPos);
