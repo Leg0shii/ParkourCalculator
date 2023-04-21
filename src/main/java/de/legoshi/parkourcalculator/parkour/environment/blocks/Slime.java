@@ -47,4 +47,14 @@ public class Slime extends ABlock {
         this.slipperiness = Movement.Slipperiness.SLIME;
     }
 
+    @Override
+    public void onEntityCollidedWithBlock(Player player) {
+        if (Math.abs(player.getVelocity().y) < 0.1D && !player.isSNEAK()) {
+            double d0 = 0.4D + Math.abs(player.getVelocity().y) * 0.2D;
+            player.getVelocity().x *= d0;
+            player.getVelocity().z *= d0;
+        }
+        super.onEntityCollidedWithBlock(player);
+    }
+
 }
