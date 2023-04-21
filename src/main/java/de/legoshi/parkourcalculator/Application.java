@@ -14,6 +14,8 @@ import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.ConfigReader;
 import javafx.beans.binding.NumberBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -25,6 +27,7 @@ import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application {
 
+    public Scene scene;
     public BorderPane window;
 
     public ConfigReader configReader;
@@ -50,8 +53,8 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) {
         this.window = new BorderPane();
-        Scene scene = new Scene(window, 1400, 1000, true);
-        scene.getStylesheets().add(Application.class.getResource("darkmode.css").toExternalForm());
+        this.scene = new Scene(window, 1400, 1000, true);
+        this.scene.getStylesheets().add(Application.class.getResource("darkmode.css").toExternalForm());
 
         this.configReader = new ConfigReader();
 
@@ -87,7 +90,7 @@ public class Application extends javafx.application.Application {
         this.minecraftScreenGroup = new Group();
         this.minecraftSubScene = new SubScene(minecraftScreenGroup, 500, 500, true, SceneAntialiasing.DISABLED);
         this.window.setCenter(this.minecraftSubScene);
-        this.minecraftGUI = new MinecraftGUI(configReader, this, minecraftScreenGroup);
+        this.minecraftGUI = new MinecraftGUI(this, minecraftScreenGroup);
         this.minecraftScreenGroup.getChildren().add(pathGroup);
 
         this.inputTickManager.addObserver(positionVisualizer);

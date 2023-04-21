@@ -2,7 +2,6 @@ package de.legoshi.parkourcalculator.gui;
 
 import de.legoshi.parkourcalculator.Application;
 import de.legoshi.parkourcalculator.gui.debug.InformationScreen;
-import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
@@ -10,7 +9,6 @@ import de.legoshi.parkourcalculator.parkour.environment.Facing;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.Air;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
-import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.util.ConfigReader;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -23,7 +21,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Observable;
@@ -36,6 +33,7 @@ public class MinecraftGUI extends Observable {
     public static final double BLOCK_OFFSET_Z = 0.5;
 
     private final ConfigReader configReader;
+    private final Application application;
 
     private final BorderPane window;
     private final SubScene subScene;
@@ -46,8 +44,9 @@ public class MinecraftGUI extends Observable {
     private ArrayList<Box> previewBlockBoxes = new ArrayList<>();
     private final ArrayList<Observer> observers = new ArrayList<>();
 
-    public MinecraftGUI(ConfigReader configReader, Application application, Group group) {
-        this.configReader = configReader;
+    public MinecraftGUI(Application application, Group group) {
+        this.application = application;
+        this.configReader = application.configReader;
 
         this.group = group;
         this.group.setDepthTest(DepthTest.ENABLE);
@@ -237,6 +236,7 @@ public class MinecraftGUI extends Observable {
     private void registerCamera() {
         AdvancedCamera camera = new AdvancedCamera();
         FPSController controller = new FPSController(configReader);
+        controller.setScene(application.scene);
 
         camera.setController(controller);
         subScene.setCamera(camera);
