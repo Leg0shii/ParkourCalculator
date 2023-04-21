@@ -66,7 +66,6 @@
     -fx-border-color: #4a4a4a;
 }
 
-/* Style CheckBox */
 .check-box {
     -fx-text-fill: #ffffff;
 }
@@ -96,6 +95,22 @@
 
 .check-box:focused > .box {
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 255, 0.6), 10, 0, 0, 0);
+}
+
+.darkmode-selection.check-box > .box {
+    -fx-border-color: #8B0000; /* reddish color */
+}
+
+.darkmode-selection.check-box > .box:hover {
+    -fx-border-color: #a52a2a; /* darker reddish color */
+}
+
+.darkmode-selection.check-box:pressed > .box {
+    -fx-border-color: #5f0000; /* darker reddish color */
+}
+
+.darkmode-selection.check-box:focused > .box {
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 0, 0, 0.6), 10, 0, 0, 0); /* Changed RGBA values for reddish drop shadow */
 }
 
 /* Style MenuBar, Menu, and MenuItem */

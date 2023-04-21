@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.tick;
 
+import javafx.scene.control.CheckBox;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

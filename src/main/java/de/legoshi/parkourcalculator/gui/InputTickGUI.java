@@ -3,10 +3,16 @@ package de.legoshi.parkourcalculator.gui;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.NumberHelper;
+import javafx.animation.FadeTransition;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -33,6 +39,9 @@ public class InputTickGUI extends ScrollPane {
     private final Button duplicateButton = new Button("Duplicate");
     private final TextField countTF = new TextField("1");
     private final Button removeButton = new Button("-");
+
+    private CheckBox lastRightClickedCheckBox = null;
+    private String lastRightClickedAction = null;
 
     public InputTickGUI(InputTickManager inputTickManager) {
         this.inputTicks = inputTickManager;
@@ -140,26 +149,24 @@ public class InputTickGUI extends ScrollPane {
         hBox.setPadding(new Insets(10, 0, 0, 7));
         hBox.setSpacing(18);
 
-        Label tagLabel = new Label("#");
-        Label wLabel = new Label("W");
-        wLabel.setPadding(new Insets(0, 0, 0, 1));
-        Label aLabel = new Label("A");
-        aLabel.setPadding(new Insets(0, 0, 0, 8));
-        Label sLabel = new Label("S");
-        sLabel.setPadding(new Insets(0, 0, 0, 10));
-        Label dLabel = new Label("D");
-        dLabel.setPadding(new Insets(0, 0, 0, 10));
-        Label jLabel = new Label("J");
-        jLabel.setPadding(new Insets(0, 0, 0, 11));
-        Label pLabel = new Label("P");
-        pLabel.setPadding(new Insets(0, 0, 0, 10));
-        Label nLabel = new Label("N");
-        nLabel.setPadding(new Insets(0, 0, 0, 9));
-        Label facingLabel = new Label("F");
-        facingLabel.setPadding(new Insets(0, 0, 0, 5));
+        Label tagLabel = addLabel("#", 0);
+        Label wLabel = addLabel("W", 1);
+        Label aLabel = addLabel("A", 8);
+        Label sLabel = addLabel("S", 10);
+        Label dLabel = addLabel("D", 10);
+        Label jLabel = addLabel("J", 11);
+        Label pLabel = addLabel("P", 10);
+        Label nLabel = addLabel("N", 9);
+        Label facingLabel = addLabel("F", 5);
 
         hBox.getChildren().addAll(tagLabel, wLabel, aLabel, sLabel, dLabel, jLabel, pLabel, nLabel, facingLabel);
         vBox.getChildren().add(hBox);
+    }
+
+    private Label addLabel(String name, int offset) {
+        Label label = new Label(name);
+        label.setPadding(new Insets(0, 0, 0, offset));
+        return label;
     }
 
     public void duplicateRow(InputTick inputTick) {
@@ -224,7 +231,70 @@ public class InputTickGUI extends ScrollPane {
             }
             inputTicks.notifyObservers();
         });
+
+        cB.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                handleRightClick(s, cB, inputTick);
+            }
+        });
         return cB;
+    }
+
+    private void handleRightClick(String s, CheckBox cB, InputTick inputTick) {
+        if (lastRightClickedCheckBox == null || !lastRightClickedAction.equals(s)) {
+            if (lastRightClickedCheckBox != null) lastRightClickedCheckBox.getStyleClass().remove("darkmode-selection");
+            lastRightClickedCheckBox = cB;
+            lastRightClickedAction = s;
+            lastRightClickedCheckBox.setSelected(!lastRightClickedCheckBox.isSelected());
+            lastRightClickedCheckBox.getStyleClass().add("darkmode-selection");
+            updateInputTick(s, inputTick, lastRightClickedCheckBox.isSelected());
+        } else {
+            boolean select = lastRightClickedCheckBox.isSelected();
+            int startIndex = hBoxes.indexOf(lastRightClickedCheckBox.getParent());
+            int endIndex = hBoxes.indexOf(cB.getParent());
+
+            if (startIndex > endIndex) {
+                int temp = startIndex;
+                startIndex = endIndex;
+                endIndex = temp;
+            }
+
+            for (int i = startIndex; i <= endIndex; i++) {
+                HBox row = hBoxes.get(i);
+                CheckBox checkBox = (CheckBox) row.getChildren().get(columnIndexForAction(s));
+                checkBox.setSelected(select);
+                updateInputTick(s, inputTicks.getInputTicks().get(i), select);
+            }
+            lastRightClickedCheckBox.getStyleClass().remove("darkmode-selection");
+            lastRightClickedCheckBox = null;
+            lastRightClickedAction = null;
+        }
+    }
+
+    private int columnIndexForAction(String s) {
+        return switch (s) {
+            case "w" -> 1;
+            case "a" -> 2;
+            case "s" -> 3;
+            case "d" -> 4;
+            case "j" -> 5;
+            case "p" -> 6;
+            case "n" -> 7;
+            default -> -1;
+        };
+    }
+
+    private void updateInputTick(String s, InputTick inputTick, boolean selected) {
+        switch (s) {
+            case "w" -> inputTick.W = selected;
+            case "a" -> inputTick.A = selected;
+            case "s" -> inputTick.S = selected;
+            case "d" -> inputTick.D = selected;
+            case "j" -> inputTick.JUMP = selected;
+            case "p" -> inputTick.SPRINT = selected;
+            case "n" -> inputTick.SNEAK = selected;
+        }
+        inputTicks.notifyObservers();
     }
 
 }
