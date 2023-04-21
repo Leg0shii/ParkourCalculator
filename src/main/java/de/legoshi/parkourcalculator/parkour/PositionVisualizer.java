@@ -1,13 +1,17 @@
 package de.legoshi.parkourcalculator.parkour;
 
+import de.legoshi.parkourcalculator.gui.EditPlayerGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
+import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
+import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
@@ -21,10 +25,13 @@ import lombok.Getter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 public class PositionVisualizer extends Observable implements Observer {
+
+    private static final double ALLOWED_ERROR = 1e-15;
 
     @Getter private final MovementEngine movementEngine;
     private final InputTickManager inputTickManager;
@@ -132,8 +139,6 @@ public class PositionVisualizer extends Observable implements Observer {
         double decimalNumber = movementEngine.player.getStartPos().y % 1;
         double roundedDecimalNumber = Double.parseDouble(df.format(-decimalNumber/2).replace(",", "."));
 
-        // System.out.println(yCoordinate + "==" + roundedDecimalNumber +"||"+ yCoordinate +"=="+ -0.5);
-
         if (zCoordinate == 0) return;
         if (yCoordinate != roundedDecimalNumber && yCoordinate != -0.5) return;
 
@@ -142,18 +147,39 @@ public class PositionVisualizer extends Observable implements Observer {
             coords = coords.add(node.getTranslateX(), 0, node.getTranslateZ());
         }
 
-        Vec3 oldStartVec = movementEngine.player.getStartPos().copy();
-        movementEngine.player.setStartPos(new Vec3(coords.getX(), pOffset.y, coords.getZ()));
+        double xOffset = coords.getX()-pOffset.x;
+        double zOffset = coords.getZ()-pOffset.z;
+        Vec3 updatedVec = handleBoxMovementAndCollision(pOffset, xOffset, zOffset);
 
-        // resets movement if player is inside a block
-        if (ScreenSettings.isPathCollision() &&
-                !movementEngine.getCollidingBoundingBoxes(movementEngine.player.getStartBB()).isEmpty()) {
-            // only reset colliding axis
-            // best is to reset the axis exactly to the block hit box
-            movementEngine.player.setStartPos(oldStartVec);
-        }
+        movementEngine.player.setStartPos(updatedVec);
 
         generatePlayerPath();
+    }
+
+    public Vec3 handleBoxMovementAndCollision(Vec3 pOffset, double xOffset, double zOffset) {
+        Vec3 newPos = new Vec3(pOffset.x + xOffset, pOffset.y, pOffset.z + zOffset);
+        movementEngine.player.setStartPos(newPos);
+        if (!movementEngine.getCollidingBoundingBoxes(movementEngine.player.getStartBB()).isEmpty()) {
+            double newX = binarySearchAxis(movementEngine, pOffset.x, xOffset, pOffset.y, pOffset.z, true);
+            double newZ = binarySearchAxis(movementEngine, pOffset.z, zOffset, pOffset.y, newX, false);
+            newPos = new Vec3(newX, pOffset.y, newZ);
+        }
+        return newPos;
+    }
+
+    private double binarySearchAxis(MovementEngine movementEngine, double original, double offset, double y, double otherAxis, boolean isX) {
+        double low = original, high = original + offset, newVal;
+        while (Math.abs(high - low) > ALLOWED_ERROR) {
+            newVal = (low + high) / 2;
+            Vec3 testPos = isX ? new Vec3(newVal, y, otherAxis) : new Vec3(otherAxis, y, newVal);
+            movementEngine.player.setStartPos(testPos);
+            if (movementEngine.getCollidingBoundingBoxes(movementEngine.player.getStartBB()).isEmpty()) {
+                low = newVal;
+            } else {
+                high = newVal;
+            }
+        }
+        return low;
     }
 
     private void onMouseClick(MouseEvent event, int tickPos) {
