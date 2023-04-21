@@ -22,19 +22,12 @@ public class ScreenSettings extends TitledPane {
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
 
-        HBox previewHBox = new HBox();
-        previewHBox.setSpacing(10);
-        previewHBox.setAlignment(Pos.BASELINE_LEFT);
-        previewHBox.getChildren().addAll(previewBlockLabel, previewBlockCB);
-
-        HBox pathHBox = new HBox();
-        pathHBox.setSpacing(10);
-        pathHBox.setAlignment(Pos.BASELINE_LEFT);
-        pathHBox.getChildren().addAll(pathCollisionLabel, pathCollisionCB);
-
+        HBox previewHBox = addTuple(previewBlockLabel, previewBlockCB);
+        HBox pathHBox = addTuple(pathCollisionLabel, pathCollisionCB);
         VBox vBox = new VBox(previewHBox, pathHBox);
 
         previewBlockCB.setSelected(true);
+        pathCollisionCB.setSelected(true);
 
         setContent(vBox);
     }
@@ -45,6 +38,14 @@ public class ScreenSettings extends TitledPane {
 
     public static boolean isPreviewMode() {
         return previewBlockCB.isSelected();
+    }
+
+    private HBox addTuple(Label label, CheckBox checkBox) {
+        HBox pathHBox = new HBox();
+        pathHBox.setSpacing(10);
+        pathHBox.setAlignment(Pos.BASELINE_LEFT);
+        pathHBox.getChildren().addAll(label, checkBox);
+        return pathHBox;
     }
 
 }
