@@ -23,7 +23,7 @@ public class FPSController extends CameraController {
 
         double mouseSpeedMulti = configReader.getDoubleProperty("maxMouseMultiplier");
         this.mouseSpeed = configReader.getDoubleProperty("mouseSpeed");
-        this.minSpeed = mouseSpeed;
+        this.minMouseSpeed = mouseSpeed;
         this.maxMouseSpeed = mouseSpeed * mouseSpeedMulti;
     }
 
