@@ -66,7 +66,7 @@ public class PlayerSettings extends TitledPane {
 
         // Create a GridPane to hold the text fields
         GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10));
+        gridPane.setPadding(new Insets(10, 10, 0, 10));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
         gridPane.setAlignment(Pos.CENTER);
@@ -124,6 +124,7 @@ public class PlayerSettings extends TitledPane {
         // Set the content of the titledPane to the VBox
         ScrollPane scrollPane = new ScrollPane(vBox);
         scrollPane.setFitToWidth(true);
+        scrollPane.setPadding(new Insets(0, 0, 10, 0));
         setContent(scrollPane);
     }
 
