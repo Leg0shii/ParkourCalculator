@@ -26,7 +26,6 @@
       <element id="library" level="project" name="Maven: org.openjfx:javafx-graphics:win:18" />
       <element id="library" level="project" name="Maven: org.openjfx:javafx-fxml:18" />
       <element id="library" level="project" name="Maven: org.openjfx:javafx-fxml:win:18" />
-      <element id="library" level="project" name="Maven: org.fxyz3d:fxyz3d:0.5.4" />
       <element id="library" level="project" name="Maven: eu.mihosoft.vrl.jcsg:jcsg:0.5.7" />
       <element id="library" level="project" name="Maven: eu.mihosoft.vvecmath:vvecmath:0.4.0" />
       <element id="library" level="project" name="Maven: org.orbisgis:poly2tri-core:0.1.2" />
