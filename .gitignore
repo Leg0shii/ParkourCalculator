@@ -11,7 +11,9 @@ target/
 *.iws
 *.iml
 *.ipr
+
 src/main/resources/config.properties
+src/main/java/de/legoshi/parkourcalculator/Test.java
 
 ### Eclipse ###
 .apt_generated
