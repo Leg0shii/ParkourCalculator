@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug;
 
+import de.legoshi.parkourcalculator.parkour.environment.Facing;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -26,6 +27,6 @@ public class InformationScreen extends VBox implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (!(arg.toString().length() <= 7)) return;
-        blockFacingLabel.setText("Block Facing: " + arg);
+        blockFacingLabel.setText("Block Facing: " + ((Facing) arg).name());
     }
 }

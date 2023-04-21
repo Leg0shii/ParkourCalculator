@@ -6,10 +6,12 @@ import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
+import de.legoshi.parkourcalculator.parkour.environment.Facing;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.Air;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
+import de.legoshi.parkourcalculator.util.NumberHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
 import de.legoshi.parkourcalculator.util.fxyz.FPSController;
@@ -132,41 +134,42 @@ public class MinecraftGUI extends Observable {
         ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
         if (clickedBlock == null) return null;
 
-        DecimalFormat df = new DecimalFormat("#.#########");
-        double clickX = Double.parseDouble(df.format(mouseEvent.getX()).replace(",", "."));
-        double clickY = Double.parseDouble(df.format(mouseEvent.getY()).replace(",", "."));
-        double clickZ = Double.parseDouble(df.format(mouseEvent.getZ()).replace(",", "."));
-        Bounds bounds = clickedBox.getBoundsInLocal();
-
         Vec3 vec3Float = clickedBlock.getVec3().copy();
-        vec3Float.x = -vec3Float.x; // flipping the x axis
+        vec3Float.x = -vec3Float.x;
 
-        if (bounds.getMinX() == clickX) vec3Float.addVector(1, 0, 0);
-        else if (bounds.getMaxX() == clickX) vec3Float.addVector(-1, 0, 0);
-        else if (bounds.getMinY() == clickY) vec3Float.addVector(0, 1, 0);
-        else if (bounds.getMaxY() == clickY) vec3Float.addVector(0, -1, 0);
-        else if (bounds.getMinZ() == clickZ) vec3Float.addVector(0, 0, -1);
-        else if (bounds.getMaxZ() == clickZ) vec3Float.addVector(0, 0, 1);
+        Facing facing = getFacingAsString(mouseEvent);
+        if (facing == Facing.WEST) vec3Float.addVector(1, 0, 0);
+        else if (facing == Facing.EAST) vec3Float.addVector(-1, 0, 0);
+        else if (facing == Facing.TOP) vec3Float.addVector(0, 1, 0);
+        else if (facing == Facing.BOTTOM) vec3Float.addVector(0, -1, 0);
+        else if (facing == Facing.SOUTH) vec3Float.addVector(0, 0, -1);
+        else if (facing == Facing.NORTH) vec3Float.addVector(0, 0, 1);
         return vec3Float;
     }
 
-    private String getFacingAsString(MouseEvent mouseEvent) {
+    private Facing getFacingAsString(MouseEvent mouseEvent) {
         if (!(mouseEvent.getTarget() instanceof Box clickedBox)) return null;
         ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
         if (clickedBlock == null) return null;
 
-        DecimalFormat df = new DecimalFormat("#.#########");
-        double clickX = Double.parseDouble(df.format(mouseEvent.getX()).replace(",", "."));
-        double clickY = Double.parseDouble(df.format(mouseEvent.getY()).replace(",", "."));
-        double clickZ = Double.parseDouble(df.format(mouseEvent.getZ()).replace(",", "."));
-        Bounds bounds = clickedBox.getBoundsInLocal();
+        int p = 7;
+        double clickX = NumberHelper.roundDouble(mouseEvent.getX(), p);
+        double clickY = NumberHelper.roundDouble(mouseEvent.getY(), p);
+        double clickZ = NumberHelper.roundDouble(mouseEvent.getZ(), p);
 
-        if (bounds.getMinX() == clickX) return "west";
-        else if (bounds.getMaxX() == clickX) return "east";
-        else if (bounds.getMinY() == clickY) return "top";
-        else if (bounds.getMaxY() == clickY) return "bottom";
-        else if (bounds.getMinZ() == clickZ) return "south";
-        else return "north";
+        Bounds bounds = clickedBox.getBoundsInLocal();
+        double maxX = NumberHelper.roundDouble(bounds.getMaxX(), p);
+        double maxY = NumberHelper.roundDouble(bounds.getMaxY(), p);
+        double minX = NumberHelper.roundDouble(bounds.getMinX(), p);
+        double minY = NumberHelper.roundDouble(bounds.getMinY(), p);
+        double minZ = NumberHelper.roundDouble(bounds.getMinZ(), p);
+
+        if (minX == clickX) return Facing.WEST;
+        else if (maxX == clickX) return Facing.EAST;
+        else if (minY == clickY) return Facing.TOP;
+        else if (maxY == clickY) return Facing.BOTTOM;
+        else if (minZ == clickZ) return Facing.SOUTH;
+        else return Facing.NORTH;
     }
 
     private Vec3 getRoundedCoordinatesFromMouseEvent(MouseEvent mouseEvent) {
