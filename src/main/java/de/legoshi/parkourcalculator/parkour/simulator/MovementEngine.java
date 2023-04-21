@@ -99,7 +99,6 @@ public class MovementEngine {
                 if (player.GROUND) mult = mult * block.slipperiness.value;
                 float acceleration = 0.16277136F / (mult * mult * mult);
 
-                // error could be here possibly?
                 float movement;
                 if (player.SPRINT) movement = 0.130000010133F;
                 else movement = 0.1F;
