@@ -3,6 +3,7 @@ package de.legoshi.parkourcalculator.gui.debug;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
+import de.legoshi.parkourcalculator.util.ConfigReader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -21,7 +22,10 @@ import java.util.stream.Stream;
 public class CoordinateScreen extends VBox implements Observer {
 
     private final MovementEngine movementEngine;
+    private final ConfigReader configReader;
     private final Player player;
+
+    private final int precision;
 
     private final Label startLabelInfo = new Label("First Tick Coordinates");
     private List<Label> start = new ArrayList<>();
@@ -34,9 +38,11 @@ public class CoordinateScreen extends VBox implements Observer {
 
     @Getter private int tickClicked = -1;
 
-    public CoordinateScreen(MovementEngine movementEngine) {
+    public CoordinateScreen(MovementEngine movementEngine, ConfigReader configReader) {
         this.movementEngine = movementEngine;
+        this.configReader = configReader;
         this.player = movementEngine.player;
+        this.precision = Math.min(Math.max(configReader.getIntProperty("coordinatePrecision"), 1), 16);
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setMinWidth(200);
         this.getStyleClass().add("coordinate-field");
@@ -89,7 +95,7 @@ public class CoordinateScreen extends VBox implements Observer {
     }
 
     private String setDecimals(double value) {
-        return String.format("%.12f", value);
+        return String.format("%." + precision + "f", value);
     }
 
     private Label getSpacer() {
