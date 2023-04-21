@@ -3,6 +3,7 @@ package de.legoshi.parkourcalculator.gui.debug.menu;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
+import de.legoshi.parkourcalculator.util.ConfigReader;
 import javafx.beans.binding.NumberBinding;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ScrollPane;
@@ -14,10 +15,10 @@ public class MenuScreen extends VBox {
     public PlayerSettings playerSettings;
     public ScreenSettings screenSeetings;
 
-    public MenuScreen(CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer, NumberBinding remainingHeight) {
+    public MenuScreen(ConfigReader configReader, CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer, NumberBinding remainingHeight) {
         this.blockSettings = new BlockSettings();
         this.playerSettings = new PlayerSettings(coordinateScreen, movementEngine, positionVisualizer);
-        this.screenSeetings = new ScreenSettings();
+        this.screenSeetings = new ScreenSettings(configReader);
 
         Accordion accordion = new Accordion();
         accordion.getPanes().addAll(blockSettings, playerSettings, screenSeetings);

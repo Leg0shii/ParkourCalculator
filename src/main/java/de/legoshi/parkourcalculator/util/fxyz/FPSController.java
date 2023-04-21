@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.util.fxyz;
 
+import de.legoshi.parkourcalculator.util.ConfigReader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
@@ -9,11 +10,21 @@ import javafx.scene.input.ScrollEvent;
 public class FPSController extends CameraController {
 
     private boolean fwd, strafeL, strafeR, back, up, down, shift, mouseLookEnabled;
-    private double speed = 0.02;
-    private final double maxSpeed = 0.05, minSpeed = 0.02;
+    private double speed, maxSpeed, minSpeed;
+    private double mouseSpeed, maxMouseSpeed, minMouseSpeed;
 
-    public FPSController() {
-        super(true, AnimationPreference.TIMER);        
+    public FPSController(ConfigReader configReader) {
+        super(true, AnimationPreference.TIMER);
+
+        double speedMulti = configReader.getDoubleProperty("maxSpeedMultiplier");
+        this.speed = configReader.getDoubleProperty("cameraSpeed");
+        this.minSpeed = speed;
+        this.maxSpeed = speed * speedMulti;
+
+        double mouseSpeedMulti = configReader.getDoubleProperty("maxMouseMultiplier");
+        this.mouseSpeed = configReader.getDoubleProperty("mouseSpeed");
+        this.minSpeed = mouseSpeed;
+        this.maxMouseSpeed = mouseSpeed * mouseSpeedMulti;
     }
 
     @Override
@@ -39,6 +50,7 @@ public class FPSController extends CameraController {
                 case SHIFT -> {
                     shift = true;
                     speed = maxSpeed;
+                    mouseSpeed = maxMouseSpeed;
                 }
             }
         } else if (event.getEventType() == KeyEvent.KEY_RELEASED) {
@@ -52,6 +64,7 @@ public class FPSController extends CameraController {
                 case SHIFT -> {
                     shift = false;
                     speed = minSpeed;
+                    mouseSpeed = minMouseSpeed;
                 }
             }
         }
@@ -66,8 +79,8 @@ public class FPSController extends CameraController {
             
             affine.setToIdentity();
             
-            rotateY.setAngle(MathUtils.clamp(((rotateY.getAngle() + dragDelta.getX() * (speed/3 * 15)) % 360 + 540) % 360 - 180, -360, 360)); // horizontal
-            rotateX.setAngle(MathUtils.clamp(((rotateX.getAngle() - dragDelta.getY() * (speed/3 * 15)) % 360 + 540) % 360 - 180, -90, 90)); // vertical
+            rotateY.setAngle(MathUtils.clamp(((rotateY.getAngle() + dragDelta.getX() * (mouseSpeed/3 * 15)) % 360 + 540) % 360 - 180, -360, 360)); // horizontal
+            rotateX.setAngle(MathUtils.clamp(((rotateX.getAngle() - dragDelta.getY() * (mouseSpeed/3 * 15)) % 360 + 540) % 360 - 180, -90, 90)); // vertical
             
             affine.prepend(t.createConcatenation(rotateY.createConcatenation(rotateX)));
         }     

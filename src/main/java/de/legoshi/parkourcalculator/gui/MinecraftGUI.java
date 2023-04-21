@@ -11,6 +11,7 @@ import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.Air;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
+import de.legoshi.parkourcalculator.util.ConfigReader;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
@@ -34,6 +35,8 @@ public class MinecraftGUI extends Observable {
     public static final double BLOCK_OFFSET_Y = 0.5;
     public static final double BLOCK_OFFSET_Z = 0.5;
 
+    private final ConfigReader configReader;
+
     private final BorderPane window;
     private final SubScene subScene;
     private final Group group;
@@ -43,7 +46,9 @@ public class MinecraftGUI extends Observable {
     private ArrayList<Box> previewBlockBoxes = new ArrayList<>();
     private final ArrayList<Observer> observers = new ArrayList<>();
 
-    public MinecraftGUI(Application application, Group group) {
+    public MinecraftGUI(ConfigReader configReader, Application application, Group group) {
+        this.configReader = configReader;
+
         this.group = group;
         this.group.setDepthTest(DepthTest.ENABLE);
 
@@ -231,7 +236,7 @@ public class MinecraftGUI extends Observable {
 
     private void registerCamera() {
         AdvancedCamera camera = new AdvancedCamera();
-        FPSController controller = new FPSController();
+        FPSController controller = new FPSController(configReader);
 
         camera.setController(controller);
         subScene.setCamera(camera);

@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
+import de.legoshi.parkourcalculator.util.ConfigReader;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -17,7 +18,7 @@ public class ScreenSettings extends TitledPane {
     private static Label pathCollisionLabel = new Label("Collision on path move");
     private static CheckBox pathCollisionCB = new CheckBox();
 
-    public ScreenSettings() {
+    public ScreenSettings(ConfigReader configReader) {
         Text titleText = new Text("Screen Settings");
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
@@ -26,8 +27,10 @@ public class ScreenSettings extends TitledPane {
         HBox pathHBox = addTuple(pathCollisionLabel, pathCollisionCB);
         VBox vBox = new VBox(previewHBox, pathHBox);
 
-        previewBlockCB.setSelected(true);
-        pathCollisionCB.setSelected(true);
+        boolean previewBlock = configReader.getBooleanProperty("previewBlock");
+        boolean pathCollision = configReader.getBooleanProperty("pathCollision");
+        previewBlockCB.setSelected(previewBlock);
+        pathCollisionCB.setSelected(pathCollision);
 
         setContent(vBox);
     }

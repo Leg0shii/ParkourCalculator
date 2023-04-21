@@ -12,7 +12,7 @@ import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
-import de.legoshi.parkourcalculator.util.Vec3;
+import de.legoshi.parkourcalculator.util.ConfigReader;
 import javafx.beans.binding.NumberBinding;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -20,13 +20,14 @@ import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application {
 
     public BorderPane window;
+
+    public ConfigReader configReader;
 
     public DebugUI debugUI;
     public InputTickGUI inputTickGUI;
@@ -52,6 +53,8 @@ public class Application extends javafx.application.Application {
         Scene scene = new Scene(window, 1400, 1000, true);
         scene.getStylesheets().add(Application.class.getResource("darkmode.css").toExternalForm());
 
+        this.configReader = new ConfigReader();
+
         // load environment and bind it to the movement-engine
         this.environment = new Environment();
         this.movementEngine = new MovementEngine(environment);
@@ -76,7 +79,7 @@ public class Application extends javafx.application.Application {
         // load coordinate-screen and the menu-accordion
         this.informationScreen = new InformationScreen();
         this.coordinateScreen = new CoordinateScreen(movementEngine);
-        this.menuScreen = new MenuScreen(coordinateScreen, movementEngine, positionVisualizer, getMenuOffset(scene));
+        this.menuScreen = new MenuScreen(configReader, coordinateScreen, movementEngine, positionVisualizer, getMenuOffset(scene));
         this.debugUI = new DebugUI(informationScreen, coordinateScreen, menuScreen);
         this.window.setRight(debugUI);
 
@@ -84,7 +87,7 @@ public class Application extends javafx.application.Application {
         this.minecraftScreenGroup = new Group();
         this.minecraftSubScene = new SubScene(minecraftScreenGroup, 500, 500, true, SceneAntialiasing.DISABLED);
         this.window.setCenter(this.minecraftSubScene);
-        this.minecraftGUI = new MinecraftGUI(this, minecraftScreenGroup);
+        this.minecraftGUI = new MinecraftGUI(configReader, this, minecraftScreenGroup);
         this.minecraftScreenGroup.getChildren().add(pathGroup);
 
         this.inputTickManager.addObserver(positionVisualizer);
