@@ -150,7 +150,6 @@ public class PositionVisualizer extends Observable implements Observer {
         double xOffset = coords.getX()-pOffset.x;
         double zOffset = coords.getZ()-pOffset.z;
         Vec3 updatedVec = handleBoxMovementAndCollision(pOffset, xOffset, zOffset);
-
         movementEngine.player.setStartPos(updatedVec);
 
         generatePlayerPath();
@@ -158,6 +157,8 @@ public class PositionVisualizer extends Observable implements Observer {
 
     public Vec3 handleBoxMovementAndCollision(Vec3 pOffset, double xOffset, double zOffset) {
         Vec3 newPos = new Vec3(pOffset.x + xOffset, pOffset.y, pOffset.z + zOffset);
+        if (!ScreenSettings.isPathCollision()) return newPos;
+
         movementEngine.player.setStartPos(newPos);
         if (!movementEngine.getCollidingBoundingBoxes(movementEngine.player.getStartBB()).isEmpty()) {
             double newX = binarySearchAxis(movementEngine, pOffset.x, xOffset, pOffset.y, pOffset.z, true);
