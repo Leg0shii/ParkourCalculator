@@ -11,7 +11,6 @@ import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
-import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
