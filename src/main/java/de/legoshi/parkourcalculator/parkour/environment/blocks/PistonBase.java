@@ -24,7 +24,7 @@ public class PistonBase extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/piston_base.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/piston_base.png");
     }
 
     @Override

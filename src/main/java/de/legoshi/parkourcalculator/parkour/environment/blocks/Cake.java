@@ -36,7 +36,7 @@ public class Cake extends ABlock implements TierBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/cake.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/cake.png");
     }
 
     @Override

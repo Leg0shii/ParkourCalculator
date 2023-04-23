@@ -62,7 +62,7 @@ public class Ladder extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/ladder.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/ladder.png");
     }
 
 }

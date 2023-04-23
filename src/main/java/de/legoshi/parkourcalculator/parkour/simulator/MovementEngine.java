@@ -21,11 +21,12 @@ public class MovementEngine {
     public Environment environment;
     public ArrayList<PlayerTickInformation> playerTickInformations;
 
-    private static final Vec3 DEFAULT_START = new Vec3(0.5, 1.0, 0.5);
+    private static final Vec3 DEFAULT_START = new Vec3(-0.5, 1.0, 0.5);
+    private static final float START_YAW = 0.0F;
     private static final Vec3 DEFAULT_VELOCITY = new Vec3(0, -0.0784000015258789, 0);
 
     public MovementEngine(Environment environment) {
-        this.player = new Player(DEFAULT_START, DEFAULT_VELOCITY);
+        this.player = new Player(DEFAULT_START, DEFAULT_VELOCITY, START_YAW);
         this.environment = environment;
         this.playerTickInformations = new ArrayList<>();
     }

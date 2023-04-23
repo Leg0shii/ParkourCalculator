@@ -32,6 +32,8 @@ public class MinecraftGUI extends Observable {
     public static final double BLOCK_OFFSET_Y = 0.5;
     public static final double BLOCK_OFFSET_Z = 0.5;
 
+    public static final Vec3 BLOCK_POSITION = new Vec3(1, 0, 0);
+
     private final ConfigReader configReader;
     private final Application application;
 
@@ -77,8 +79,7 @@ public class MinecraftGUI extends Observable {
     }
 
     public void addStartingBlock() {
-        ABlock aBlock = new StandardBlock(new Vec3(0, 0, 0));
-        addBlock(aBlock);
+        addBlock(new StandardBlock(BLOCK_POSITION));
     }
 
     public void resetScreen() {

@@ -29,7 +29,7 @@ public class Soulsand extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/soulsand.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/soulsand.png");
     }
 
     @Override

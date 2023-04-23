@@ -28,6 +28,6 @@ public class Enderchest extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/enderchest.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/enderchest.png");
     }
 }

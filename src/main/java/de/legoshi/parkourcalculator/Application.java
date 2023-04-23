@@ -79,7 +79,7 @@ public class Application extends javafx.application.Application {
 
         // load coordinate-screen and the menu-accordion
         this.informationScreen = new InformationScreen();
-        this.coordinateScreen = new CoordinateScreen(movementEngine, configReader);
+        this.coordinateScreen = new CoordinateScreen(movementEngine);
         this.menuScreen = new MenuScreen(configReader, coordinateScreen, movementEngine, positionVisualizer, getMenuOffset(scene));
         this.debugUI = new DebugUI(informationScreen, coordinateScreen, menuScreen);
         this.window.setRight(debugUI);

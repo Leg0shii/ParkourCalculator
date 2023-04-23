@@ -28,7 +28,7 @@ public class Lilypad extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/lilypad.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/lilypad.png");
     }
 
 }

@@ -42,11 +42,6 @@
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.gotson</groupId>
-            <artifactId>webp-imageio</artifactId>
-            <version>0.2.2</version>
-        </dependency>
     </dependencies>
 
     <packaging>jar</packaging>

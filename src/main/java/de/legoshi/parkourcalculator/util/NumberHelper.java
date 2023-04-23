@@ -12,6 +12,14 @@ public class NumberHelper {
         }
     }
 
+    public static Float parseFloat(String string) {
+        try {
+            return Float.parseFloat(string);
+        } catch (NumberFormatException | NullPointerException e) {
+            return null;
+        }
+    }
+
     public static double roundDouble(double val, int precision) {
         String s = "#.";
         for (int i = 0; i < precision; i++) s = s + "#";

@@ -33,6 +33,6 @@ public class BrewingStand extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/brewing_stand.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/brewing_stand.png");
     }
 }

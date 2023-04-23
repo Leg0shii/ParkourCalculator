@@ -29,7 +29,7 @@ public class Cobweb extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/cobweb.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/cobweb.png");
     }
 
     @Override

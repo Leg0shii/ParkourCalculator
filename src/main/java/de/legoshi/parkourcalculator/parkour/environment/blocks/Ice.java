@@ -29,7 +29,7 @@ public class Ice extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/ice.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/ice.png");
     }
 
     public void updateSlipperiness() {

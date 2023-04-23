@@ -82,9 +82,10 @@ public class CSVUtils {
             writer.newLine();
 
             // Write the content
+            // -b.pos.x (flip x-axis in javafx)
             for (BlockData b : blockDatas) {
                 writer.write(String.format(Locale.US, "%.1f,%.1f,%.1f,%s,%d,%s,%b,%b,%b,%b,%b,%b",
-                        b.blockType, b.pos.x, b.pos.y, b.pos.z, b.tier, b.color.toString(), b.TOP, b.BOTTOM, b.NORTH, b.EAST, b.SOUTH, b.WEST));
+                        -b.pos.x, b.pos.y, b.pos.z, b.blockType, b.tier, b.color.toString(), b.TOP, b.BOTTOM, b.NORTH, b.EAST, b.SOUTH, b.WEST));
                 writer.newLine();
             }
         } catch (IOException e) {

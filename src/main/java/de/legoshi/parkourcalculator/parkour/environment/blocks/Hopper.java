@@ -48,6 +48,6 @@ public class Hopper extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/hopper.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/hopper.png");
     }
 }

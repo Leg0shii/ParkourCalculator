@@ -78,7 +78,7 @@ public class CocoaBean extends FacingBlock implements TierBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/cocoa_bean.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/cocoa_bean.png");
     }
 
     @Override

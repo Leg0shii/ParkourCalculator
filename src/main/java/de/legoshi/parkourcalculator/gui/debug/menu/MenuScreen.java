@@ -18,7 +18,7 @@ public class MenuScreen extends VBox {
     public MenuScreen(ConfigReader configReader, CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer, NumberBinding remainingHeight) {
         this.blockSettings = new BlockSettings();
         this.playerSettings = new PlayerSettings(coordinateScreen, movementEngine, positionVisualizer);
-        this.screenSeetings = new ScreenSettings(configReader);
+        this.screenSeetings = new ScreenSettings(configReader, coordinateScreen);
 
         Accordion accordion = new Accordion();
         accordion.getPanes().addAll(blockSettings, playerSettings, screenSeetings);

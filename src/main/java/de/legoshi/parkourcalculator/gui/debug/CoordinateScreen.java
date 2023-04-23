@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug;
 
+import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
@@ -22,10 +23,7 @@ import java.util.stream.Stream;
 public class CoordinateScreen extends VBox implements Observer {
 
     private final MovementEngine movementEngine;
-    private final ConfigReader configReader;
-    private final Player player;
-
-    private final int precision;
+    private int precision;
 
     private final Label startLabelInfo = new Label("First Tick Coordinates");
     private List<Label> start = new ArrayList<>();
@@ -38,11 +36,8 @@ public class CoordinateScreen extends VBox implements Observer {
 
     @Getter private int tickClicked = -1;
 
-    public CoordinateScreen(MovementEngine movementEngine, ConfigReader configReader) {
+    public CoordinateScreen(MovementEngine movementEngine) {
         this.movementEngine = movementEngine;
-        this.configReader = configReader;
-        this.player = movementEngine.player;
-        this.precision = Math.min(Math.max(configReader.getIntProperty("coordinatePrecision"), 1), 16);
         this.setPadding(new Insets(10, 10, 10, 10));
         this.setMinWidth(200);
         this.getStyleClass().add("coordinate-field");
@@ -51,12 +46,8 @@ public class CoordinateScreen extends VBox implements Observer {
         initLabels();
         update(null, null);
         indentLabels();
-    }
 
-    private void addTextClass(VBox... vBoxes) {
-        for (VBox vBox : vBoxes) {
-            for (Node n : vBox.getChildren()) n.getStyleClass().add("coords-text");
-        }
+        updatePrecision();
     }
 
     public void updateSpecificTick(Label title, List<Label> labels, String name, int tickPos) {
@@ -85,6 +76,18 @@ public class CoordinateScreen extends VBox implements Observer {
         this.tickClicked = tick;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        updateSpecificTick(startLabelInfo, start, "Start", 0);
+        updateSpecificTick(tickLabelInfo, tick, "Tick", tickClicked);
+        updateSpecificTick(lastLabelInfo, last, "Last", movementEngine.getPlayerTickInformations().size()-1);
+    }
+
+    public void updatePrecision() {
+        this.precision = Math.min(Math.max(ScreenSettings.getCoordinatePrecision(), 1), 16);
+        this.update(null, null);
+    }
+
     private void indentLabels() {
         Insets insets = new Insets(0, 0, 0, 5);
         for (Node node : getChildren()) {
@@ -94,19 +97,21 @@ public class CoordinateScreen extends VBox implements Observer {
         }
     }
 
+    private void addTextClass(VBox... vBoxes) {
+        for (VBox vBox : vBoxes) {
+            for (Node n : vBox.getChildren()) n.getStyleClass().add("coords-text");
+        }
+    }
+
     private String setDecimals(double value) {
-        return String.format("%." + precision + "f", value);
+        String parsedValue = String.format("%," + precision + "f", value);
+        if (value == 0) parsedValue = ("" + parsedValue).replace("-", "");
+        parsedValue = parsedValue.replace(",", ".");
+        return parsedValue;
     }
 
     private Label getSpacer() {
         return new Label(" ");
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        updateSpecificTick(startLabelInfo, start, "Start", 0);
-        updateSpecificTick(tickLabelInfo, tick, "Tick", tickClicked);
-        updateSpecificTick(lastLabelInfo, last, "Last", movementEngine.getPlayerTickInformations().size()-1);
     }
 
     private void initLabels() {

@@ -37,7 +37,7 @@ public class Snow extends ABlock implements TierBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/snow.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/snow.png");
     }
 
     @Override

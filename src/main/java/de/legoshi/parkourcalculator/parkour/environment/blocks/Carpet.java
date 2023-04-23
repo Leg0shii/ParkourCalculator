@@ -27,6 +27,6 @@ public class Carpet extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/carpet.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/carpet.png");
     }
 }

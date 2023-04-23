@@ -28,6 +28,6 @@ public class DragonEgg extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/dragon_egg.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/dragon_egg.png");
     }
 }

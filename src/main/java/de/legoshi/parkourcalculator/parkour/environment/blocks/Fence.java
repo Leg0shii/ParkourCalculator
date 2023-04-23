@@ -23,7 +23,7 @@ public class Fence extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/fence.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/fence.png");
     }
 
     @Override

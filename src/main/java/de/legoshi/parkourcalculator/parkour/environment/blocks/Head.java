@@ -79,7 +79,7 @@ public class Head extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/head.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/head.png");
     }
 
 }

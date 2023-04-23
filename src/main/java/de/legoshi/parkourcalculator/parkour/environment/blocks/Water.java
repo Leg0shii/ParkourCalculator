@@ -28,7 +28,7 @@ public class Water extends BlockLiquid {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/water.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/water.png");
     }
 
 }

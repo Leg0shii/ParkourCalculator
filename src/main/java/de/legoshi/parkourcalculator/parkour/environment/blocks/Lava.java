@@ -29,7 +29,7 @@ public class Lava extends BlockLiquid {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/lava.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/lava.png");
     }
 
 }

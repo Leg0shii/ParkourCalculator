@@ -28,6 +28,6 @@ public class Cactus extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/cactus.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/cactus.png");
     }
 }

@@ -30,7 +30,7 @@ public class Slime extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/slime.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/slime.png");
     }
 
     @Override

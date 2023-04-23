@@ -23,7 +23,7 @@ public class PistonHead extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/piston_head.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/piston_head.png");
     }
 
     @Override

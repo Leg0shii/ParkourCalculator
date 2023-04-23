@@ -68,7 +68,7 @@ public class Anvil extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/anvil.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/anvil.png");
     }
 
 }

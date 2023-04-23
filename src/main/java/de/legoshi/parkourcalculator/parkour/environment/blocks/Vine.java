@@ -62,7 +62,7 @@ public class Vine extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/vine.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/vine.png");
     }
 
 }

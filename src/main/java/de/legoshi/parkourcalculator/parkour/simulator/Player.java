@@ -43,13 +43,15 @@ public class Player {
     @Getter @Setter protected Vec3 position;
     @Getter @Setter protected Vec3 startVel;
     @Getter @Setter protected Vec3 startPos;
+    @Getter protected float startYAW;
     protected AxisAlignedBB playerBB;
 
-    public Player(Vec3 position, Vec3 velocity) {
+    public Player(Vec3 position, Vec3 velocity, float startYAW) {
         this.startPos = position.copy();
         this.position = position.copy();
 
         this.startVel = velocity.copy();
+        setStartYAW(startYAW);
         this.velocity = velocity.copy();
 
         slipperiness = Movement.Slipperiness.BLOCK;
@@ -66,8 +68,8 @@ public class Player {
 
         if (inputTick.W) moveForward++;
         if (inputTick.S) moveForward--;
-        if (inputTick.A) moveStrafe++;
-        if (inputTick.D) moveStrafe--;
+        if (inputTick.A) moveStrafe--; // switch sites (related to x-axis difference in minecraft/javafx)
+        if (inputTick.D) moveStrafe++; // switch sites (related to x-axis difference in minecraft/javafx)
 
         JUMP = inputTick.JUMP;
         SNEAK = inputTick.SNEAK;
@@ -95,7 +97,7 @@ public class Player {
     protected void resetPlayer() {
         this.position = this.startPos.copy();
         this.velocity = this.startVel.copy();
-        YAW = 0;
+        YAW = startYAW;
         GROUND = true;
         WEB = false;
         SPRINT = false;
@@ -156,6 +158,10 @@ public class Player {
 
         ABlock block = Environment.getBlock(x, minY, z);
         return (block instanceof Ladder || block instanceof Vine);
+    }
+
+    public void setStartYAW(float yaw) {
+        this.startYAW = yaw * (-1); // flip on x-axis
     }
 
 }

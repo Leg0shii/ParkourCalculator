@@ -48,7 +48,7 @@ public class Cauldron extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/cauldron.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/cauldron.png");
     }
 
 }

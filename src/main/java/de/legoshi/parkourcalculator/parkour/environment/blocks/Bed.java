@@ -28,7 +28,7 @@ public class Bed extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/bed.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/bed.png");
     }
 
 }

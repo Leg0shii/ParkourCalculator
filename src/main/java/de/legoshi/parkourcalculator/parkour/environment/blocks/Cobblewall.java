@@ -137,7 +137,7 @@ public class Cobblewall extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/cobblewall.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/cobblewall.png");
     }
 
 }

@@ -210,8 +210,9 @@ public class InputTickGUI extends ScrollPane {
 
     private TextField registerTextField(InputTick inputTick) {
         TextField tF = new TextField("0");
-        tF.setOnAction(actionEvent -> {
-            inputTick.YAW = Float.parseFloat(tF.getText());
+        tF.setOnKeyTyped(actionEvent -> {
+            Float f = NumberHelper.parseFloat(tF.getText());
+            inputTick.YAW = f == null ? 0 : f;
             inputTicks.notifyObservers();
         });
         tF.setMaxWidth(60);

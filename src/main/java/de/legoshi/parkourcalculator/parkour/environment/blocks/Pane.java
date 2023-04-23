@@ -82,7 +82,7 @@ public class Pane extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/glass_pane.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/glass_pane.png");
     }
 
 }

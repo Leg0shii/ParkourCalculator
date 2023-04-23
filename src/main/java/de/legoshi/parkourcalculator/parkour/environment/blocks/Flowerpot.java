@@ -28,6 +28,6 @@ public class Flowerpot extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/flowerpot.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/flowerpot.png");
     }
 }

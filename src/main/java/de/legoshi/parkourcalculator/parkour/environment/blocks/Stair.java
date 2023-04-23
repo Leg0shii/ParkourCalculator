@@ -84,6 +84,6 @@ public class Stair extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/stair.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/stair.png");
     }
 }

@@ -23,8 +23,17 @@ public class ImageHelper {
 
     private static Image getImageView(String s) {
         try (InputStream is = ImageHelper.class.getResourceAsStream(s)) {
-            BufferedImage webpImage = ImageIO.read(is);
-            BufferedImage processedImage = changeWhiteToDarkGray(webpImage, IMAGE_HEIGHT, IMAGE_WIDTH, PRESERVE_RATIO, SMOOTH);
+            if (is == null) {
+                System.err.println("Error: InputStream is null. Check the image file path: " + s);
+                return null;
+            }
+            Image webpImage = new Image(is);
+            if (webpImage.isError()) {
+                System.err.println("Error: Cannot load image. Check the image file: " + s);
+                return null;
+            }
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(webpImage, null);
+            BufferedImage processedImage = changeWhiteToDarkGray(bufferedImage, IMAGE_HEIGHT, IMAGE_WIDTH, PRESERVE_RATIO, SMOOTH);
             return SwingFXUtils.toFXImage(processedImage, null);
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,6 +42,10 @@ public class ImageHelper {
     }
 
     private static BufferedImage changeWhiteToDarkGray(BufferedImage inputImage, int targetWidth, int targetHeight, boolean preserveRatio, boolean smooth) {
+        if (inputImage == null) {
+            System.err.println("Error: inputImage is null in changeWhiteToDarkGray method.");
+            return null;
+        }
         // Calculate the new width and height while preserving the aspect ratio
         int width = inputImage.getWidth();
         int height = inputImage.getHeight();

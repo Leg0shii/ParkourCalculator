@@ -68,7 +68,7 @@ public class Trapdoor extends FacingBlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/trapdoor.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/trapdoor.png");
     }
 
 }

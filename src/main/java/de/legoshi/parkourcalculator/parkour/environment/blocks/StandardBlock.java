@@ -26,7 +26,7 @@ public class StandardBlock extends ABlock {
 
     @Override
     void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/stone.webp");
+        this.image = new ImageHelper().getImageFromURL("/images/stone.png");
     }
 
 }
