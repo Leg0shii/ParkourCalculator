@@ -104,7 +104,7 @@ public class CoordinateScreen extends VBox implements Observer {
     }
 
     private String setDecimals(double value) {
-        String parsedValue = String.format("%," + precision + "f", value);
+        String parsedValue = String.format("%." + precision + "f", value);
         if (value == 0) parsedValue = ("" + parsedValue).replace("-", "");
         parsedValue = parsedValue.replace(",", ".");
         return parsedValue;
