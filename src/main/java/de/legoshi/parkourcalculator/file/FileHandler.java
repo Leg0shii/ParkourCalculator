@@ -11,7 +11,7 @@ public class FileHandler {
     public static void saveInputs(List<InputData> inputs, Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Input");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.csv)", "*.csv"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.csv)", "*.csv", "*"));
         File file = fileChooser.showSaveDialog(window);
         if (file != null) {
             CSVUtils.saveTicksToCSV(inputs, file.getAbsolutePath());
@@ -21,7 +21,7 @@ public class FileHandler {
     public static List<InputData> loadInputs(Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Inputs");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.csv)", "*.csv"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.csv)", "*.csv", "*"));
         File file = fileChooser.showOpenDialog(window);
 
         if (file != null) {
@@ -34,8 +34,9 @@ public class FileHandler {
     public static void saveBlocks(List<BlockData> blocks, Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Input");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.bcsv)", "*.bcsv"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.bcsv)", "*.bcsv", "*"));
         File file = fileChooser.showSaveDialog(window);
+
         if (file != null) {
             CSVUtils.saveBlocksToCSV(blocks, file.getAbsolutePath());
         }
@@ -44,7 +45,7 @@ public class FileHandler {
     public static List<List<BlockData>> loadBlocks(Window window) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Inputs");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.bcsv)", "*.bcsv"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.bcsv)", "*.bcsv", "*"));
         File file = fileChooser.showOpenDialog(window);
 
         if (file != null) {
@@ -54,5 +55,4 @@ public class FileHandler {
         return null;
     }
 
-    // Add similar methods for saving and loading Block and Jump objects
 }

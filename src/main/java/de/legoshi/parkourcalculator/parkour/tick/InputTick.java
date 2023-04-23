@@ -1,22 +1,15 @@
 package de.legoshi.parkourcalculator.parkour.tick;
 
-import javafx.scene.control.CheckBox;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @AllArgsConstructor
 public class InputTick {
 
     public boolean W, A, S, D;
-    public boolean JUMP, SPRINT, SNEAK = false;
-
-    public float YAW = 0;
-
-    public InputTick() {
-        this.W = false;
-        this.A = false;
-        this.S = false;
-        this.D = false;
-    }
+    public boolean JUMP, SPRINT, SNEAK;
+    public float YAW;
 
     public InputTick copy() {
         InputTick inputTick = new InputTick();

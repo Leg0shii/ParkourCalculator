@@ -99,7 +99,7 @@ public class Player {
         this.position = this.startPos.copy();
         this.velocity = this.startVel.copy();
         YAW = startYAW;
-        GROUND = true;
+        GROUND = false;
         WEB = false;
         SPRINT = false;
         SNEAK = false;

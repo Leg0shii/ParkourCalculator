@@ -107,7 +107,7 @@ public class PlayerSettings extends TitledPane {
             this.xPosField.setText(replaceNegZero(ptiC.getPosition().x*(-1))+ "");
             this.yPosField.setText(ptiC.getPosition().y + "");
             this.zPosField.setText(ptiC.getPosition().z + "");
-            this.facingYaw.setText(replaceNegZero(ptiC.getFacing()) + "");
+            this.facingYaw.setText(replaceNegZero(ptiC.getFacing()*(-1)) + "");
 
             Player player = movementEngine.player;
             this.xVelField.setText(replaceNegZero(player.getStartVel().x*(-1)) + "");
@@ -117,11 +117,11 @@ public class PlayerSettings extends TitledPane {
 
         Button copyButton = new Button("Copy to Clipboard");
         copyButton.setOnAction(event -> {
-            double x = tryParseDouble(xPosField.getText())*(-1);
+            double x = tryParseDouble(xPosField.getText());
             double y = tryParseDouble(yPosField.getText());
             double z = tryParseDouble(zPosField.getText());
-            double yaw = tryParseDouble(facingYaw.getText());
-            double pitch = tryParseDouble(facingPitch.getText());
+            float yaw = tryParseFloat(facingYaw.getText());
+            float pitch = tryParseFloat(facingPitch.getText());
 
             String tpCommand = "/tp " + x + " " + y + " " + z + " " + yaw + " " + pitch;
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -207,6 +207,14 @@ public class PlayerSettings extends TitledPane {
         }
     }
 
+    private float tryParseFloat(String text) {
+        try {
+            return Float.parseFloat(text);
+        } catch (NumberFormatException | NullPointerException e) {
+            return 0.0F;
+        }
+    }
+
     private void syncPathAndScreen() {
         positionVisualizer.update(null, null);
         coordinateScreen.update(null, null);
@@ -219,11 +227,16 @@ public class PlayerSettings extends TitledPane {
 
     private float getFloat(float oldVal, String text) {
         Float d = NumberHelper.parseFloat(text);
-        System.out.println(d);
         return d == null ? oldVal : d;
     }
 
     private String replaceNegZero(double val) {
+        String s = val + "";
+        if (val == 0.0) s = s.replace("-", "");
+        return s;
+    }
+
+    private String replaceNegZero(float val) {
         String s = val + "";
         if (val == 0.0) s = s.replace("-", "");
         return s;

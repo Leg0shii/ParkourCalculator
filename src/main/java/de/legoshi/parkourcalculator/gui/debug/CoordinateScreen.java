@@ -110,6 +110,13 @@ public class CoordinateScreen extends VBox implements Observer {
         return parsedValue;
     }
 
+    private String setDecimals(float value) {
+        String parsedValue = String.format("%.4f", value);
+        if (value == 0) parsedValue = ("" + parsedValue).replace("-", "");
+        parsedValue = parsedValue.replace(",", ".");
+        return parsedValue;
+    }
+
     private Label getSpacer() {
         return new Label(" ");
     }
