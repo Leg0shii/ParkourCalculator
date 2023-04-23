@@ -19,7 +19,7 @@ public class Player {
     protected float width = 0.3F;
     protected float height = 1.8F;
 
-    protected boolean GROUND = true;
+    protected boolean GROUND;
     @Setter protected boolean WEB;
     protected boolean WATER;
     protected boolean LAVA;
@@ -94,6 +94,7 @@ public class Player {
         }
     }
 
+    // run one idle tick to apply these values
     protected void resetPlayer() {
         this.position = this.startPos.copy();
         this.velocity = this.startVel.copy();

@@ -83,6 +83,15 @@ public class MenuGUI extends MenuBar {
 
         // add all ticks to the side
         List<InputTick> inputTicks = new ArrayList<>();
+        Vec3 startPos = inputDatas.get(0).getPosition();
+        Vec3 startVel = inputDatas.get(0).getVelocity();
+
+        // check if player is not too far away
+        if (Math.abs(startPos.x)-10 <= 0 && Math.abs(startPos.y)-10 <= 0 && Math.abs(startPos.x)-10 <= 0) {
+            movementEngine.player.setStartPos(startPos);
+            movementEngine.player.setStartVel(startVel);
+        }
+
         for (InputData inputData : inputDatas) inputTicks.add(inputData.getInputTick());
         inputTickGUI.importTicks(inputTicks);
 

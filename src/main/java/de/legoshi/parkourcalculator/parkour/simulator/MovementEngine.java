@@ -32,13 +32,19 @@ public class MovementEngine {
     }
 
     public PlayerTickInformation getLastTick(List<InputTick> inputTicks) {
-        player.resetPlayer();
+        preparePlayer();
         for (InputTick inputTick : inputTicks) calculateTick(inputTick);
         return player.getPlayerTickInformation();
     }
 
+    public void preparePlayer() {
+        player.resetPlayer();
+        calculateTick(new InputTick());
+    }
+
     public void resetPlayer() {
         player.setStartPos(DEFAULT_START);
+        player.setStartYAW(START_YAW);
         player.setStartVel(DEFAULT_VELOCITY);
         player.resetPlayer();
     }
@@ -47,7 +53,7 @@ public class MovementEngine {
         playerTickInformations = new ArrayList<>();
         if (inputTicks.size() == 0) return playerTickInformations;
 
-        player.resetPlayer();
+        preparePlayer();
         playerTickInformations.add(player.getPlayerTickInformation());
 
         for (InputTick inputTick : inputTicks) {

@@ -37,7 +37,8 @@ public class PlayerSettings extends TitledPane {
     private final TextField yVelField;
     private final TextField zVelField;
 
-    private final TextField facing;
+    private final TextField facingYaw;
+    private final TextField facingPitch;
 
     public PlayerSettings(CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer) {
         this.movementEngine = movementEngine;
@@ -52,7 +53,7 @@ public class PlayerSettings extends TitledPane {
         Vec3 startVel = movementEngine.getPlayer().getStartVel();
 
         // Create the text fields
-        xPosField = new TextField("" + -startPos.x);
+        xPosField = new TextField("" + replaceNegZero(-startPos.x));
         xPosField.setPromptText("X Position");
 
         yPosField = new TextField("" + startPos.y);
@@ -61,7 +62,7 @@ public class PlayerSettings extends TitledPane {
         zPosField = new TextField("" + startPos.z);
         zPosField.setPromptText("Z Position");
 
-        xVelField = new TextField("" + -startVel.x);
+        xVelField = new TextField("" + replaceNegZero(-startVel.x));
         xVelField.setPromptText("X Velocity");
 
         yVelField = new TextField("" + startVel.y);
@@ -70,8 +71,11 @@ public class PlayerSettings extends TitledPane {
         zVelField = new TextField("" + startVel.z);
         zVelField.setPromptText("Z Velocity");
 
-        facing = new TextField("" + movementEngine.player.getYAW());
-        facing.setPromptText("Facing");
+        facingYaw = new TextField("" + movementEngine.player.getYAW());
+        facingYaw.setPromptText("Yaw");
+
+        facingPitch = new TextField("60.0");
+        facingPitch.setPromptText("Pitch");
 
         // Create a GridPane to hold the text fields
         GridPane gridPane = new GridPane();
@@ -80,8 +84,10 @@ public class PlayerSettings extends TitledPane {
         gridPane.setHgap(10);
         gridPane.setAlignment(Pos.CENTER);
 
-        gridPane.add(new Label("Facing:"), 0, 0);
-        gridPane.add(facing, 0, 1);
+        gridPane.add(new Label("Yaw:"), 0, 0);
+        gridPane.add(facingYaw, 0, 1);
+        gridPane.add(new Label("Pitch:"), 1, 0);
+        gridPane.add(facingPitch, 1, 1);
 
         gridPane.add(new Label("Position:"), 0, 2);
         gridPane.add(xPosField, 0, 3);
@@ -98,13 +104,13 @@ public class PlayerSettings extends TitledPane {
         getButton.setOnAction(event -> {
             // Get values from somewhere (e.g. a game engine) and set them in the text fields
             PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(0);
-            this.xPosField.setText(-ptiC.getPosition().x + "");
+            this.xPosField.setText(replaceNegZero(ptiC.getPosition().x*(-1))+ "");
             this.yPosField.setText(ptiC.getPosition().y + "");
             this.zPosField.setText(ptiC.getPosition().z + "");
-            this.facing.setText(ptiC.getFacing() + "");
+            this.facingYaw.setText(replaceNegZero(ptiC.getFacing()) + "");
 
             Player player = movementEngine.player;
-            this.xVelField.setText(-player.getStartVel().x + "");
+            this.xVelField.setText(replaceNegZero(player.getStartVel().x*(-1)) + "");
             this.yVelField.setText(player.getStartVel().y + "");
             this.zVelField.setText(player.getStartVel().z + "");
         });
@@ -114,9 +120,10 @@ public class PlayerSettings extends TitledPane {
             double x = tryParseDouble(xPosField.getText())*(-1);
             double y = tryParseDouble(yPosField.getText());
             double z = tryParseDouble(zPosField.getText());
-            double facing = movementEngine.playerTickInformations.get(0).getFacing();
+            double yaw = tryParseDouble(facingYaw.getText());
+            double pitch = tryParseDouble(facingPitch.getText());
 
-            String tpCommand = "/tp " + x + " " + y + " " + z + " " + facing + " 90";
+            String tpCommand = "/tp " + x + " " + y + " " + z + " " + yaw + " " + pitch;
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             StringSelection stringSelection = new StringSelection(tpCommand);
             clipboard.setContents(stringSelection, null);
@@ -163,9 +170,9 @@ public class PlayerSettings extends TitledPane {
             movementEngine.player.setStartPos(newPos);
             syncPathAndScreen();
         });
-        this.facing.setOnKeyTyped(keyEvent -> {
+        this.facingYaw.setOnKeyTyped(keyEvent -> {
             float oldFacing = movementEngine.player.getStartYAW();
-            float newFacing = getFloat(oldFacing, facing.getText());
+            float newFacing = getFloat(oldFacing, facingYaw.getText());
             movementEngine.player.setStartYAW(newFacing);
             syncPathAndScreen();
         });
@@ -214,6 +221,12 @@ public class PlayerSettings extends TitledPane {
         Float d = NumberHelper.parseFloat(text);
         System.out.println(d);
         return d == null ? oldVal : d;
+    }
+
+    private String replaceNegZero(double val) {
+        String s = val + "";
+        if (val == 0.0) s = s.replace("-", "");
+        return s;
     }
 
 }
