@@ -33,6 +33,8 @@ public abstract class FacingBlock extends ABlock {
 
         if (BlockSettings.isFlip()) calcBaseFlip();
         if (BlockSettings.isFloor()) calcBase();
+
+        if (this.axisVecTuples.isEmpty()) calcSouth();
     }
 
     @Override

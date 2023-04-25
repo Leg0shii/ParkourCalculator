@@ -30,8 +30,8 @@ public class CocoaBean extends FacingBlock implements TierBlock {
 
         if (BlockSettings.isNorth()) calcNorth();
         else if (BlockSettings.isEast()) calcEast();
-        else if (BlockSettings.isSouth()) calcSouth();
-        else calcWest();
+        else if (BlockSettings.isWest()) calcWest();
+        else calcSouth();
     }
 
     @Override

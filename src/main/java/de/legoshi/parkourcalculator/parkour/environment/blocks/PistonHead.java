@@ -36,6 +36,8 @@ public class PistonHead extends FacingBlock {
         else if (BlockSettings.isWest()) calcWest();
         else if (BlockSettings.isFlip()) calcBaseFlip();
         else if (BlockSettings.isFloor()) calcBase();
+
+        if (this.axisVecTuples.isEmpty()) calcSouth();
     }
 
     // 0.5x0.25x1

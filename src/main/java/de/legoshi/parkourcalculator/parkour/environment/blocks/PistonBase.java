@@ -37,6 +37,8 @@ public class PistonBase extends FacingBlock {
         else if (BlockSettings.isWest()) calcWest();
         else if (BlockSettings.isFlip()) calcBaseFlip();
         else if (BlockSettings.isFloor()) calcBase();
+
+        if (this.axisVecTuples.isEmpty()) calcSouth();
     }
 
     @Override

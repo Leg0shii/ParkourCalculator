@@ -93,8 +93,11 @@ public class MenuGUI extends MenuBar {
             startVel.y = MovementEngine.DEFAULT_VELOCITY.y;
         }
 
+        movementEngine.resetPlayer();
         movementEngine.player.setStartPos(startPos.copy());
         movementEngine.player.setStartVel(startVel.copy());
+
+        application.menuScreen.playerSettings.getFacingYaw().setText("0.0");
 
         for (InputData inputData : inputDatas) inputTicks.add(inputData.getInputTick());
         inputTickGUI.importTicks(inputTicks);

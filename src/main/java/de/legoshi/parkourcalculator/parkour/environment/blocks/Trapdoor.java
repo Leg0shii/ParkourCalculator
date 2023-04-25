@@ -19,7 +19,23 @@ public class Trapdoor extends FacingBlock {
     }
 
     @Override
-    protected void calcSouth() {
+    protected void calcBase() {
+        Vec3 lowerEdge = new Vec3(0, 0, 0);
+        Vec3 upperEdge = new Vec3(1, 0.1875, 1);
+        Vec3 shift = new Vec3(0, 0.40625, 0);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
+    }
+
+    @Override
+    protected void calcBaseFlip() {
+        Vec3 lowerEdge = new Vec3(0, 0.8125, 0);
+        Vec3 upperEdge = new Vec3(1, 1, 1);
+        Vec3 shift = new Vec3(0, 0.40625, 0);
+        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
+    }
+
+    @Override
+    protected void calcNorth() {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 1, 0.1875);
         Vec3 shift = new Vec3(0, 0, 0.40625);
@@ -35,7 +51,7 @@ public class Trapdoor extends FacingBlock {
     }
 
     @Override
-    protected void calcNorth() {
+    protected void calcSouth() {
         Vec3 lowerEdge = new Vec3(0, 0, 0.8125);
         Vec3 upperEdge = new Vec3(1, 1, 1);
         Vec3 shift = new Vec3(0, 0, 0.40625);
@@ -47,22 +63,6 @@ public class Trapdoor extends FacingBlock {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(0.1875, 1, 1);
         Vec3 shift = new Vec3(0.40625, 0, 0);
-        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
-    }
-
-    @Override
-    protected void calcBase() {
-        Vec3 lowerEdge = new Vec3(0, 0, 0);
-        Vec3 upperEdge = new Vec3(1, 0.1875, 1);
-        Vec3 shift = new Vec3(0, 0.40625, 0);
-        this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
-    }
-
-    @Override
-    protected void calcBaseFlip() {
-        Vec3 lowerEdge = new Vec3(0, 0.8125, 0);
-        Vec3 upperEdge = new Vec3(1, 1, 1);
-        Vec3 shift = new Vec3(0, 0.40625, 0);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
     }
 
