@@ -25,6 +25,8 @@ import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application {
 
+    public static String APP_NAME = "Parkour Calculator v1.0.4pre3";
+
     public Scene scene;
     public BorderPane window;
 
@@ -97,7 +99,7 @@ public class Application extends javafx.application.Application {
         this.positionVisualizer.addObserver(coordinateScreen);
         this.positionVisualizer.generatePlayerPath();
 
-        stage.setTitle("Parkour Calculator v1.0.4pre");
+        stage.setTitle(APP_NAME);
         stage.setScene(scene);
         stage.show();
 
