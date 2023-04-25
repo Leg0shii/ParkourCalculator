@@ -14,14 +14,16 @@ public class MenuScreen extends VBox {
     public BlockSettings blockSettings;
     public PlayerSettings playerSettings;
     public ScreenSettings screenSeetings;
+    public ExperimentalSettings experimentalSettings;
 
     public MenuScreen(ConfigReader configReader, CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer, NumberBinding remainingHeight) {
         this.blockSettings = new BlockSettings();
         this.playerSettings = new PlayerSettings(coordinateScreen, movementEngine, positionVisualizer);
-        this.screenSeetings = new ScreenSettings(configReader, coordinateScreen);
+        this.screenSeetings = new ScreenSettings(configReader, playerSettings, coordinateScreen, positionVisualizer);
+        this.experimentalSettings = new ExperimentalSettings();
 
         Accordion accordion = new Accordion();
-        accordion.getPanes().addAll(blockSettings, playerSettings, screenSeetings);
+        accordion.getPanes().addAll(blockSettings, playerSettings, screenSeetings, experimentalSettings);
 
         ScrollPane scrollPane = new ScrollPane(accordion);
         scrollPane.setFitToWidth(true);

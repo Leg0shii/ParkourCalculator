@@ -86,11 +86,15 @@ public class MenuGUI extends MenuBar {
         Vec3 startPos = inputDatas.get(0).getPosition();
         Vec3 startVel = inputDatas.get(0).getVelocity();
 
-        // check if player is not too far away
-        if (Math.abs(startPos.x)-10 <= 0 && Math.abs(startPos.y)-10 <= 0 && Math.abs(startPos.x)-10 <= 0) {
-            movementEngine.player.setStartPos(startPos);
-            movementEngine.player.setStartVel(startVel);
+        // necessary because mpk doesn't set a y-velocity.
+        // Without y-velocity the player is floating above the ground on first tick
+        if (startVel.y == 0.0) {
+            System.out.println("REPLACED startVel.y == 0.0 with default");
+            startVel.y = MovementEngine.DEFAULT_VELOCITY.y;
         }
+
+        movementEngine.player.setStartPos(startPos.copy());
+        movementEngine.player.setStartVel(startVel.copy());
 
         for (InputData inputData : inputDatas) inputTicks.add(inputData.getInputTick());
         inputTickGUI.importTicks(inputTicks);

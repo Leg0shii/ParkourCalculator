@@ -1,10 +1,12 @@
 package de.legoshi.parkourcalculator.gui.debug;
 
+import de.legoshi.parkourcalculator.gui.debug.menu.PlayerSettings;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
 import de.legoshi.parkourcalculator.parkour.simulator.Player;
 import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
 import de.legoshi.parkourcalculator.util.ConfigReader;
+import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -67,9 +69,9 @@ public class CoordinateScreen extends VBox implements Observer {
         labels.get(1).setText("X-" + name + ": " + setDecimals(-ptiC.getPosition().x)); // flips pos on x-axis
         labels.get(2).setText("Y-" + name + ": " + setDecimals(ptiC.getPosition().y));
         labels.get(3).setText("Z-" + name + ": " + setDecimals(ptiC.getPosition().z));
-        labels.get(4).setText("X-" + name + "-Vel: " + setDecimals(-ptiC.getVelocity().x)); // flips vel on x-axis
-        labels.get(5).setText("Y-" + name + "-Vel: " + setDecimals(ptiC.getVelocity().y));
-        labels.get(6).setText("Z-" + name + "-Vel: " + setDecimals(ptiC.getVelocity().z));
+        labels.get(4).setText("X-" + name + "-Vel: " + setDecimals(-getVelocity(tickPos).x)); // flips vel on x-axis
+        labels.get(5).setText("Y-" + name + "-Vel: " + setDecimals(getVelocity(tickPos).y));
+        labels.get(6).setText("Z-" + name + "-Vel: " + setDecimals(getVelocity(tickPos).z));
     }
 
     public void setClickedTick(int tick) {
@@ -81,6 +83,10 @@ public class CoordinateScreen extends VBox implements Observer {
         updateSpecificTick(startLabelInfo, start, "Start", 0);
         updateSpecificTick(tickLabelInfo, tick, "Tick", tickClicked);
         updateSpecificTick(lastLabelInfo, last, "Last", movementEngine.getPlayerTickInformations().size()-1);
+    }
+
+    public void update() {
+        this.update(null, null);
     }
 
     public void updatePrecision() {
@@ -139,6 +145,12 @@ public class CoordinateScreen extends VBox implements Observer {
         addTextClass(posLabel, velLabel);
         title.getStyleClass().add("coords-title");
         this.getChildren().addAll(new VBox(title, posContainer));
+    }
+
+    private Vec3 getVelocity(int tickPos) {
+        if (ScreenSettings.isRealVelocity() && tickPos == 0) return new Vec3(0, 0, 0);
+        PlayerTickInformation ptiC = movementEngine.getPlayerTickInformations().get(tickPos);
+        return ScreenSettings.isRealVelocity() ? ptiC.getRealVelocity() : ptiC.getVelocity();
     }
 
 }

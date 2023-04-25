@@ -15,6 +15,7 @@ public class PlayerTickInformation {
     private float facing;
     private Vec3 position;
     private Vec3 velocity;
+    private Vec3 realVelocity;
 
     private boolean collided;
     private boolean ground;

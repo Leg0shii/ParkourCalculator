@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.simulator;
 
+import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.Ladder;
@@ -12,6 +13,7 @@ import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.awt.event.ItemEvent;
 import java.util.List;
 
 public class Player {
@@ -29,6 +31,8 @@ public class Player {
     protected boolean JUMP;
 
     @Setter @Getter protected float YAW;
+    @Getter protected float startYAW;
+
     protected float moveStrafe, moveForward;
 
     protected float jumpMovementFactor = 0.02F;
@@ -39,11 +43,13 @@ public class Player {
 
     protected Movement.Slipperiness slipperiness;
 
-    @Getter @Setter protected Vec3 velocity;
-    @Getter @Setter protected Vec3 position;
-    @Getter @Setter protected Vec3 startVel;
     @Getter @Setter protected Vec3 startPos;
-    @Getter protected float startYAW;
+    @Getter @Setter protected Vec3 position;
+
+    @Getter @Setter protected Vec3 startVel;
+    @Getter @Setter protected Vec3 velocity;
+    @Getter @Setter protected Vec3 realVel;
+
     protected AxisAlignedBB playerBB;
 
     public Player(Vec3 position, Vec3 velocity, float startYAW) {
@@ -51,9 +57,9 @@ public class Player {
         this.position = position.copy();
 
         this.startVel = velocity.copy();
-        setStartYAW(startYAW);
         this.velocity = velocity.copy();
 
+        this.setStartYAW(startYAW);
         slipperiness = Movement.Slipperiness.BLOCK;
         updatePlayerBB();
     }
@@ -98,6 +104,7 @@ public class Player {
     protected void resetPlayer() {
         this.position = this.startPos.copy();
         this.velocity = this.startVel.copy();
+        this.realVel = this.startVel.copy();
         YAW = startYAW;
         GROUND = false;
         WEB = false;
@@ -146,6 +153,7 @@ public class Player {
                 YAW,
                 position.copy(),
                 velocity.copy(),
+                realVel.copy(),
                 isCollided,
                 GROUND,
                 JUMP

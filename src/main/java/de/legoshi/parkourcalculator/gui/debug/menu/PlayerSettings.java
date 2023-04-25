@@ -62,13 +62,13 @@ public class PlayerSettings extends TitledPane {
         zPosField = new TextField("" + startPos.z);
         zPosField.setPromptText("Z Position");
 
-        xVelField = new TextField("" + replaceNegZero(-startVel.x));
+        xVelField = new TextField(replaceNegZero((ScreenSettings.isRealVelocity() ? 0 : startVel.x*(-1))) + "");
         xVelField.setPromptText("X Velocity");
 
-        yVelField = new TextField("" + startVel.y);
+        yVelField = new TextField((ScreenSettings.isRealVelocity() ? 0 : startVel.y) + "");
         yVelField.setPromptText("Y Velocity");
 
-        zVelField = new TextField("" + startVel.z);
+        zVelField = new TextField((ScreenSettings.isRealVelocity() ? 0 : startVel.z) + "");
         zVelField.setPromptText("Z Velocity");
 
         facingYaw = new TextField("" + movementEngine.player.getYAW());
@@ -101,19 +101,7 @@ public class PlayerSettings extends TitledPane {
 
         // Create the button to apply values
         Button getButton = new Button("Get values");
-        getButton.setOnAction(event -> {
-            // Get values from somewhere (e.g. a game engine) and set them in the text fields
-            PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(0);
-            this.xPosField.setText(replaceNegZero(ptiC.getPosition().x*(-1))+ "");
-            this.yPosField.setText(ptiC.getPosition().y + "");
-            this.zPosField.setText(ptiC.getPosition().z + "");
-            this.facingYaw.setText(replaceNegZero(ptiC.getFacing()*(-1)) + "");
-
-            Player player = movementEngine.player;
-            this.xVelField.setText(replaceNegZero(player.getStartVel().x*(-1)) + "");
-            this.yVelField.setText(player.getStartVel().y + "");
-            this.zVelField.setText(player.getStartVel().z + "");
-        });
+        getButton.setOnAction(event -> updatePlayerSettings());
 
         Button copyButton = new Button("Copy to Clipboard");
         copyButton.setOnAction(event -> {
@@ -148,26 +136,41 @@ public class PlayerSettings extends TitledPane {
         setContent(scrollPane);
     }
 
+    public void updatePlayerSettings() {
+        Vec3 startPos = movementEngine.getPlayer().getStartPos();
+        Vec3 startVel = movementEngine.player.getStartVel();
+
+        this.xPosField.setText(replaceNegZero(startPos.x*(-1))+ "");
+        this.yPosField.setText(startPos.y + "");
+        this.zPosField.setText(startPos.z + "");
+        this.facingYaw.setText(replaceNegZero(movementEngine.player.getStartYAW()*(-1)) + "");
+
+        Player player = movementEngine.player;
+        this.xVelField.setText(replaceNegZero(startVel.x*(-1)) + "");
+        this.yVelField.setText(startVel.y + "");
+        this.zVelField.setText(startVel.z + "");
+
+        player.setStartVel(startVel.copy());
+        syncPathAndScreen();
+    }
+
     private void registerTextFieldChanges() {
         this.xPosField.setOnKeyTyped(keyEvent -> {
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             double value = getDouble(oldPos.x, xPosField.getText())*(-1);
-            Vec3 newPos = new Vec3(value, oldPos.y, oldPos.z);
-            movementEngine.player.setStartPos(newPos);
+            movementEngine.player.setStartPos(new Vec3(value, oldPos.y, oldPos.z));
             syncPathAndScreen();
         });
         this.yPosField.setOnKeyTyped(keyEvent -> {
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             double value = getDouble(oldPos.y, yPosField.getText());
-            Vec3 newPos = new Vec3(oldPos.x, value, oldPos.z);
-            movementEngine.player.setStartPos(newPos);
+            movementEngine.player.setStartPos(new Vec3(oldPos.x, value, oldPos.z));
             syncPathAndScreen();
         });
         this.zPosField.setOnKeyTyped(keyEvent -> {
             Vec3 oldPos = movementEngine.player.getStartPos().copy();
             double value = getDouble(oldPos.z, zPosField.getText());
-            Vec3 newPos = new Vec3(oldPos.x, oldPos.y, value);
-            movementEngine.player.setStartPos(newPos);
+            movementEngine.player.setStartPos(new Vec3(oldPos.x, oldPos.y, value));
             syncPathAndScreen();
         });
         this.facingYaw.setOnKeyTyped(keyEvent -> {
@@ -179,22 +182,19 @@ public class PlayerSettings extends TitledPane {
         this.xVelField.setOnKeyTyped(keyEvent -> {
             Vec3 oldVel = movementEngine.player.getStartVel().copy();
             double value = getDouble(oldVel.x, xVelField.getText())*(-1);
-            Vec3 newVel = new Vec3(value, oldVel.y, oldVel.z);
-            movementEngine.player.setStartVel(newVel);
+            movementEngine.player.setStartVel(new Vec3(value, oldVel.y, oldVel.z));
             syncPathAndScreen();
         });
         this.yVelField.setOnKeyTyped(keyEvent -> {
             Vec3 oldVel = movementEngine.player.getStartVel().copy();
             double value = getDouble(oldVel.y, yVelField.getText());
-            Vec3 newVel = new Vec3(oldVel.x, value, oldVel.z);
-            movementEngine.player.setStartVel(newVel);
+            movementEngine.player.setStartVel(new Vec3(oldVel.x, value, oldVel.z));
             syncPathAndScreen();
         });
         this.zVelField.setOnKeyTyped(keyEvent -> {
             Vec3 oldVel = movementEngine.player.getStartVel().copy();
             double value = getDouble(oldVel.z, zVelField.getText());
-            Vec3 newVel = new Vec3(oldVel.x, oldVel.y, value);
-            movementEngine.player.setStartVel(newVel);
+            movementEngine.player.setStartVel(new Vec3(oldVel.x, oldVel.y, value));
             syncPathAndScreen();
         });
     }

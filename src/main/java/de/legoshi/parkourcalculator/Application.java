@@ -97,7 +97,7 @@ public class Application extends javafx.application.Application {
         this.positionVisualizer.addObserver(coordinateScreen);
         this.positionVisualizer.generatePlayerPath();
 
-        stage.setTitle("Parkour Simulator!");
+        stage.setTitle("Parkour Calculator v1.0.4pre");
         stage.setScene(scene);
         stage.show();
 

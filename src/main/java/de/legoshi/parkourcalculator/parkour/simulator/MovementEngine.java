@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.parkour.simulator;
 
+import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.*;
 import de.legoshi.parkourcalculator.parkour.tick.InputTick;
@@ -17,13 +18,15 @@ import java.util.List;
 @Setter
 public class MovementEngine {
 
+    public static final Vec3 DEFAULT_START = new Vec3(-0.5, 1.0, 0.5);
+    public static final float START_YAW = 0.0F;
+    public static final Vec3 DEFAULT_VELOCITY = new Vec3(0, -0.0784000015258789, 0);
+
     public Player player;
     public Environment environment;
     public ArrayList<PlayerTickInformation> playerTickInformations;
 
-    private static final Vec3 DEFAULT_START = new Vec3(-0.5, 1.0, 0.5);
-    private static final float START_YAW = 0.0F;
-    private static final Vec3 DEFAULT_VELOCITY = new Vec3(0, -0.0784000015258789, 0);
+    private int tick;
 
     public MovementEngine(Environment environment) {
         this.player = new Player(DEFAULT_START, DEFAULT_VELOCITY, START_YAW);
@@ -32,14 +35,23 @@ public class MovementEngine {
     }
 
     public PlayerTickInformation getLastTick(List<InputTick> inputTicks) {
-        preparePlayer();
+        player.resetPlayer();
         for (InputTick inputTick : inputTicks) calculateTick(inputTick);
         return player.getPlayerTickInformation();
     }
 
-    public void preparePlayer() {
+    // check if player is on ground.... (STUPID)
+    private boolean preparePlayer() {
+        boolean onGround = false;
+        tick = -1;
         player.resetPlayer();
+
+        // check if the player is without true velocity on the ground
         calculateTick(new InputTick());
+        if (player.getPlayerTickInformation().isGround()) onGround = true;
+        player.resetPlayer();
+
+        return onGround;
     }
 
     public void resetPlayer() {
@@ -53,9 +65,10 @@ public class MovementEngine {
         playerTickInformations = new ArrayList<>();
         if (inputTicks.size() == 0) return playerTickInformations;
 
-        preparePlayer();
-        playerTickInformations.add(player.getPlayerTickInformation());
+        boolean onGround = preparePlayer();
+        playerTickInformations.add(player.getPlayerTickInformation()); // add starting position
 
+        player.GROUND = onGround;
         for (InputTick inputTick : inputTicks) {
             calculateTick(inputTick);
             playerTickInformations.add(player.getPlayerTickInformation());
@@ -210,6 +223,7 @@ public class MovementEngine {
         if (player.SPRINT) {
             player.jumpMovementFactor = (float) ((double) player.jumpMovementFactor + (double) 0.02F * 0.3D);
         }
+        tick++;
     }
 
     private void moveEntity(double x, double y, double z) {
@@ -423,6 +437,7 @@ public class MovementEngine {
         }*/
 
         doBlockCollisions();
+        player.setRealVel(new Vec3(x, y, z));
     }
 
     private void moveFlying(float strafe, float forward, float friction) {
