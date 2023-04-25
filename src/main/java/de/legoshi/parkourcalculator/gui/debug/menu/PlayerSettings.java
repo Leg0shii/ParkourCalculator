@@ -16,9 +16,11 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import lombok.Getter;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -37,7 +39,7 @@ public class PlayerSettings extends TitledPane {
     private final TextField yVelField;
     private final TextField zVelField;
 
-    private final TextField facingYaw;
+    @Getter private final TextField facingYaw;
     private final TextField facingPitch;
 
     public PlayerSettings(CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer) {
@@ -100,7 +102,7 @@ public class PlayerSettings extends TitledPane {
         gridPane.add(zVelField, 1, 5);
 
         // Create the button to apply values
-        Button getButton = new Button("Get values");
+        Button getButton = new Button("Get Pos. & Vel.");
         getButton.setOnAction(event -> updatePlayerSettings());
 
         Button copyButton = new Button("Copy to Clipboard");
@@ -143,7 +145,7 @@ public class PlayerSettings extends TitledPane {
         this.xPosField.setText(replaceNegZero(startPos.x*(-1))+ "");
         this.yPosField.setText(startPos.y + "");
         this.zPosField.setText(startPos.z + "");
-        this.facingYaw.setText(replaceNegZero(movementEngine.player.getStartYAW()*(-1)) + "");
+        this.facingYaw.setText(replaceNegZero(movementEngine.player.getStartYAW()) + "");
 
         Player player = movementEngine.player;
         this.xVelField.setText(replaceNegZero(startVel.x*(-1)) + "");

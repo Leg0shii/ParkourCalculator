@@ -29,7 +29,7 @@ public class CSVUtils {
                 Vec3 p = tick.getPosition();
                 Vec3 v = tick.getVelocity();
                 writer.write(String.format(Locale.US, "%.15f,%.15f,%.15f,%.5f,%.5f,%.1f,%.1f,%b,%b,%b,%b,%b,%b,%b,%b,%b,%.15f,%.15f,%.15f",
-                        p.x, p.y, p.z, iTick.YAW, 90.0, iTick.YAW, 0.0, iTick.W, iTick.A, iTick.S, iTick.D, iTick.SPRINT, iTick.SNEAK, iTick.JUMP, false, false, v.x, v.y, v.z));
+                        -p.x, p.y, p.z, iTick.YAW, 90.0, iTick.YAW, 0.0, iTick.W, iTick.A, iTick.S, iTick.D, iTick.SPRINT, iTick.SNEAK, iTick.JUMP, false, false, -v.x, v.y, v.z));
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -60,8 +60,8 @@ public class CSVUtils {
                     Float.parseFloat(tokens[3])
                 );
 
-                Vec3 position = new Vec3(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]));
-                Vec3 velocity = new Vec3(Double.parseDouble(tokens[16]), Double.parseDouble(tokens[17]), Double.parseDouble(tokens[18]));
+                Vec3 position = new Vec3(-Double.parseDouble(tokens[0]), Double.parseDouble(tokens[1]), Double.parseDouble(tokens[2]));
+                Vec3 velocity = new Vec3(-Double.parseDouble(tokens[16]), Double.parseDouble(tokens[17]), Double.parseDouble(tokens[18]));
 
                 inputData.setInputTick(tick);
                 inputData.setPosition(position);
