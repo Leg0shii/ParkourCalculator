@@ -140,7 +140,7 @@ public class PositionVisualizer extends Observable implements Observer {
         double roundedDecimalNumber = Double.parseDouble(df.format(-decimalNumber/2).replace(",", "."));
 
         if (zCoordinate == 0) return;
-        if (yCoordinate != roundedDecimalNumber && yCoordinate != -0.5) return;
+        if (yCoordinate != roundedDecimalNumber && yCoordinate != -0.5 && yCoordinate != -0.75) return;
 
         Node node = event.getPickResult().getIntersectedNode();
         if (!node.equals(this.box)) {
