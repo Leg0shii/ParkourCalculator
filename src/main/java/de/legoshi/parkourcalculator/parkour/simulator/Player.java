@@ -1,6 +1,5 @@
 package de.legoshi.parkourcalculator.parkour.simulator;
 
-import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.parkour.environment.Environment;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
 import de.legoshi.parkourcalculator.parkour.environment.blocks.Ladder;
@@ -13,9 +12,6 @@ import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.awt.event.ItemEvent;
-import java.util.List;
-
 public class Player {
 
     protected float width = 0.3F;
@@ -27,6 +23,7 @@ public class Player {
     protected boolean LAVA;
 
     protected boolean SPRINT;
+    protected int sprintToggleTimer;
     @Getter protected boolean SNEAK;
     protected boolean JUMP;
 
@@ -65,9 +62,14 @@ public class Player {
     }
 
     protected void updateTick(InputTick inputTick) {
-        boolean flag = inputTick.JUMP;
+
+        if (this.sprintToggleTimer > 0) {
+            --this.sprintToggleTimer;
+        }
+
+        boolean jumpFlag = inputTick.JUMP;
         boolean isSNEAK = inputTick.SNEAK;
-        boolean flag2 = moveForward >= 0.8F;
+        boolean moveFlag = moveForward >= 0.8F;
 
         moveStrafe = 0F;
         moveForward = 0F;
@@ -85,8 +87,10 @@ public class Player {
             moveForward = (float) ((double) moveForward * 0.3D);
         }
 
-        if (GROUND && !isSNEAK && !flag2 && moveForward >= 0.8F && !SPRINT) {
-            if (inputTick.SPRINT) {
+        if (GROUND && !isSNEAK && !moveFlag && moveForward >= 0.8F && !SPRINT) {
+            if (this.sprintToggleTimer <= 0) {
+                this.sprintToggleTimer = 7;
+            } else {
                 SPRINT = true;
             }
         }
@@ -105,6 +109,7 @@ public class Player {
         this.position = this.startPos.copy();
         this.velocity = this.startVel.copy();
         this.realVel = this.startVel.copy();
+        this.sprintToggleTimer = 0;
         YAW = startYAW;
         GROUND = false;
         WEB = false;
