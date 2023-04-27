@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application {
 
-    public static String APP_NAME = "Parkour Calculator v1.0.4pre3";
+    public static String APP_NAME = "Parkour Calculator v1.0.3";
 
     public Scene scene;
     public BorderPane window;

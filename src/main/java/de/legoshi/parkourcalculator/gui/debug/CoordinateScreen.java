@@ -65,7 +65,7 @@ public class CoordinateScreen extends VBox implements Observer {
         }
         PlayerTickInformation ptiC = movementEngine.playerTickInformations.get(tickPos);
         title.setText(tickPos + ". Tick Information");
-        labels.get(0).setText("F-" + name + ": " + setDecimals(-ptiC.getFacing())); // flips facing on x-axis
+        labels.get(0).setText("F-" + name + ": " + setDecimals(ptiC.getFacing())); // flips facing on x-axis
         labels.get(1).setText("X-" + name + ": " + setDecimals(-ptiC.getPosition().x)); // flips pos on x-axis
         labels.get(2).setText("Y-" + name + ": " + setDecimals(ptiC.getPosition().y));
         labels.get(3).setText("Z-" + name + ": " + setDecimals(ptiC.getPosition().z));
