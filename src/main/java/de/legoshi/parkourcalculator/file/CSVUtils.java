@@ -1,10 +1,8 @@
 package de.legoshi.parkourcalculator.file;
 
-import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
-import de.legoshi.parkourcalculator.parkour.tick.InputTick;
+import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.Vec3;
-import javafx.scene.paint.Color;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

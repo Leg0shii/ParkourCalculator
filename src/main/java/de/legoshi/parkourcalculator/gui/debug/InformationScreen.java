@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug;
 
-import de.legoshi.parkourcalculator.parkour.environment.Facing;
+import de.legoshi.parkourcalculator.simulation.environment.Facing;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -11,6 +11,7 @@ import java.util.Observer;
 public class InformationScreen extends VBox implements Observer {
 
     private final Label screenInfoLabel = new Label("General Screen Information");
+    private final Label currentVersion = new Label("Current Version: -");
     private final Label blockFacingLabel = new Label("Block Facing: -");
 
     public InformationScreen() {
@@ -19,9 +20,10 @@ public class InformationScreen extends VBox implements Observer {
 
         this.getStyleClass().add("coordinate-field");
         this.screenInfoLabel.getStyleClass().add("coords-title");
+        this.currentVersion.getStyleClass().add("coords-text");
         this.blockFacingLabel.getStyleClass().add("coords-text");
 
-        getChildren().addAll(screenInfoLabel, blockFacingLabel);
+        getChildren().addAll(screenInfoLabel, currentVersion, blockFacingLabel);
     }
 
     @Override
@@ -29,4 +31,9 @@ public class InformationScreen extends VBox implements Observer {
         if (!(arg.toString().length() <= 7)) return;
         blockFacingLabel.setText("Block Facing: " + ((Facing) arg).name());
     }
+
+    public void updateVersionLabel(String val) {
+        currentVersion.setText("Current Version: " + val);
+    }
+
 }

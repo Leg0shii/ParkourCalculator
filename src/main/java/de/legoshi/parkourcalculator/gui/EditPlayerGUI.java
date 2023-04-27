@@ -1,15 +1,14 @@
 package de.legoshi.parkourcalculator.gui;
 
-import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
-import de.legoshi.parkourcalculator.parkour.environment.Environment;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
-import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
-import de.legoshi.parkourcalculator.parkour.simulator.Player;
-import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
+import de.legoshi.parkourcalculator.util.PositionVisualizer;
+import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
+import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
+import de.legoshi.parkourcalculator.simulation.movement.Movement_1_8;
+import de.legoshi.parkourcalculator.simulation.player.Player_1_8;
+import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -17,7 +16,7 @@ import javafx.stage.Stage;
 public class EditPlayerGUI extends GridPane {
 
     private Stage stage;
-    private MovementEngine movementEngine;
+    private Movement_1_8 movement18;
     private PositionVisualizer positionVisualizer;
     private InputTickGUI inputTickGUI;
 
@@ -59,7 +58,7 @@ public class EditPlayerGUI extends GridPane {
     private Button bruteForceButton = new Button("Bruteforce");
 
 
-    public EditPlayerGUI(MovementEngine movementEngine, PositionVisualizer positionVisualizer, InputTickGUI inputTickGUI) {
+    public EditPlayerGUI(Movement_1_8 movement18, PositionVisualizer positionVisualizer, InputTickGUI inputTickGUI) {
 
         this.xButton.setDisable(true);
         this.yButton.setDisable(true);
@@ -113,7 +112,7 @@ public class EditPlayerGUI extends GridPane {
             int yLoc = Integer.parseInt(pos[1]);
             int zLoc = Integer.parseInt(pos[2]);
             ABlock aBlock = null;
-            for (ABlock block : Environment.aBlocks) {
+            for (ABlock block : BlockManager_1_8.aBlocks) {
                 for (AxisVecTuple axisVecTuple : block.getAxisVecTuples()) {
                     if (xLoc <= axisVecTuple.getBb().maxX && xLoc - 1 >= axisVecTuple.getBb().minX &&
                         yLoc <= axisVecTuple.getBb().maxY && yLoc - 1 >= axisVecTuple.getBb().minY &&
@@ -126,9 +125,9 @@ public class EditPlayerGUI extends GridPane {
             if (aBlock == null) return;
 
             // save current position
-            Player player = movementEngine.player;
-            double areaStartX = player.getStartPos().x;
-            double areaStartZ = player.getStartPos().z;
+            Player_1_8 player18 = (Player_1_8) movement18.getPlayer();
+            double areaStartX = player18.getStartPos().x;
+            double areaStartZ = player18.getStartPos().z;
             double areaXIterator = Double.parseDouble(positionXPrecision.getText());
             areaXIterator = areaXIterator == 0 ? 1 : areaXIterator;
             double areaXGoal = Double.parseDouble(startXAreaField.getText());
@@ -160,7 +159,7 @@ public class EditPlayerGUI extends GridPane {
                 textField.setText(value + facing + "");
                 for (double xStart = areaStartX - areaXGoal; (xStart <= areaStartX + areaXGoal) || !xIteration; xStart += areaXIterator) {
                     for (double zStart = areaStartZ - areaZGoal; (zStart <= areaStartZ + areaZGoal) || !zIteration; zStart += areaZIterator) {
-                        player.setStartPos(new Vec3(xStart, player.getStartPos().y, zStart));
+                        player18.setStartPos(new Vec3(xStart, player18.getStartPos().y, zStart));
                         facingResult = facing;
                         xResult = xStart;
                         zResult = zStart;
@@ -184,7 +183,7 @@ public class EditPlayerGUI extends GridPane {
                 System.out.println((System.currentTimeMillis() - timeStart) + " ms");
             } else {
                 System.out.println("Restored position");
-                player.setStartPos(new Vec3(areaStartX, player.getStartPos().y, areaStartZ));
+                player18.setStartPos(new Vec3(areaStartX, player18.getStartPos().y, areaStartZ));
                 textField.setText(value + "");
             }
 

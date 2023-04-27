@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.file;
 
-import de.legoshi.parkourcalculator.parkour.tick.InputTick;
+import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

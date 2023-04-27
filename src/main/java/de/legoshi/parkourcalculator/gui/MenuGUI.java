@@ -5,12 +5,15 @@ import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.file.FileHandler;
 import de.legoshi.parkourcalculator.file.InputData;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
-import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
-import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
-import de.legoshi.parkourcalculator.parkour.environment.Environment;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
-import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
-import de.legoshi.parkourcalculator.parkour.tick.InputTick;
+import de.legoshi.parkourcalculator.simulation.Parkour;
+import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
+import de.legoshi.parkourcalculator.simulation.movement.Movement;
+import de.legoshi.parkourcalculator.util.PositionVisualizer;
+import de.legoshi.parkourcalculator.simulation.environment.BlockFactory;
+import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
+import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
+import de.legoshi.parkourcalculator.simulation.movement.Movement_1_8;
+import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -26,17 +29,18 @@ public class MenuGUI extends MenuBar {
     private final Window window;
     private final Application application;
     private final InputTickGUI inputTickGUI;
-    private final MovementEngine movementEngine;
     private final PositionVisualizer positionVisualizer;
-    @Setter
-    private MinecraftGUI minecraftGUI;
+
+    @Setter private MinecraftGUI minecraftGUI;
+    private Parkour parkour;
+    private Movement movement;
 
     public MenuGUI(Window window, Application application) {
         this.window = window;
         this.application = application;
         this.inputTickGUI = application.inputTickGUI;
         this.positionVisualizer = application.positionVisualizer;
-        this.movementEngine = positionVisualizer.getMovementEngine();
+        apply(application.currentParkour);
 
         Menu fileMenu = new Menu("File");
         Menu helpMenu = new Menu("Help");
@@ -65,6 +69,11 @@ public class MenuGUI extends MenuBar {
         getMenus().addAll(fileMenu, helpMenu);
     }
 
+    public void apply(Parkour parkour) {
+        this.parkour = parkour;
+        this.movement = parkour.getMovement();
+    }
+
     private void resetPlayer() {
         positionVisualizer.resetPlayer();
     }
@@ -76,6 +85,7 @@ public class MenuGUI extends MenuBar {
     private void resetBlocks() {
         minecraftGUI.resetScreen();
     }
+
 
     private void openInputMenu() {
         List<InputData> inputDatas = FileHandler.loadInputs(window);
@@ -90,12 +100,13 @@ public class MenuGUI extends MenuBar {
         // Without y-velocity the player is floating above the ground on first tick
         if (startVel.y == 0.0) {
             System.out.println("REPLACED startVel.y == 0.0 with default");
-            startVel.y = MovementEngine.DEFAULT_VELOCITY.y;
+            // startVel.y = Parkour_1_8.DEFAULT_VELOCITY.y;
+            startVel.y = -0.0784000015258789D;
         }
 
-        movementEngine.resetPlayer();
-        movementEngine.player.setStartPos(startPos.copy());
-        movementEngine.player.setStartVel(startVel.copy());
+        movement.resetPlayer();
+        parkour.getPlayer().setStartPos(startPos.copy());
+        parkour.getPlayer().setStartVel(startVel.copy());
 
         application.menuScreen.playerSettings.getFacingYaw().setText("0.0");
 
@@ -127,8 +138,8 @@ public class MenuGUI extends MenuBar {
     private void saveInputMenu() {
         List<InputData> inputDatas = new ArrayList<>();
 
-        Vec3 playerStart = movementEngine.player.getStartPos();
-        Vec3 playerStartVel = movementEngine.player.getStartVel();
+        Vec3 playerStart = parkour.getPlayer().getStartPos();
+        Vec3 playerStartVel = parkour.getPlayer().getStartVel();
 
         int i = 0;
         for (InputTick inputTick : inputTickGUI.getInputTicks().getInputTicks()) {
@@ -148,7 +159,7 @@ public class MenuGUI extends MenuBar {
     }
 
     private void saveBlockMenu() {
-        List<ABlock> aBlocks = Environment.aBlocks;
+        List<ABlock> aBlocks = BlockManager_1_8.aBlocks;
         List<BlockData> blockDataList = new ArrayList<>();
         for (ABlock aBlock : aBlocks) {
             blockDataList.add(aBlock.toBlockData());

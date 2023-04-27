@@ -5,4 +5,5 @@ module de.legoshi.parkourcalculator {
     requires javafx.swing;
 
     exports de.legoshi.parkourcalculator;
+    exports de.legoshi.parkourcalculator.simulation;
 }

@@ -1,21 +1,16 @@
 package de.legoshi.parkourcalculator.gui;
 
-import de.legoshi.parkourcalculator.parkour.tick.InputTick;
-import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
+import de.legoshi.parkourcalculator.simulation.tick.InputTick;
+import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.NumberHelper;
-import javafx.animation.FadeTransition;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.util.Duration;
 import lombok.Getter;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 

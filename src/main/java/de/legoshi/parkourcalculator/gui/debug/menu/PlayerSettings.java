@@ -1,10 +1,9 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
-import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
-import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
-import de.legoshi.parkourcalculator.parkour.simulator.Player;
-import de.legoshi.parkourcalculator.parkour.simulator.PlayerTickInformation;
+import de.legoshi.parkourcalculator.simulation.Parkour;
+import de.legoshi.parkourcalculator.simulation.player.Player;
+import de.legoshi.parkourcalculator.util.PositionVisualizer;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.geometry.Insets;
@@ -16,7 +15,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -28,7 +26,7 @@ import java.awt.datatransfer.StringSelection;
 
 public class PlayerSettings extends TitledPane {
 
-    private final MovementEngine movementEngine;
+    private final Parkour parkour;
     private final PositionVisualizer positionVisualizer;
     private final CoordinateScreen coordinateScreen;
 
@@ -42,8 +40,8 @@ public class PlayerSettings extends TitledPane {
     @Getter private final TextField facingYaw;
     private final TextField facingPitch;
 
-    public PlayerSettings(CoordinateScreen coordinateScreen, MovementEngine movementEngine, PositionVisualizer positionVisualizer) {
-        this.movementEngine = movementEngine;
+    public PlayerSettings(CoordinateScreen coordinateScreen, Parkour parkour, PositionVisualizer positionVisualizer) {
+        this.parkour = parkour;
         this.positionVisualizer = positionVisualizer;
         this.coordinateScreen = coordinateScreen;
 
@@ -51,8 +49,8 @@ public class PlayerSettings extends TitledPane {
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
 
-        Vec3 startPos = movementEngine.getPlayer().getStartPos();
-        Vec3 startVel = movementEngine.getPlayer().getStartVel();
+        Vec3 startPos = parkour.getPlayer().getStartPos();
+        Vec3 startVel = parkour.getPlayer().getStartVel();
 
         // Create the text fields
         xPosField = new TextField("" + replaceNegZero(-startPos.x));
@@ -73,7 +71,7 @@ public class PlayerSettings extends TitledPane {
         zVelField = new TextField((ScreenSettings.isRealVelocity() ? 0 : startVel.z) + "");
         zVelField.setPromptText("Z Velocity");
 
-        facingYaw = new TextField("" + movementEngine.player.getYAW());
+        facingYaw = new TextField("" + parkour.getPlayer().getYAW());
         facingYaw.setPromptText("Yaw");
 
         facingPitch = new TextField("60.0");
@@ -139,64 +137,64 @@ public class PlayerSettings extends TitledPane {
     }
 
     public void updatePlayerSettings() {
-        Vec3 startPos = movementEngine.getPlayer().getStartPos();
-        Vec3 startVel = movementEngine.player.getStartVel();
+        Vec3 startPos = parkour.getPlayer().getStartPos();
+        Vec3 startVel = parkour.getPlayer().getStartVel();
 
         this.xPosField.setText(replaceNegZero(startPos.x*(-1))+ "");
         this.yPosField.setText(startPos.y + "");
         this.zPosField.setText(startPos.z + "");
-        this.facingYaw.setText(replaceNegZero(movementEngine.player.getStartYAW()) + "");
+        this.facingYaw.setText(replaceNegZero(parkour.getPlayer().getStartYAW()) + "");
 
-        Player player = movementEngine.player;
         this.xVelField.setText(replaceNegZero(startVel.x*(-1)) + "");
         this.yVelField.setText(startVel.y + "");
         this.zVelField.setText(startVel.z + "");
 
-        player.setStartVel(startVel.copy());
+        parkour.getPlayer().setStartVel(startVel.copy());
         syncPathAndScreen();
     }
 
     private void registerTextFieldChanges() {
+        Player player = parkour.getPlayer();
         this.xPosField.setOnKeyTyped(keyEvent -> {
-            Vec3 oldPos = movementEngine.player.getStartPos().copy();
+            Vec3 oldPos = player.getStartPos().copy();
             double value = getDouble(oldPos.x, xPosField.getText())*(-1);
-            movementEngine.player.setStartPos(new Vec3(value, oldPos.y, oldPos.z));
+            player.setStartPos(new Vec3(value, oldPos.y, oldPos.z));
             syncPathAndScreen();
         });
         this.yPosField.setOnKeyTyped(keyEvent -> {
-            Vec3 oldPos = movementEngine.player.getStartPos().copy();
+            Vec3 oldPos = player.getStartPos().copy();
             double value = getDouble(oldPos.y, yPosField.getText());
-            movementEngine.player.setStartPos(new Vec3(oldPos.x, value, oldPos.z));
+            player.setStartPos(new Vec3(oldPos.x, value, oldPos.z));
             syncPathAndScreen();
         });
         this.zPosField.setOnKeyTyped(keyEvent -> {
-            Vec3 oldPos = movementEngine.player.getStartPos().copy();
+            Vec3 oldPos = player.getStartPos().copy();
             double value = getDouble(oldPos.z, zPosField.getText());
-            movementEngine.player.setStartPos(new Vec3(oldPos.x, oldPos.y, value));
+            player.setStartPos(new Vec3(oldPos.x, oldPos.y, value));
             syncPathAndScreen();
         });
         this.facingYaw.setOnKeyTyped(keyEvent -> {
-            float oldFacing = movementEngine.player.getStartYAW();
+            float oldFacing = player.getStartYAW();
             float newFacing = getFloat(oldFacing, facingYaw.getText());
-            movementEngine.player.setStartYAW(newFacing);
+            player.setStartYAW(newFacing);
             syncPathAndScreen();
         });
         this.xVelField.setOnKeyTyped(keyEvent -> {
-            Vec3 oldVel = movementEngine.player.getStartVel().copy();
+            Vec3 oldVel = player.getStartVel().copy();
             double value = getDouble(oldVel.x, xVelField.getText())*(-1);
-            movementEngine.player.setStartVel(new Vec3(value, oldVel.y, oldVel.z));
+            player.setStartVel(new Vec3(value, oldVel.y, oldVel.z));
             syncPathAndScreen();
         });
         this.yVelField.setOnKeyTyped(keyEvent -> {
-            Vec3 oldVel = movementEngine.player.getStartVel().copy();
+            Vec3 oldVel = player.getStartVel().copy();
             double value = getDouble(oldVel.y, yVelField.getText());
-            movementEngine.player.setStartVel(new Vec3(oldVel.x, value, oldVel.z));
+            player.setStartVel(new Vec3(oldVel.x, value, oldVel.z));
             syncPathAndScreen();
         });
         this.zVelField.setOnKeyTyped(keyEvent -> {
-            Vec3 oldVel = movementEngine.player.getStartVel().copy();
+            Vec3 oldVel = player.getStartVel().copy();
             double value = getDouble(oldVel.z, zVelField.getText());
-            movementEngine.player.setStartVel(new Vec3(oldVel.x, oldVel.y, value));
+            player.setStartVel(new Vec3(oldVel.x, oldVel.y, value));
             syncPathAndScreen();
         });
     }

@@ -8,10 +8,14 @@ import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.DebugUI;
 import de.legoshi.parkourcalculator.gui.debug.InformationScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.MenuScreen;
-import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
-import de.legoshi.parkourcalculator.parkour.environment.Environment;
-import de.legoshi.parkourcalculator.parkour.simulator.MovementEngine;
-import de.legoshi.parkourcalculator.parkour.tick.InputTickManager;
+import de.legoshi.parkourcalculator.simulation.Parkour;
+import de.legoshi.parkourcalculator.simulation.ParkourVersion;
+import de.legoshi.parkourcalculator.simulation.Parkour_1_12;
+import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
+import de.legoshi.parkourcalculator.util.PositionVisualizer;
+import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
+import de.legoshi.parkourcalculator.simulation.movement.Movement_1_8;
+import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.ConfigReader;
 import javafx.beans.binding.NumberBinding;
 import javafx.geometry.Rectangle2D;
@@ -47,8 +51,12 @@ public class Application extends javafx.application.Application {
     public InputTickManager inputTickManager;
     public PositionVisualizer positionVisualizer;
 
-    public Environment environment;
-    public MovementEngine movementEngine;
+    public Parkour currentParkour;
+
+    public Parkour_1_8 parkour_1_8;
+    public Parkour_1_12 parkour_1_12;
+
+    public ParkourVersion parkourVersion;
 
     @Override
     public void start(Stage stage) {
@@ -58,9 +66,9 @@ public class Application extends javafx.application.Application {
 
         this.configReader = new ConfigReader();
 
-        // load environment and bind it to the movement-engine
-        this.environment = new Environment();
-        this.movementEngine = new MovementEngine(environment);
+        // different parkour versions
+        this.parkourVersion = ParkourVersion.valueOf(configReader.getProperty("parkourVersion"));
+        applyParkour(parkourVersion);
 
         // load the input manager and the UI
         this.inputTickManager = new InputTickManager();
@@ -69,7 +77,7 @@ public class Application extends javafx.application.Application {
 
         // load path group to display player-movement and bind to pos-visualizer
         Group pathGroup = new Group();
-        this.positionVisualizer = new PositionVisualizer(pathGroup, movementEngine, inputTickManager);
+        this.positionVisualizer = new PositionVisualizer(pathGroup, currentParkour, inputTickManager);
 
         // load and register block gui
         this.blockGUI = new BlockGUI();
@@ -81,8 +89,8 @@ public class Application extends javafx.application.Application {
 
         // load coordinate-screen and the menu-accordion
         this.informationScreen = new InformationScreen();
-        this.coordinateScreen = new CoordinateScreen(movementEngine);
-        this.menuScreen = new MenuScreen(configReader, coordinateScreen, movementEngine, positionVisualizer, getMenuOffset(scene));
+        this.coordinateScreen = new CoordinateScreen(currentParkour);
+        this.menuScreen = new MenuScreen(this, getMenuOffset(scene));
         this.debugUI = new DebugUI(informationScreen, coordinateScreen, menuScreen);
         this.window.setRight(debugUI);
 
@@ -115,6 +123,18 @@ public class Application extends javafx.application.Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public void applyParkour(ParkourVersion parkourVersion) {
+        switch (parkourVersion) {
+            case V_1_8 -> currentParkour = parkour_1_8 == null ? new Parkour_1_8() : parkour_1_8;
+            default -> currentParkour = parkour_1_12 == null ? new Parkour_1_12() : parkour_1_12;
+        }
+        if (positionVisualizer != null) this.positionVisualizer.apply(currentParkour);
+        if (coordinateScreen != null) this.coordinateScreen.apply(currentParkour);
+        if (menuScreen != null) this.menuScreen.apply(currentParkour);
+        if (menuGUI != null) this.menuGUI.apply(currentParkour);
+        this.parkourVersion = parkourVersion;
     }
 
     private NumberBinding getMenuOffset(Scene scene) {

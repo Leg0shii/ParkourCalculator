@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigReader {
+
     private Properties properties;
 
     public ConfigReader() {

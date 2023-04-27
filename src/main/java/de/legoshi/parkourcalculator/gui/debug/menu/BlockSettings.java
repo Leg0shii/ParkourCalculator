@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
-import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
+import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;

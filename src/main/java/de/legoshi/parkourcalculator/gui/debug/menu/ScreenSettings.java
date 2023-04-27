@@ -1,7 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
-import de.legoshi.parkourcalculator.parkour.PositionVisualizer;
 import de.legoshi.parkourcalculator.util.ConfigReader;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import javafx.geometry.Insets;
@@ -23,8 +22,7 @@ public class ScreenSettings extends TitledPane {
 
     private static int precision;
 
-    public ScreenSettings(ConfigReader configReader, PlayerSettings playerSettings, CoordinateScreen coordinateScreen, PositionVisualizer positionVisualizer) {
-
+    public ScreenSettings(ConfigReader configReader, PlayerSettings playerSettings, CoordinateScreen coordinateScreen) {
         Text titleText = new Text("Screen Settings");
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);

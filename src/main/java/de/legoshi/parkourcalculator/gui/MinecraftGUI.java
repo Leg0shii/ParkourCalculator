@@ -3,12 +3,12 @@ package de.legoshi.parkourcalculator.gui;
 import de.legoshi.parkourcalculator.Application;
 import de.legoshi.parkourcalculator.gui.debug.InformationScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
-import de.legoshi.parkourcalculator.parkour.environment.BlockFactory;
-import de.legoshi.parkourcalculator.parkour.environment.Environment;
-import de.legoshi.parkourcalculator.parkour.environment.Facing;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.Air;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.StandardBlock;
+import de.legoshi.parkourcalculator.simulation.environment.BlockFactory;
+import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
+import de.legoshi.parkourcalculator.simulation.environment.Facing;
+import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
+import de.legoshi.parkourcalculator.simulation.environment.block.Air;
+import de.legoshi.parkourcalculator.simulation.environment.block.StandardBlock;
 import de.legoshi.parkourcalculator.util.ConfigReader;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -22,7 +22,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,8 +40,6 @@ public class MinecraftGUI extends Observable {
     private final SubScene subScene;
     private final Group group;
 
-    public final Comparator<Node> depthComparator;
-
     private ArrayList<Box> previewBlockBoxes = new ArrayList<>();
     private final ArrayList<Observer> observers = new ArrayList<>();
 
@@ -59,7 +56,7 @@ public class MinecraftGUI extends Observable {
         this.subScene.heightProperty().bind(window.heightProperty().subtract(application.menuGUI.heightProperty()).subtract(application.blockGUI.heightProperty()));
         this.subScene.widthProperty().bind(window.widthProperty().subtract(application.inputTickGUI.widthProperty()).subtract(application.coordinateScreen.widthProperty()));
 
-        addObserver(application.environment);
+        addObserver(application.currentParkour.getBlockManager());
         addObserver(application.coordinateScreen);
         addObserver(application.positionVisualizer);
         addObserver(application.informationScreen);
@@ -70,12 +67,6 @@ public class MinecraftGUI extends Observable {
 
         addStartingBlock();
         registerCamera();
-
-        this.depthComparator = (node1, node2) -> {
-            double z1 = node1.localToSceneTransformProperty().get().getTz();
-            double z2 = node2.localToSceneTransformProperty().get().getTz();
-            return Double.compare(z2, z1);
-        };
     }
 
     public void addStartingBlock() {
@@ -95,7 +86,7 @@ public class MinecraftGUI extends Observable {
                 Vec3 newBlockPos = getRoundedCoordinatesFromMouseEvent(mouseEvent);
                 if(newBlockPos != null) {
                     newBlockPos.x *= -1; // flipping the x axis ??
-                    ABlock curBlock = Environment.getBlock(newBlockPos.x, newBlockPos.y, newBlockPos.z);
+                    ABlock curBlock = BlockManager_1_8.getBlock(newBlockPos.x, newBlockPos.y, newBlockPos.z);
                     if (!(curBlock instanceof Air)) return;
                 }
                 ABlock newBlock = getNewBlockFromPos(mouseEvent);
@@ -187,11 +178,11 @@ public class MinecraftGUI extends Observable {
         Vec3 vec3Rounded = getRoundedCoordinatesFromMouseEvent(mouseEvent);
         if (vec3Rounded == null) return null;
 
-        return BlockFactory.createBlock(vec3Rounded, Environment.currentBlock.getClass().getSimpleName());
+        return BlockFactory.createBlock(vec3Rounded, BlockManager_1_8.currentBlock.getClass().getSimpleName());
     }
 
     private ABlock getExistingBlockFromPos(MouseEvent mouseEvent) {
-        for (ABlock aBlock : Environment.aBlocks) {
+        for (ABlock aBlock : BlockManager_1_8.aBlocks) {
             Box box = (Box) mouseEvent.getTarget();
             if (aBlock.getBoxesArrayList().contains(box)) {
                 return aBlock;
@@ -256,7 +247,7 @@ public class MinecraftGUI extends Observable {
 
     public void clearScreen() {
         group.getChildren().removeIf(node -> !(node instanceof Group)); // remove all blocks, keep path group
-        Environment.aBlocks = new ArrayList<>();
+        BlockManager_1_8.aBlocks = new ArrayList<>();
     }
 
     public void addObserver(Observer observer) {

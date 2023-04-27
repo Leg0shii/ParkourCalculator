@@ -2,7 +2,7 @@ package de.legoshi.parkourcalculator.util;
 
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
-import de.legoshi.parkourcalculator.parkour.environment.blocks.ABlock;
+import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import lombok.AllArgsConstructor;

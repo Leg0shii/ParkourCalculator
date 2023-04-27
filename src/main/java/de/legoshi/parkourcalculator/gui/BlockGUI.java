@@ -1,6 +1,6 @@
 package de.legoshi.parkourcalculator.gui;
 
-import de.legoshi.parkourcalculator.parkour.environment.Environment;
+import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -44,7 +44,7 @@ public class BlockGUI extends ScrollPane {
         clickEffect.setColor(Color.GRAY);
         clickEffect.setRadius(20.0);
 
-        Environment.registeredBlocks.forEach(block -> {
+        BlockManager_1_8.registeredBlocks.forEach(block -> {
             StackPane stackPane = new StackPane();
             ImageView imageView = new ImageView(block.image);
             stackPane.getChildren().add(imageView);
@@ -55,13 +55,13 @@ public class BlockGUI extends ScrollPane {
                 selectedPane = stackPane;
 
                 stackPane.setEffect(clickEffect);
-                Environment.updateCurrentBlock(block);
+                BlockManager_1_8.updateCurrentBlock(block);
             });
 
             stackPane.setOnMouseEntered(event -> stackPane.setEffect(hoverEffect));
             stackPane.setOnMouseExited(event -> stackPane.setEffect(selectedPane == stackPane ? clickEffect : null));
 
-            if (Environment.currentBlock.getClass().getSimpleName().equals(block.getClass().getSimpleName())) {
+            if (BlockManager_1_8.currentBlock.getClass().getSimpleName().equals(block.getClass().getSimpleName())) {
                 selectedPane = stackPane;
                 stackPane.setEffect(clickEffect);
             }
