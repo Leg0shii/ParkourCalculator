@@ -22,28 +22,35 @@ public class ConfigProperties {
 
     private void loadConfig() {
         System.out.println();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
+        String workingDirectory = System.getProperty("user.dir");
+        Path configFilePath = Paths.get(workingDirectory, "config.properties");
+
+        if (Files.exists(configFilePath)) {
+            try (InputStream inputStream = Files.newInputStream(configFilePath)) {
+                properties.load(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(CONFIG_FILE)) {
+                properties.load(inputStream);
+                saveConfig(); // Save the configuration file to the working directory
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void saveConfig() {
         try {
-            URL configFileUrl = getClass().getClassLoader().getResource(CONFIG_FILE);
-            if (configFileUrl != null) {
-                Path configFilePath = Paths.get(configFileUrl.toURI());
-                try (OutputStream outputStream = Files.newOutputStream(configFilePath)) {
-                    properties.store(outputStream, "Configuration settings");
-                }
-            } else {
-                System.err.println("Unable to locate " + CONFIG_FILE);
+            String workingDirectory = System.getProperty("user.dir");
+            Path configFilePath = Paths.get(workingDirectory, "config.properties");
+            try (OutputStream outputStream = Files.newOutputStream(configFilePath)) {
+                properties.store(outputStream, "Configuration settings");
             }
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void resetToDefault() {
