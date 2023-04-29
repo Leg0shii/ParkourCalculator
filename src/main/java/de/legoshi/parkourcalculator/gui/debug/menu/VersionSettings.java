@@ -10,10 +10,11 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import lombok.Getter;
 
 public class VersionSettings extends TitledPane{
 
-    private final ComboBox<String> versionComboBox = new ComboBox<>();
+    @Getter private final ComboBox<String> versionComboBox = new ComboBox<>();
 
     public VersionSettings(Application application) {
 
@@ -35,7 +36,6 @@ public class VersionSettings extends TitledPane{
         versionComboBox.setOnAction(event -> {
             String newValue = versionComboBox.getValue();
             application.applyParkour(ParkourVersion.valueOf(newValue));
-            application.informationScreen.updateVersionLabel(newValue);
         });
 
         setContent(gridPane);

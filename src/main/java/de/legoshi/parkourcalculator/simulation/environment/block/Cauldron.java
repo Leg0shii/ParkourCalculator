@@ -19,7 +19,7 @@ public class Cauldron extends ABlock {
     }
 
     @Override
-    void updateBoundingBox() {
+    public void updateBoundingBox() {
         Vec3 lowerEdge1 = new Vec3(0, 0, 0);
         Vec3 upperEdge1 = new Vec3(1, 1, 0.125);
         Vec3 shift1 = new Vec3(0, 0, 0.4375);
@@ -47,7 +47,7 @@ public class Cauldron extends ABlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/cauldron.png");
     }
 

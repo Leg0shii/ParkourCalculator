@@ -19,7 +19,7 @@ public class BrewingStand extends ABlock {
     }
 
     @Override
-    void updateBoundingBox() {
+    public void updateBoundingBox() {
         Vec3 lowerEdgeBase = new Vec3(0, 0, 0);
         Vec3 upperEdgeBase = new Vec3(1, 0.125, 1);
         Vec3 shiftBase = new Vec3(0, 0.5-0.125/2, 0);
@@ -32,7 +32,7 @@ public class BrewingStand extends ABlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/brewing_stand.png");
     }
 }

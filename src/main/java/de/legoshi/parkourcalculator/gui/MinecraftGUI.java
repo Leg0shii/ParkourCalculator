@@ -3,25 +3,29 @@ package de.legoshi.parkourcalculator.gui;
 import de.legoshi.parkourcalculator.Application;
 import de.legoshi.parkourcalculator.gui.debug.InformationScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
+import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
+import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.BlockFactory;
-import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
+import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.environment.Facing;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.environment.block.Air;
 import de.legoshi.parkourcalculator.simulation.environment.block.StandardBlock;
-import de.legoshi.parkourcalculator.util.ConfigReader;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import de.legoshi.parkourcalculator.util.fxyz.AdvancedCamera;
 import de.legoshi.parkourcalculator.util.fxyz.FPSController;
 import javafx.geometry.Bounds;
 import javafx.scene.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
+import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,44 +37,71 @@ public class MinecraftGUI extends Observable {
 
     public static final Vec3 BLOCK_POSITION = new Vec3(1, 0, 0);
 
-    private final ConfigReader configReader;
+    private final ConfigProperties configProperties;
     private final Application application;
+    private BlockManager blockManager;
 
-    private final BorderPane window;
     private final SubScene subScene;
     private final Group group;
 
-    private ArrayList<Box> previewBlockBoxes = new ArrayList<>();
-    private final ArrayList<Observer> observers = new ArrayList<>();
+    @Getter private FPSController controller;
+
+    private List<Box> previewBlockBoxes = new ArrayList<>();
+    private final List<Observer> observers = new ArrayList<>();
+
+    private MouseButton addBlock, destroyBlock;
 
     public MinecraftGUI(Application application, Group group) {
         this.application = application;
-        this.configReader = application.configReader;
+        this.configProperties = application.configGUI.getConfigProperties();
+        this.blockManager = application.currentParkour.getBlockManager();
 
         this.group = group;
         this.group.setDepthTest(DepthTest.ENABLE);
 
         this.subScene = application.minecraftSubScene;
-        this.window = application.window;
+        BorderPane window = application.window;
 
         this.subScene.heightProperty().bind(window.heightProperty().subtract(application.menuGUI.heightProperty()).subtract(application.blockGUI.heightProperty()));
         this.subScene.widthProperty().bind(window.widthProperty().subtract(application.inputTickGUI.widthProperty()).subtract(application.coordinateScreen.widthProperty()));
 
-        addObserver(application.currentParkour.getBlockManager());
+        apply(application.currentParkour);
         addObserver(application.coordinateScreen);
         addObserver(application.positionVisualizer);
         addObserver(application.informationScreen);
 
         application.menuGUI.setMinecraftGUI(this);
-
         application.minecraftSubScene.setOnMouseMoved(this::handleBackgroundMouseMove);
 
-        addStartingBlock();
         registerCamera();
     }
 
+    public void updateConfigValues(ConfigProperties configProperties) {
+        addBlock = MouseButton.valueOf(configProperties.getPlaceBlock());
+        destroyBlock = MouseButton.valueOf(configProperties.getDestroyBlock());
+    }
+
+    public void apply(Parkour parkour) {
+        group.getChildren().removeIf(node -> !(node instanceof Group));
+
+        observers.remove(blockManager);
+        this.observers.add(0, parkour.getBlockManager());
+
+        this.blockManager = parkour.getBlockManager();
+        this.previewBlockBoxes = new ArrayList<>();
+
+        if (blockManager.aBlocks.isEmpty()) {
+            addStartingBlock();
+            return;
+        }
+
+        List<ABlock> aBlocksCopy = new ArrayList<>(blockManager.aBlocks);
+        aBlocksCopy.forEach(this::addBlock);
+        blockManager.aBlocks = aBlocksCopy;
+    }
+
     public void addStartingBlock() {
-        addBlock(new StandardBlock(BLOCK_POSITION));
+        addBlock(new StandardBlock(BLOCK_POSITION.copy()));
     }
 
     public void resetScreen() {
@@ -81,21 +112,18 @@ public class MinecraftGUI extends Observable {
     public void handleMouseClick(MouseEvent mouseEvent) {
         if (!(mouseEvent.getTarget() instanceof Box)) return;
         mouseEvent.consume();
-        switch (mouseEvent.getButton()) {
-            case PRIMARY -> {
-                Vec3 newBlockPos = getRoundedCoordinatesFromMouseEvent(mouseEvent);
-                if(newBlockPos != null) {
-                    newBlockPos.x *= -1; // flipping the x axis ??
-                    ABlock curBlock = BlockManager_1_8.getBlock(newBlockPos.x, newBlockPos.y, newBlockPos.z);
-                    if (!(curBlock instanceof Air)) return;
-                }
-                ABlock newBlock = getNewBlockFromPos(mouseEvent);
-                if (newBlock != null) addBlock(newBlock);
+        if (mouseEvent.getButton().equals(addBlock)) {
+            Vec3 newBlockPos = getRoundedCoordinatesFromMouseEvent(mouseEvent);
+            if(newBlockPos != null) {
+                newBlockPos.x *= -1; // flipping the x axis
+                ABlock curBlock = blockManager.getBlock(newBlockPos.x, newBlockPos.y, newBlockPos.z);
+                if (!(curBlock instanceof Air)) return;
             }
-            case SECONDARY -> {
-                ABlock block = getExistingBlockFromPos(mouseEvent);
-                if (block != null) removeBlock(block);
-            }
+            ABlock newBlock = getNewBlockFromPos(mouseEvent);
+            if (newBlock != null) addBlock(newBlock);
+        } else if(mouseEvent.getButton().equals(destroyBlock)) {
+            ABlock block = getExistingBlockFromPos(mouseEvent);
+            if (block != null) removeBlock(block);
         }
     }
 
@@ -178,11 +206,11 @@ public class MinecraftGUI extends Observable {
         Vec3 vec3Rounded = getRoundedCoordinatesFromMouseEvent(mouseEvent);
         if (vec3Rounded == null) return null;
 
-        return BlockFactory.createBlock(vec3Rounded, BlockManager_1_8.currentBlock.getClass().getSimpleName());
+        return BlockFactory.createBlock(vec3Rounded, blockManager.currentBlock.getClass().getSimpleName());
     }
 
     private ABlock getExistingBlockFromPos(MouseEvent mouseEvent) {
-        for (ABlock aBlock : BlockManager_1_8.aBlocks) {
+        for (ABlock aBlock : blockManager.aBlocks) {
             Box box = (Box) mouseEvent.getTarget();
             if (aBlock.getBoxesArrayList().contains(box)) {
                 return aBlock;
@@ -227,7 +255,7 @@ public class MinecraftGUI extends Observable {
 
     private void registerCamera() {
         AdvancedCamera camera = new AdvancedCamera();
-        FPSController controller = new FPSController(configReader);
+        this.controller = new FPSController(configProperties);
         controller.setScene(application.scene);
 
         camera.setController(controller);
@@ -247,7 +275,7 @@ public class MinecraftGUI extends Observable {
 
     public void clearScreen() {
         group.getChildren().removeIf(node -> !(node instanceof Group)); // remove all blocks, keep path group
-        BlockManager_1_8.aBlocks = new ArrayList<>();
+        blockManager.aBlocks = new ArrayList<>();
     }
 
     public void addObserver(Observer observer) {

@@ -41,7 +41,8 @@ public abstract class ABlock {
         updateSlipperiness();
     }
 
-    abstract void updateBoundingBox();
+    public abstract void updateBoundingBox();
+    public abstract void updateImage();
 
     public void updateColor() {
         setMaterialColor(BlockColors.STONE.get());
@@ -51,14 +52,6 @@ public abstract class ABlock {
 
     public void updateSlipperiness() {
         this.slipperiness = Movement.Slipperiness.BLOCK;
-    }
-    abstract void updateImage();
-
-    private void updateBoxes() {
-        this.boxesArrayList.clear();
-        for (AxisVecTuple axisVecTuple : this.axisVecTuples) {
-            this.boxesArrayList.add(axisVecTuple.getBox(this));
-        }
     }
 
     public AxisVecTuple constructBlock(Vec3 lE, Vec3 uE, Vec3 shift) {
@@ -99,6 +92,13 @@ public abstract class ABlock {
         else this.specularPower = 5;
         this.specularColor = specularColor;
         this.updateBoxes();
+    }
+
+    private void updateBoxes() {
+        this.boxesArrayList.clear();
+        for (AxisVecTuple axisVecTuple : this.axisVecTuples) {
+            this.boxesArrayList.add(axisVecTuple.getBox(this));
+        }
     }
 
 }

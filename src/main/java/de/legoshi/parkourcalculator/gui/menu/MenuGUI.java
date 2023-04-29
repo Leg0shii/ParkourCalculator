@@ -1,9 +1,11 @@
-package de.legoshi.parkourcalculator.gui;
+package de.legoshi.parkourcalculator.gui.menu;
 
 import de.legoshi.parkourcalculator.Application;
 import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.file.FileHandler;
 import de.legoshi.parkourcalculator.file.InputData;
+import de.legoshi.parkourcalculator.gui.InputTickGUI;
+import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
@@ -44,16 +46,19 @@ public class MenuGUI extends MenuBar {
 
         Menu fileMenu = new Menu("File");
         Menu helpMenu = new Menu("Help");
+        Menu configMenu = new Menu("Config");
 
         MenuItem openInputMenuItem = new MenuItem("Open Inputs");
         MenuItem openBlockMenuItem = new MenuItem("Open Blocks");
         MenuItem saveInputMenuItem = new MenuItem("Save Inputs");
         MenuItem saveBlockMenuItem = new MenuItem("Save Blocks");
+        MenuItem openConfigItem = new MenuItem("Open Config");
 
         openInputMenuItem.setOnAction(event -> openInputMenu());
         openBlockMenuItem.setOnAction(event -> openBlockMenu());
         saveInputMenuItem.setOnAction(event -> saveInputMenu());
         saveBlockMenuItem.setOnAction(event -> saveBlockMenu());
+        openConfigItem.setOnAction(event -> openConfigMenu());
 
         fileMenu.getItems().addAll(openInputMenuItem, openBlockMenuItem, saveInputMenuItem, saveBlockMenuItem);
 
@@ -66,12 +71,18 @@ public class MenuGUI extends MenuBar {
         helpBlocksResetMenuItem.setOnAction(event -> resetBlocks());
 
         helpMenu.getItems().addAll(helpBlocksResetMenuItem, helpTicksResetMenuItem, helpPlayerResetMenuItem);
-        getMenus().addAll(fileMenu, helpMenu);
+        configMenu.getItems().addAll(openConfigItem);
+        getMenus().addAll(fileMenu, helpMenu, configMenu);
+    }
+
+    private void openConfigMenu() {
+        application.configGUI.showConfigScreen();
     }
 
     public void apply(Parkour parkour) {
         this.parkour = parkour;
         this.movement = parkour.getMovement();
+        System.out.println("MenuGUI applied");
     }
 
     private void resetPlayer() {
@@ -159,7 +170,7 @@ public class MenuGUI extends MenuBar {
     }
 
     private void saveBlockMenu() {
-        List<ABlock> aBlocks = BlockManager_1_8.aBlocks;
+        List<ABlock> aBlocks = parkour.getBlockManager().aBlocks;
         List<BlockData> blockDataList = new ArrayList<>();
         for (ABlock aBlock : aBlocks) {
             blockDataList.add(aBlock.toBlockData());

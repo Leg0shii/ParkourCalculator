@@ -7,13 +7,13 @@ import de.legoshi.parkourcalculator.util.Vec3;
 
 public abstract class Parkour {
 
-    protected Player player;
-    protected Movement movement;
-    protected BlockManager blockManager;
-
     public static final float START_YAW = 0.0F;
     public static final Vec3 DEFAULT_START = new Vec3(-0.5, 1.0, 0.5);
     public static final Vec3 DEFAULT_VELOCITY = new Vec3(0, -0.0784000015258789, 0);
+
+    protected Player player;
+    protected Movement movement;
+    protected BlockManager blockManager;
 
     public Player getPlayer() {
         return player;

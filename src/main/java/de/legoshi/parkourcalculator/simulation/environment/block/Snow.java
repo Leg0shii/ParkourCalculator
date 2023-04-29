@@ -25,7 +25,7 @@ public class Snow extends ABlock implements TierBlock {
     }
 
     @Override
-    void updateBoundingBox() {
+    public void updateBoundingBox() {
         this.tier = BlockSettings.getTier();
         prepareBlock(this.tier);
 
@@ -36,7 +36,7 @@ public class Snow extends ABlock implements TierBlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/snow.png");
     }
 

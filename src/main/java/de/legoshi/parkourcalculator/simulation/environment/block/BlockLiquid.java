@@ -11,12 +11,12 @@ public class BlockLiquid extends ABlock {
     }
 
     @Override
-    void updateBoundingBox() {
+    public void updateBoundingBox() {
 
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
 
     }
 

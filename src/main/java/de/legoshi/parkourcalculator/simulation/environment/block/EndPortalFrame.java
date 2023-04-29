@@ -22,7 +22,7 @@ public class EndPortalFrame extends ABlock implements TierBlock {
     }
 
     @Override
-    void updateBoundingBox() {
+    public void updateBoundingBox() {
         this.tier = BlockSettings.getTier();
         prepareBlock(tier);
 
@@ -40,7 +40,7 @@ public class EndPortalFrame extends ABlock implements TierBlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/end_portal_frame.png");
     }
 

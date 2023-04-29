@@ -1,6 +1,7 @@
-package de.legoshi.parkourcalculator.simulation.environment.block;
+package de.legoshi.parkourcalculator.simulation.environment.block_1_8;
 
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
+import de.legoshi.parkourcalculator.simulation.environment.block.FacingBlock;
 import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -9,9 +10,9 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 
 @NoArgsConstructor
-public class Pane extends FacingBlock {
+public class Pane_1_8 extends FacingBlock {
 
-    public Pane(Vec3 vec3) {
+    public Pane_1_8(Vec3 vec3) {
         super(vec3);
     }
 
@@ -22,7 +23,12 @@ public class Pane extends FacingBlock {
     }
 
     @Override
-    protected void updateBoundingBox() {
+    public void updateImage() {
+        this.image = new ImageHelper().getImageFromURL("/images/glass_pane.png");
+    }
+
+    @Override
+    public void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
         if (!(BlockSettings.isNorth() || BlockSettings.isEast() || BlockSettings.isSouth() || BlockSettings.isWest())) {
@@ -78,11 +84,6 @@ public class Pane extends FacingBlock {
     @Override
     protected void calcBaseFlip() {
 
-    }
-
-    @Override
-    void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/glass_pane.png");
     }
 
 }

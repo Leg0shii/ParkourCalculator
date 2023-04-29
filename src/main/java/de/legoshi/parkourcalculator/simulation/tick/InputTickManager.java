@@ -21,7 +21,7 @@ public class InputTickManager extends Observable {
 
     public void notifyObservers() {
         for (Observer observer : observers) {
-            if (observer !=null) observer.update(this, null);
+            if (observer != null) observer.update(this, null);
         }
     }
 }

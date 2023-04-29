@@ -26,7 +26,7 @@ public class Anvil extends FacingBlock {
     }
 
     @Override
-    protected void updateBoundingBox() {
+    public void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
         if (BlockSettings.isNorth() || BlockSettings.isSouth()) calcNorth();
@@ -67,7 +67,7 @@ public class Anvil extends FacingBlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/anvil.png");
     }
 

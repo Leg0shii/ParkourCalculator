@@ -22,9 +22,27 @@ public class CocoaBean extends FacingBlock implements TierBlock {
         setMaterialColor(BlockColors.COCOA_BEAN.get());
         setSpecularColor(BlockColors.PLANT_SPEC.get());
     }
+    @Override
+    public void updateImage() {
+        this.image = new ImageHelper().getImageFromURL("/images/cocoa_bean.png");
+    }
 
     @Override
-    protected void updateBoundingBox() {
+    public void prepareBlock(int tier) {
+        tier--;
+        if (tier > 2) tier = 2;
+        this.addedSize = (tier) * 0.0625;
+    }
+
+    @Override
+    public BlockData toBlockData() {
+        BlockData blockData = super.toBlockData();
+        blockData.tier = this.tier;
+        return blockData;
+    }
+
+    @Override
+    public void updateBoundingBox() {
         this.tier = BlockSettings.getTier();
         prepareBlock(this.tier);
 
@@ -74,25 +92,6 @@ public class CocoaBean extends FacingBlock implements TierBlock {
     @Override
     protected void calcBaseFlip() {
 
-    }
-
-    @Override
-    void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/cocoa_bean.png");
-    }
-
-    @Override
-    public void prepareBlock(int tier) {
-        tier--;
-        if (tier > 2) tier = 2;
-        this.addedSize = (tier) * 0.0625;
-    }
-
-    @Override
-    public BlockData toBlockData() {
-        BlockData blockData = super.toBlockData();
-        blockData.tier = this.tier;
-        return blockData;
     }
 
 }

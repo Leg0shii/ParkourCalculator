@@ -46,6 +46,7 @@ public class PositionVisualizer extends Observable implements Observer {
         this.inputTickManager = inputTickManager;
         this.group = group;
         apply(parkour);
+        this.resetPlayer();
     }
 
     public void apply(Parkour parkour) {
@@ -57,9 +58,10 @@ public class PositionVisualizer extends Observable implements Observer {
         this.box.setTranslateY(MinecraftGUI.BLOCK_OFFSET_Y - parkour.getPlayer().getStartPos().y);
         this.box.setOpacity(0);
         this.box.setMouseTransparent(true);
-        group.getChildren().add(box);
+        this.group.getChildren().add(box);
 
-        this.resetPlayer();
+        generatePlayerPath();
+        System.out.println("PositionVisualizer applied");
     }
 
     public void resetPlayer() {

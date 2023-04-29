@@ -1,30 +1,46 @@
 package de.legoshi.parkourcalculator.util.fxyz;
 
-import de.legoshi.parkourcalculator.util.ConfigReader;
+import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
+import java.util.Locale;
+
 public class FPSController extends CameraController {
 
-    private boolean fwd, strafeL, strafeR, back, up, down, shift, mouseLookEnabled;
-    private double speed, maxSpeed, minSpeed;
-    private double mouseSpeed, maxMouseSpeed, minMouseSpeed;
+    private static boolean fwd, strafeL, strafeR, back, up, down, shift, mouseLookEnabled;
+    private static double speed, maxSpeed, minSpeed;
+    private static double mouseSpeed, maxMouseSpeed, minMouseSpeed;
 
-    public FPSController(ConfigReader configReader) {
+    private static KeyCode forwardKey, backwardsKey, leftKey, rightKey, upKey, downKey, sprintKey;
+
+    public FPSController(ConfigProperties configProperties) {
         super(true, AnimationPreference.TIMER);
+        updateConfigValues(configProperties);
+    }
 
-        double speedMulti = configReader.getDoubleProperty("maxSpeedMultiplier");
-        this.speed = configReader.getDoubleProperty("cameraSpeed");
-        this.minSpeed = speed;
-        this.maxSpeed = speed * speedMulti;
+    public void updateConfigValues(ConfigProperties configProperties) {
+        double speedMulti = configProperties.getMaxSpeedMultiplier();
+        speed = configProperties.getCameraSpeed();
+        minSpeed = speed;
+        maxSpeed = speed * speedMulti;
 
-        double mouseSpeedMulti = configReader.getDoubleProperty("maxMouseMultiplier");
-        this.mouseSpeed = configReader.getDoubleProperty("mouseSpeed");
-        this.minMouseSpeed = mouseSpeed;
-        this.maxMouseSpeed = mouseSpeed * mouseSpeedMulti;
+        double mouseSpeedMulti = configProperties.getMaxMouseMultiplier();
+        mouseSpeed = configProperties.getMouseSpeed();
+        minMouseSpeed = mouseSpeed;
+        maxMouseSpeed = mouseSpeed * mouseSpeedMulti;
+
+        forwardKey = KeyCode.valueOf(configProperties.getForward().toUpperCase(Locale.ROOT));
+        backwardsKey = KeyCode.valueOf(configProperties.getBackward().toUpperCase(Locale.ROOT));
+        leftKey = KeyCode.valueOf(configProperties.getLeft().toUpperCase(Locale.ROOT));
+        rightKey = KeyCode.valueOf(configProperties.getRight().toUpperCase(Locale.ROOT));
+        upKey = KeyCode.valueOf(configProperties.getUp().toUpperCase(Locale.ROOT));
+        downKey = KeyCode.valueOf(configProperties.getDown().toUpperCase(Locale.ROOT));
+        sprintKey = KeyCode.valueOf(configProperties.getSprint().toUpperCase(Locale.ROOT));
     }
 
     @Override
@@ -40,32 +56,28 @@ public class FPSController extends CameraController {
     @Override
     public void handleKeyEvent(KeyEvent event, boolean handle) {
         if (event.getEventType() == KeyEvent.KEY_PRESSED) {
-            switch (event.getCode()) {
-                case W -> fwd = true;
-                case S -> back = true;
-                case A -> strafeL = true;
-                case D -> strafeR = true;
-                case SPACE -> up = true;
-                case R -> down = true;
-                case SHIFT -> {
-                    shift = true;
-                    speed = maxSpeed;
-                    mouseSpeed = maxMouseSpeed;
-                }
+            if (event.getCode().equals(forwardKey)) fwd = true;
+            else if (event.getCode().equals(backwardsKey)) back = true;
+            else if (event.getCode().equals(leftKey)) strafeL = true;
+            else if (event.getCode().equals(rightKey)) strafeR = true;
+            else if (event.getCode().equals(upKey)) up = true;
+            else if (event.getCode().equals(downKey)) down = true;
+            else if (event.getCode().equals(sprintKey)) {
+                shift = true;
+                speed = maxSpeed;
+                mouseSpeed = maxMouseSpeed;
             }
         } else if (event.getEventType() == KeyEvent.KEY_RELEASED) {
-            switch (event.getCode()) {
-                case W -> fwd = false;
-                case S -> back = false;
-                case A -> strafeL = false;
-                case D -> strafeR = false;
-                case SPACE -> up = false;
-                case R -> down = false;
-                case SHIFT -> {
-                    shift = false;
-                    speed = minSpeed;
-                    mouseSpeed = minMouseSpeed;
-                }
+            if (event.getCode().equals(forwardKey)) fwd = false;
+            else if (event.getCode().equals(backwardsKey)) back = false;
+            else if (event.getCode().equals(leftKey)) strafeL = false;
+            else if (event.getCode().equals(rightKey)) strafeR = false;
+            else if (event.getCode().equals(upKey)) up = false;
+            else if (event.getCode().equals(downKey)) down = false;
+            else if (event.getCode().equals(sprintKey)) {
+                shift = false;
+                speed = minSpeed;
+                mouseSpeed = minMouseSpeed;
             }
         }
     }

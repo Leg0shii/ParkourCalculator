@@ -22,12 +22,12 @@ public class Fence extends FacingBlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/fence.png");
     }
 
     @Override
-    protected void updateBoundingBox() {
+    public void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
         calcBase();
         if (BlockSettings.isNorth()) calcNorth();

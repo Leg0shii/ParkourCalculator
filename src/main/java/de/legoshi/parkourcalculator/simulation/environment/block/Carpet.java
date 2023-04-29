@@ -18,7 +18,7 @@ public class Carpet extends ABlock {
     }
 
     @Override
-    void updateBoundingBox() {
+    public void updateBoundingBox() {
         Vec3 lowerEdge = new Vec3(0, 0, 0);
         Vec3 upperEdge = new Vec3(1, 0.0625, 1);
         Vec3 shift = new Vec3(0, 0.5-0.0625/2, 0);
@@ -26,7 +26,7 @@ public class Carpet extends ABlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/carpet.png");
     }
 }

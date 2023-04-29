@@ -13,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 public class EditPlayerGUI extends GridPane {
 
     private Stage stage;
@@ -112,15 +114,6 @@ public class EditPlayerGUI extends GridPane {
             int yLoc = Integer.parseInt(pos[1]);
             int zLoc = Integer.parseInt(pos[2]);
             ABlock aBlock = null;
-            for (ABlock block : BlockManager_1_8.aBlocks) {
-                for (AxisVecTuple axisVecTuple : block.getAxisVecTuples()) {
-                    if (xLoc <= axisVecTuple.getBb().maxX && xLoc - 1 >= axisVecTuple.getBb().minX &&
-                        yLoc <= axisVecTuple.getBb().maxY && yLoc - 1 >= axisVecTuple.getBb().minY &&
-                        zLoc <= axisVecTuple.getBb().maxZ && zLoc - 1 >= axisVecTuple.getBb().minZ) {
-                        aBlock = block;
-                    }
-                }
-            }
 
             if (aBlock == null) return;
 

@@ -1,5 +1,7 @@
 package de.legoshi.parkourcalculator.gui;
 
+import de.legoshi.parkourcalculator.simulation.Parkour;
+import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,25 +16,28 @@ import javafx.scene.paint.Color;
 
 public class BlockGUI extends ScrollPane {
 
-    private AnchorPane anchorPane;
-    private HBox hBox;
-
+    private BlockManager blockManager;
+    private final HBox hBox;
     private StackPane selectedPane;
 
-    public BlockGUI() {
+    public BlockGUI(Parkour parkour) {
         BorderPane.setAlignment(this, Pos.CENTER);
+        setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
         hBox.setSpacing(5.0);
         hBox.setPadding(new Insets(8, 8, 20, 8));
 
-        anchorPane = new AnchorPane(hBox);
-        setContent(anchorPane);
+        setContent(new AnchorPane(hBox));
+        apply(parkour);
+    }
 
-        setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
+    public void apply(Parkour parkour) {
+        this.blockManager = parkour.getBlockManager();
+        hBox.getChildren().clear();
         registerBlocks();
+        System.out.println("BlockGUI applied");
     }
 
     private void registerBlocks() {
@@ -44,7 +49,7 @@ public class BlockGUI extends ScrollPane {
         clickEffect.setColor(Color.GRAY);
         clickEffect.setRadius(20.0);
 
-        BlockManager_1_8.registeredBlocks.forEach(block -> {
+        blockManager.registeredBlocks.forEach(block -> {
             StackPane stackPane = new StackPane();
             ImageView imageView = new ImageView(block.image);
             stackPane.getChildren().add(imageView);
@@ -55,13 +60,13 @@ public class BlockGUI extends ScrollPane {
                 selectedPane = stackPane;
 
                 stackPane.setEffect(clickEffect);
-                BlockManager_1_8.updateCurrentBlock(block);
+                blockManager.updateCurrentBlock(block);
             });
 
             stackPane.setOnMouseEntered(event -> stackPane.setEffect(hoverEffect));
             stackPane.setOnMouseExited(event -> stackPane.setEffect(selectedPane == stackPane ? clickEffect : null));
 
-            if (BlockManager_1_8.currentBlock.getClass().getSimpleName().equals(block.getClass().getSimpleName())) {
+            if (blockManager.currentBlock.getClass().getSimpleName().equals(block.getClass().getSimpleName())) {
                 selectedPane = stackPane;
                 stackPane.setEffect(clickEffect);
             }

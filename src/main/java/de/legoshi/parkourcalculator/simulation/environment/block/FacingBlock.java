@@ -23,7 +23,7 @@ public abstract class FacingBlock extends ABlock {
     }
 
     @Override
-    protected void updateBoundingBox() {
+    public void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
         if (BlockSettings.isNorth()) calcNorth();

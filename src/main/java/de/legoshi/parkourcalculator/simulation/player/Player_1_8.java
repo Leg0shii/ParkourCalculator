@@ -2,7 +2,7 @@ package de.legoshi.parkourcalculator.simulation.player;
 
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
-import de.legoshi.parkourcalculator.simulation.environment.block.Ladder;
+import de.legoshi.parkourcalculator.simulation.environment.block_1_8.Ladder_1_8;
 import de.legoshi.parkourcalculator.simulation.environment.block.Vine;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
@@ -10,8 +10,6 @@ import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
 import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
-import lombok.Getter;
-import lombok.Setter;
 
 public class Player_1_8 extends Player {
 
@@ -28,9 +26,6 @@ public class Player_1_8 extends Player {
     public boolean SNEAK;
     public boolean JUMP;
 
-    @Getter @Setter public float YAW;
-    @Getter @Setter public float startYAW;
-
     public float moveStrafe, moveForward;
 
     public float jumpMovementFactor = 0.02F;
@@ -40,23 +35,10 @@ public class Player_1_8 extends Player {
     public boolean isCollided;
 
     public Movement.Slipperiness slipperiness;
-
-    @Getter @Setter public Vec3 startPos;
-    @Getter @Setter public Vec3 position;
-    @Getter @Setter public Vec3 startVel;
-    @Getter @Setter public Vec3 velocity;
-    @Getter @Setter public Vec3 realVel;
-
     public AxisAlignedBB playerBB;
 
     public Player_1_8(Vec3 position, Vec3 velocity, float startYAW) {
-        this.startPos = position.copy();
-        this.position = position.copy();
-
-        this.startVel = velocity.copy();
-        this.velocity = velocity.copy();
-
-        this.startYAW = startYAW;
+        super(position, velocity, startYAW);
         slipperiness = Movement.Slipperiness.BLOCK;
         updatePlayerBB();
     }
@@ -175,13 +157,13 @@ public class Player_1_8 extends Player {
         );
     }
 
-    public boolean isOnLadder() {
+    public boolean isOnLadder(BlockManager_1_8 blockManager18) {
         int x = MinecraftMathHelper.floor_double(this.position.x);
         int minY = MinecraftMathHelper.floor_double(this.playerBB.minY);
         int z = MinecraftMathHelper.floor_double(this.position.z);
 
-        ABlock block = BlockManager_1_8.getBlock(x, minY, z);
-        return (block instanceof Ladder || block instanceof Vine);
+        ABlock block = blockManager18.getBlock(x, minY, z);
+        return (block instanceof Ladder_1_8 || block instanceof Vine);
     }
 
 }

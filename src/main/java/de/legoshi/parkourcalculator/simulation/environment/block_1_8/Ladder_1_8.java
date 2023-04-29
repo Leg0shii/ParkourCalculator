@@ -1,14 +1,15 @@
-package de.legoshi.parkourcalculator.simulation.environment.block;
+package de.legoshi.parkourcalculator.simulation.environment.block_1_8;
 
+import de.legoshi.parkourcalculator.simulation.environment.block.FacingBlock;
 import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class Ladder extends FacingBlock {
+public class Ladder_1_8 extends FacingBlock {
 
-    public Ladder(Vec3 vec3) {
+    public Ladder_1_8(Vec3 vec3) {
         super(vec3);
     }
 
@@ -16,6 +17,11 @@ public class Ladder extends FacingBlock {
     public void updateColor() {
         setMaterialColor(BlockColors.WOOD.get());
         setSpecularColor(BlockColors.WOOD_SPEC.get());
+    }
+
+    @Override
+    public void updateImage() {
+        this.image = new ImageHelper().getImageFromURL("/images/ladder.png");
     }
 
     @Override
@@ -58,11 +64,6 @@ public class Ladder extends FacingBlock {
         Vec3 upperEdge = new Vec3(0.125, 1, 1);
         Vec3 shift = new Vec3(0.4375, 0, 0);
         this.axisVecTuples.add(constructBlock(lowerEdge, upperEdge, shift));
-    }
-
-    @Override
-    void updateImage() {
-        this.image = new ImageHelper().getImageFromURL("/images/ladder.png");
     }
 
 }

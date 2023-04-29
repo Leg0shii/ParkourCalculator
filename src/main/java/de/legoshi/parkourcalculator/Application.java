@@ -1,7 +1,10 @@
 package de.legoshi.parkourcalculator;
 
 import de.legoshi.parkourcalculator.gui.BlockGUI;
-import de.legoshi.parkourcalculator.gui.MenuGUI;
+import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
+import de.legoshi.parkourcalculator.gui.menu.ConfigGUI;
+import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
+import de.legoshi.parkourcalculator.gui.menu.MenuGUI;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
@@ -13,10 +16,7 @@ import de.legoshi.parkourcalculator.simulation.ParkourVersion;
 import de.legoshi.parkourcalculator.simulation.Parkour_1_12;
 import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
 import de.legoshi.parkourcalculator.util.PositionVisualizer;
-import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
-import de.legoshi.parkourcalculator.simulation.movement.Movement_1_8;
 import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
-import de.legoshi.parkourcalculator.util.ConfigReader;
 import javafx.beans.binding.NumberBinding;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -34,12 +34,11 @@ public class Application extends javafx.application.Application {
     public Scene scene;
     public BorderPane window;
 
-    public ConfigReader configReader;
-
     public DebugUI debugUI;
     public InputTickGUI inputTickGUI;
     public BlockGUI blockGUI;
     public MenuGUI menuGUI;
+    public ConfigGUI configGUI;
     public MinecraftGUI minecraftGUI;
     public SubScene minecraftSubScene;
     public CoordinateScreen coordinateScreen;
@@ -64,10 +63,10 @@ public class Application extends javafx.application.Application {
         this.scene = new Scene(window, 1400, 1000, true);
         this.scene.getStylesheets().add(Application.class.getResource("darkmode.css").toExternalForm());
 
-        this.configReader = new ConfigReader();
+        this.configGUI = new ConfigGUI(this);
 
         // different parkour versions
-        this.parkourVersion = ParkourVersion.valueOf(configReader.getProperty("parkourVersion"));
+        this.parkourVersion = configGUI.getConfigProperties().getVersion();
         applyParkour(parkourVersion);
 
         // load the input manager and the UI
@@ -80,7 +79,7 @@ public class Application extends javafx.application.Application {
         this.positionVisualizer = new PositionVisualizer(pathGroup, currentParkour, inputTickManager);
 
         // load and register block gui
-        this.blockGUI = new BlockGUI();
+        this.blockGUI = new BlockGUI(currentParkour);
         this.window.setBottom(blockGUI);
 
         // load the menu bar
@@ -89,6 +88,7 @@ public class Application extends javafx.application.Application {
 
         // load coordinate-screen and the menu-accordion
         this.informationScreen = new InformationScreen();
+        this.informationScreen.updateVersionLabel(parkourVersion.toString());
         this.coordinateScreen = new CoordinateScreen(currentParkour);
         this.menuScreen = new MenuScreen(this, getMenuOffset(scene));
         this.debugUI = new DebugUI(informationScreen, coordinateScreen, menuScreen);
@@ -106,6 +106,8 @@ public class Application extends javafx.application.Application {
 
         this.positionVisualizer.addObserver(coordinateScreen);
         this.positionVisualizer.generatePlayerPath();
+
+        updateConfigValues(configGUI.getConfigProperties());
 
         stage.setTitle(APP_NAME);
         stage.setScene(scene);
@@ -125,15 +127,42 @@ public class Application extends javafx.application.Application {
         launch();
     }
 
+    public void updateConfigValues(ConfigProperties configProperties) {
+        ScreenSettings.precision = configProperties.getCoordinatePrecision();
+        minecraftGUI.getController().updateConfigValues(configProperties);
+        coordinateScreen.updateConfigValues();
+        minecraftGUI.updateConfigValues(configProperties);
+
+        ScreenSettings.getCoordinatePrecTF().setText(configProperties.getCoordinatePrecision() + "");
+        ScreenSettings.getPreviewBlockCB().setSelected(configProperties.isPreviewBlock());
+        ScreenSettings.getPathCollisionCB().setSelected(configProperties.isPathCollision());
+        ScreenSettings.getRealVelCB().setSelected(configProperties.isRealVelocity());
+
+        if (configProperties.isRealVelocity()) coordinateScreen.update();
+
+        ParkourVersion version = configProperties.getVersion();
+        menuScreen.versionSettings.getVersionComboBox().setValue(version.toString());
+        applyParkour(version);
+    }
+
     public void applyParkour(ParkourVersion parkourVersion) {
         switch (parkourVersion) {
-            case V_1_8 -> currentParkour = parkour_1_8 == null ? new Parkour_1_8() : parkour_1_8;
-            default -> currentParkour = parkour_1_12 == null ? new Parkour_1_12() : parkour_1_12;
+            case V_1_8 -> {
+                currentParkour = parkour_1_8 == null ? new Parkour_1_8() : parkour_1_8;
+                parkour_1_8 = (Parkour_1_8) currentParkour;
+            }
+            default -> {
+                currentParkour = parkour_1_12 == null ? new Parkour_1_12() : parkour_1_12;
+                parkour_1_12 = (Parkour_1_12) currentParkour;
+            }
         }
-        if (positionVisualizer != null) this.positionVisualizer.apply(currentParkour);
         if (coordinateScreen != null) this.coordinateScreen.apply(currentParkour);
         if (menuScreen != null) this.menuScreen.apply(currentParkour);
         if (menuGUI != null) this.menuGUI.apply(currentParkour);
+        if (blockGUI != null) this.blockGUI.apply(currentParkour);
+        if (minecraftGUI != null) this.minecraftGUI.apply(currentParkour);
+        if (positionVisualizer != null) this.positionVisualizer.apply(currentParkour);
+        if (informationScreen != null) informationScreen.updateVersionLabel(parkourVersion.toString());
         this.parkourVersion = parkourVersion;
     }
 

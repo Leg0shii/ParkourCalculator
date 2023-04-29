@@ -1,7 +1,7 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
-import de.legoshi.parkourcalculator.util.ConfigReader;
+import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,17 +12,18 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import lombok.Getter;
 
 public class ScreenSettings extends TitledPane {
 
-    private static final CheckBox previewBlockCB = new CheckBox();
-    private static final CheckBox pathCollisionCB = new CheckBox();
-    private static final CheckBox realVelCB = new CheckBox();
-    private static final TextField coordinatePrecTF = new TextField();
+    @Getter private static final CheckBox previewBlockCB = new CheckBox();
+    @Getter private static final CheckBox pathCollisionCB = new CheckBox();
+    @Getter private static final CheckBox realVelCB = new CheckBox();
+    @Getter private static final TextField coordinatePrecTF = new TextField();
 
-    private static int precision;
+    public static int precision;
 
-    public ScreenSettings(ConfigReader configReader, PlayerSettings playerSettings, CoordinateScreen coordinateScreen) {
+    public ScreenSettings(ConfigProperties configProperties, PlayerSettings playerSettings, CoordinateScreen coordinateScreen) {
         Text titleText = new Text("Screen Settings");
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
@@ -45,10 +46,10 @@ public class ScreenSettings extends TitledPane {
         gridPane.add(new Label("Coordinate Precision"), 0, 3);
         gridPane.add(coordinatePrecTF, 1, 3);
 
-        boolean previewBlock = configReader.getBooleanProperty("previewBlock");
-        boolean pathCollision = configReader.getBooleanProperty("pathCollision");
-        boolean tickVel = configReader.getBooleanProperty("realVelocity");
-        precision = configReader.getIntProperty("coordinatePrecision");
+        boolean previewBlock = configProperties.isPreviewBlock();
+        boolean pathCollision = configProperties.isPathCollision();
+        boolean tickVel = configProperties.isRealVelocity();
+        precision = configProperties.getCoordinatePrecision();
 
         previewBlockCB.setSelected(previewBlock);
         pathCollisionCB.setSelected(pathCollision);

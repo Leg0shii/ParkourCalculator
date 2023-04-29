@@ -4,6 +4,8 @@ import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
+import de.legoshi.parkourcalculator.simulation.environment.block_1_12.*;
+import de.legoshi.parkourcalculator.simulation.environment.block_1_8.*;
 import de.legoshi.parkourcalculator.util.Vec3;
 
 public class BlockFactory {
@@ -12,7 +14,8 @@ public class BlockFactory {
         return switch (type) {
             // flipable
             case "Stair" -> new Stair(vec3);
-            case "PistonHead" -> new PistonHead(vec3);
+            case "PistonHead_1_8" -> new PistonHead_1_8(vec3);
+            case "PistonHead_1_12" -> new PistonHead_1_12(vec3);
             case "PistonBase" -> new PistonBase(vec3);
 
             // tiers
@@ -30,7 +33,8 @@ public class BlockFactory {
 
             case "Enderchest" -> new Enderchest(vec3);
             case "Anvil" -> new Anvil(vec3);
-            case "Bed" -> new Bed(vec3);
+            case "Bed_1_8" -> new Bed_1_8(vec3);
+            case "Bed_1_12" -> new Bed_1_12(vec3);
             case "BrewingStand" -> new BrewingStand(vec3);
             case "Cactus" -> new Cactus(vec3);
             case "Carpet" -> new Carpet(vec3);
@@ -41,12 +45,18 @@ public class BlockFactory {
             case "Flowerpot" -> new Flowerpot(vec3);
             case "Hopper" -> new Hopper(vec3);
             case "Ice" -> new Ice(vec3);
-            case "Lilypad" -> new Lilypad(vec3);
+            case "Lilypad_1_8" -> new Lilypad_1_8(vec3);
+            case "Lilypad_1_12" -> new Lilypad_1_12(vec3);
             case "Soulsand" -> new Soulsand(vec3);
             case "Trapdoor" -> new Trapdoor(vec3);
-            case "Pane" -> new Pane(vec3);
-            case "Ladder" -> new Ladder(vec3);
+            case "Pane_1_8" -> new Pane_1_8(vec3);
+            case "Pane_1_12" -> new Pane_1_12(vec3);
+            case "Ladder_1_8" -> new Ladder_1_8(vec3);
+            case "Ladder_1_12" -> new Ladder_1_12(vec3);
             case "Vine" -> new Vine(vec3);
+            case "EndRod_1_12" -> new EndRod_1_12(vec3);
+            case "ChorusPlant_1_12" -> new ChorusPlant_1_12(vec3);
+            case "Shulker_1_12" -> new Shulker_1_12(vec3);
             default -> new StandardBlock(vec3);
         };
     }

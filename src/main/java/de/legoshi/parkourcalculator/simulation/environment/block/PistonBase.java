@@ -23,12 +23,12 @@ public class PistonBase extends FacingBlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/piston_base.png");
     }
 
     @Override
-    protected void updateBoundingBox() {
+    public void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
         if (BlockSettings.isNorth()) calcNorth();

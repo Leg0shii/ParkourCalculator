@@ -104,7 +104,7 @@ public class Movement_1_8 extends Movement {
                     player18.SPRINT = false;
                 }
 
-                ABlock block = BlockManager_1_8.getBlock(
+                ABlock block = blockManager18.getBlock(
                         MinecraftMathHelper.floor_double(player18.position.x),
                         MinecraftMathHelper.floor_double(player18.position.y-1),
                         MinecraftMathHelper.floor_double(player18.position.z)
@@ -125,7 +125,7 @@ public class Movement_1_8 extends Movement {
                 moveFlying(player18.moveStrafe, player18.moveForward, movementFactor);
                 mult = 0.91F;
 
-                block = BlockManager_1_8.getBlock(
+                block = blockManager18.getBlock(
                         MinecraftMathHelper.floor_double(player18.position.x),
                         MinecraftMathHelper.floor_double(player18.position.y-1),
                         MinecraftMathHelper.floor_double(player18.position.z)
@@ -136,7 +136,7 @@ public class Movement_1_8 extends Movement {
                 }
 
                 // calculate ladder
-                if (player18.isOnLadder()) {
+                if (player18.isOnLadder(blockManager18)) {
                     float f6 = 0.15F;
                     player18.velocity.x = MinecraftMathHelper.clamp_double(player18.velocity.x, -f6, f6);
                     player18.velocity.z = MinecraftMathHelper.clamp_double(player18.velocity.z, -f6, f6);
@@ -154,7 +154,7 @@ public class Movement_1_8 extends Movement {
 
                 moveEntity(player18.velocity.x, player18.velocity.y, player18.velocity.z);
 
-                if (player18.isCollidedHorizontally && player18.isOnLadder()) {
+                if (player18.isCollidedHorizontally && player18.isOnLadder(blockManager18)) {
                     player18.velocity.y = 0.2D;
                 }
 
@@ -405,10 +405,10 @@ public class Movement_1_8 extends Movement {
         int i = MinecraftMathHelper.floor_double(player18.position.x);
         int j = MinecraftMathHelper.floor_double(player18.position.y - 0.20000000298023224D);
         int k = MinecraftMathHelper.floor_double(player18.position.z);
-        ABlock block = BlockManager_1_8.getBlock(i, j, k);
+        ABlock block = blockManager18.getBlock(i, j, k);
 
         if (block instanceof Air) {
-            ABlock lowerBlock = BlockManager_1_8.getBlock(i, j-1, k);
+            ABlock lowerBlock = blockManager18.getBlock(i, j-1, k);
             if (lowerBlock instanceof Fence || lowerBlock instanceof Cobblewall) {
                 block = lowerBlock;
             }
@@ -503,7 +503,7 @@ public class Movement_1_8 extends Movement {
     }
 
     public List<ABlock> getCollidingBoundingBoxes(AxisAlignedBB bb) {
-        List<ABlock> placedBlocks = BlockManager_1_8.aBlocks;
+        List<ABlock> placedBlocks = blockManager18.aBlocks;
         List<ABlock> list = new ArrayList<>();
         for (ABlock aBlock : placedBlocks) {
             for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
@@ -537,7 +537,7 @@ public class Movement_1_8 extends Movement {
             for (int j = MinecraftMathHelper.floor_double(blockpos.y); j <= MinecraftMathHelper.floor_double(blockpos1.y); ++j) {
                 for (int k = MinecraftMathHelper.floor_double(blockpos.z); k <= MinecraftMathHelper.floor_double(blockpos1.z); ++k) {
                     Vec3 blockpos2 = new Vec3(i, j, k);
-                    ABlock aBlock = BlockManager_1_8.getBlock(blockpos2.x, blockpos2.y, blockpos2.z);
+                    ABlock aBlock = blockManager18.getBlock(blockpos2.x, blockpos2.y, blockpos2.z);
                     aBlock.onEntityCollidedWithBlock(player18);
                 }
             }

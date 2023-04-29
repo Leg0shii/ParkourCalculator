@@ -22,7 +22,7 @@ public class Head extends FacingBlock {
     }
 
     @Override
-    protected void updateBoundingBox() {
+    public void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
         if (!BlockSettings.isNorth() && !BlockSettings.isEast() && !BlockSettings.isSouth() && !BlockSettings.isWest()) calcBase();
@@ -78,7 +78,7 @@ public class Head extends FacingBlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/head.png");
     }
 

@@ -22,7 +22,7 @@ public class Cobblewall extends FacingBlock {
     }
 
     @Override
-    protected void updateBoundingBox() {
+    public void updateBoundingBox() {
         this.axisVecTuples = new ArrayList<>();
 
         calcBase();
@@ -46,7 +46,6 @@ public class Cobblewall extends FacingBlock {
         if (BlockSettings.isNorth() && BlockSettings.isWest()) calcNorthWestCorner();
         if (BlockSettings.isSouth() && BlockSettings.isEast()) calcSouthEastCorner();
         if (BlockSettings.isSouth() && BlockSettings.isWest()) calcSouthWestCorner();
-
     }
 
     protected void calcBase() {
@@ -136,7 +135,7 @@ public class Cobblewall extends FacingBlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/cobblewall.png");
     }
 

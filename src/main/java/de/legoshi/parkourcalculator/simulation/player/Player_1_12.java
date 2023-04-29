@@ -1,94 +1,170 @@
 package de.legoshi.parkourcalculator.simulation.player;
 
+import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
+import de.legoshi.parkourcalculator.simulation.environment.block_1_12.Ladder_1_12;
+import de.legoshi.parkourcalculator.simulation.environment.block_1_8.Ladder_1_8;
+import de.legoshi.parkourcalculator.simulation.environment.block.Vine;
+import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_12;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
+import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
 
 public class Player_1_12 extends Player {
 
-    public Player_1_12(Vec3 defaultStart, Vec3 defaultVelocity, float startYaw) {
+    public float width = 0.3F;
+    public float height = 1.8F;
 
+    public boolean GROUND;
+    public boolean WEB;
+    public boolean WATER;
+    public boolean LAVA;
+
+    public boolean SPRINT;
+    public int sprintToggleTimer;
+    public boolean SNEAK;
+    public boolean JUMP;
+
+    public float moveStrafe, moveForward;
+
+    public float jumpMovementFactor = 0.02F;
+
+    public boolean isCollidedHorizontally;
+    public boolean isCollidedVertically;
+    public boolean isCollided;
+
+    public Movement.Slipperiness slipperiness;
+    public AxisAlignedBB playerBB;
+
+    public Player_1_12(Vec3 position, Vec3 velocity, float startYaw) {
+        super(position, velocity, startYaw);
+        slipperiness = Movement.Slipperiness.BLOCK;
+        updatePlayerBB();
     }
 
-    @Override
-    public void resetPlayer() {
-
-    }
-
-    @Override
     public void updateTick(InputTick inputTick) {
 
+        if (this.sprintToggleTimer > 0) {
+            --this.sprintToggleTimer;
+        }
+
+        boolean jumpFlag = inputTick.JUMP;
+        boolean isSNEAK = inputTick.SNEAK;
+        boolean moveFlag = moveForward >= 0.8F;
+
+        moveStrafe = 0F;
+        moveForward = 0F;
+
+        if (inputTick.W) moveForward++;
+        if (inputTick.S) moveForward--;
+        if (inputTick.A) moveStrafe--; // switch sites (related to x-axis difference in minecraft/javafx)
+        if (inputTick.D) moveStrafe++; // switch sites (related to x-axis difference in minecraft/javafx)
+
+        JUMP = inputTick.JUMP;
+        SNEAK = inputTick.SNEAK;
+
+        if (SNEAK) {
+            moveStrafe = (float) ((double) moveStrafe * 0.3D);
+            moveForward = (float) ((double) moveForward * 0.3D);
+        }
+
+        if (GROUND && !isSNEAK && !moveFlag && moveForward >= 0.8F && !SPRINT) {
+            if (this.sprintToggleTimer <= 0) {
+                this.sprintToggleTimer = 7;
+            } else {
+                SPRINT = true;
+            }
+        }
+
+        if (!SPRINT && moveForward >= 0.8F && inputTick.SPRINT) {
+            SPRINT = true;
+        }
+
+        if (SPRINT && (moveForward < 0.8F || this.isCollidedHorizontally)) {
+            SPRINT = false;
+        }
     }
 
-    @Override
+    // run one idle tick to apply these values
+    public void resetPlayer() {
+        this.position = this.startPos.copy();
+        this.velocity = this.startVel.copy();
+        this.realVel = this.startVel.copy();
+        this.sprintToggleTimer = 0;
+        YAW = startYAW;
+        GROUND = false;
+        WEB = false;
+        SPRINT = false;
+        SNEAK = false;
+        JUMP = false;
+        moveStrafe = 0;
+        moveForward = 0;
+        jumpMovementFactor = 0.02F;
+        isCollidedHorizontally = false;
+        isCollidedVertically = false;
+        isCollided = false;
+        slipperiness = Movement.Slipperiness.BLOCK;
+        updatePlayerBB();
+        resetPositionToBB();
+    }
+
     public void applyInput(InputTick inputTick) {
-
+        updateTick(inputTick);
+        YAW = YAW + inputTick.YAW; // flips facing on x-axis
+        SPRINT = inputTick.SPRINT || SPRINT;
     }
 
-    @Override
-    public PlayerTickInformation getPlayerTickInformation() {
-        return null;
+    public void updatePlayerBB() {
+        this.playerBB = new AxisAlignedBB(
+                position.x - this.width, position.y, position.z - this.width,
+                position.x + this.width, position.y + this.height, position.z + this.width
+        );
     }
 
-    @Override
-    public Vec3 getStartPos() {
-        return null;
-    }
-
-    @Override
-    public void setStartPos(Vec3 vec3) {
-
-    }
-
-    @Override
-    public Vec3 getStartVel() {
-        return null;
-    }
-
-    @Override
-    public void setStartVel(Vec3 vec3) {
-
-    }
-
-    @Override
-    public float getYAW() {
-        return 0;
-    }
-
-    @Override
-    public void setYAW(float f) {
-
-    }
-
-    @Override
-    public float getStartYAW() {
-        return 0;
-    }
-
-    @Override
-    public void setStartYAW(float f) {
-
-    }
-
-    @Override
     public AxisAlignedBB getStartBB() {
-        return null;
-    }
-
-    @Override
-    public Vec3 getVelocity() {
-        return null;
+        return new AxisAlignedBB(
+                startPos.x - this.width, startPos.y, startPos.z - this.width,
+                startPos.x + this.width, startPos.y + this.height, startPos.z + this.width
+        );
     }
 
     @Override
     public void setWEB(boolean b) {
-
+        this.WEB = b;
     }
 
     @Override
     public boolean isSNEAK() {
-        return false;
+        return SNEAK;
+    }
+
+    public void resetPositionToBB() {
+        this.position.x = (this.playerBB.minX + this.playerBB.maxX) / 2.0D;
+        this.position.y = this.playerBB.minY;
+        this.position.z = (this.playerBB.minZ + this.playerBB.maxZ) / 2.0D;
+    }
+
+    public PlayerTickInformation getPlayerTickInformation() {
+        return new PlayerTickInformation(
+                YAW,
+                position.copy(),
+                velocity.copy(),
+                realVel.copy(),
+                isCollided,
+                GROUND,
+                JUMP
+        );
+    }
+
+    public boolean isOnLadder(BlockManager_1_12 blockManager_1_12) {
+        int x = MinecraftMathHelper.floor_double(this.position.x);
+        int minY = MinecraftMathHelper.floor_double(this.playerBB.minY);
+        int z = MinecraftMathHelper.floor_double(this.position.z);
+
+        ABlock block = blockManager_1_12.getBlock(x, minY, z);
+        return (block instanceof Ladder_1_12 || block instanceof Vine);
     }
 
 }

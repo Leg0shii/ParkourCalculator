@@ -19,7 +19,7 @@ public class Flowerpot extends ABlock {
     }
 
     @Override
-    void updateBoundingBox() {
+    public void updateBoundingBox() {
         Vec3 lowerEdge = new Vec3(0.3215, 0, 0.3215);
         Vec3 upperEdge = new Vec3(0.6875, 0.375, 0.6875);
         Vec3 shift = new Vec3(0.3215, 0.625/2, 0.3215);
@@ -27,7 +27,7 @@ public class Flowerpot extends ABlock {
     }
 
     @Override
-    void updateImage() {
+    public void updateImage() {
         this.image = new ImageHelper().getImageFromURL("/images/flowerpot.png");
     }
 }
