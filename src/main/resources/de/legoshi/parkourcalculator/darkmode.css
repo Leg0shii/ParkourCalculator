@@ -109,6 +109,37 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 255, 0.6), 10, 0, 0, 0);
 }
 
+.radio-button > .label {
+    -fx-text-fill: #ffffff;
+}
+
+.radio-button > .radio {
+    -fx-background-color: #3a3a3a;
+    -fx-border-color: #4a4a4a;
+    -fx-border-width: 2px;
+    -fx-border-radius: 2px;
+}
+
+.radio-button:hover > .radio {
+    -fx-background-color: #4a4a4a;
+}
+
+.radio-button:pressed > .radio {
+    -fx-background-color: #1e1e1e;
+}
+
+.radio-button:selected > .radio > .dot {
+    -fx-shape: "M0 0 L2 2 L8 -8";
+    -fx-stroke: #ffffff;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+}
+
+.radio-button:focused > .radio {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 255, 0.6), 10, 0, 0, 0);
+}
+
 .darkmode-selection.check-box > .box {
     -fx-border-color: #8B0000; /* reddish color */
 }

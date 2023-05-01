@@ -29,10 +29,10 @@ public class Movement_1_8 extends Movement {
         this.playerTickInformations = new ArrayList<>();
     }
 
-    public PlayerTickInformation getLastTick(List<InputTick> inputTicks) {
-        player18.resetPlayer();
-        for (InputTick inputTick : inputTicks) calculateTick(inputTick);
-        return player18.getPlayerTickInformation();
+    @Override
+    public PlayerTickInformation getLandOnBlock(List<InputTick> inputTicks, ABlock aBlock) {
+        updatePath(inputTicks);
+        return getLandTick(aBlock);
     }
 
     // check if player is on ground.... (STUPID)
@@ -457,24 +457,6 @@ public class Movement_1_8 extends Movement {
             player18.velocity.x = player18.velocity.x + strafe * cos - forward * sin;
             player18.velocity.z = player18.velocity.z + forward * cos + strafe * sin;
         }
-    }
-
-    public PlayerTickInformation getLandTick() {
-        PlayerTickInformation playerTickInformation = null;
-        PlayerTickInformation prevTick = null;
-        for (PlayerTickInformation pti : playerTickInformations) {
-            if (pti.isGround() && prevTick != null && !prevTick.isGround()) playerTickInformation = prevTick;
-            prevTick = pti;
-        }
-        return playerTickInformation;
-    }
-
-    public PlayerTickInformation getJumpTick() {
-        PlayerTickInformation playerTickInformation = null;
-        for (PlayerTickInformation pti : playerTickInformations) {
-            if (pti.isJump()) playerTickInformation = pti;
-        }
-        return playerTickInformation;
     }
 
     private boolean isOffsetPositionInLiquid(double x, double y, double z) {

@@ -50,6 +50,8 @@ public class MinecraftGUI extends Observable {
     private final List<Observer> observers = new ArrayList<>();
 
     private MouseButton addBlock, destroyBlock;
+    private boolean startBlock = false;
+    private boolean endBlock = false;
 
     public MinecraftGUI(Application application, Group group) {
         this.application = application;
@@ -113,6 +115,18 @@ public class MinecraftGUI extends Observable {
         if (!(mouseEvent.getTarget() instanceof Box)) return;
         mouseEvent.consume();
         if (mouseEvent.getButton().equals(addBlock)) {
+
+            ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
+            if (startBlock) {
+                this.startBlock = false;
+                application.menuScreen.bruteforceSettings.setStartBlock(clickedBlock);
+                return;
+            } else if (endBlock) {
+                this.endBlock = false;
+                application.menuScreen.bruteforceSettings.setEndBlock(clickedBlock);
+                return;
+            }
+
             Vec3 newBlockPos = getRoundedCoordinatesFromMouseEvent(mouseEvent);
             if(newBlockPos != null) {
                 newBlockPos.x *= -1; // flipping the x axis
@@ -137,6 +151,8 @@ public class MinecraftGUI extends Observable {
     public void handleBoxMouseMove(MouseEvent mouseEvent) {
         if (!ScreenSettings.isPreviewMode()) return;
         if (!(mouseEvent.getTarget() instanceof Box)) return;
+        if (startBlock || endBlock) return;
+
         mouseEvent.consume();
         ABlock newBlock = getNewBlockFromPos(mouseEvent);
 
@@ -289,6 +305,16 @@ public class MinecraftGUI extends Observable {
         for (Observer observer : observers) {
             if (observer != null) observer.update(this, arrayList);
         }
+    }
+
+    public void setStartBlock() {
+        this.startBlock = true;
+        this.endBlock = false;
+    }
+
+    public void setEndBlock() {
+        this.endBlock = true;
+        this.startBlock = false;
     }
 
 }

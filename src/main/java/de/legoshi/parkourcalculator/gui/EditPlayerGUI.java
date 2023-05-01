@@ -156,7 +156,7 @@ public class EditPlayerGUI extends GridPane {
                         facingResult = facing;
                         xResult = xStart;
                         zResult = zStart;
-                        PlayerTickInformation pti = positionVisualizer.calcLastTick();
+                        PlayerTickInformation pti = null; // positionVisualizer.calcLastTick();
                         for (AxisVecTuple axisVecTuple : aBlock.getAxisVecTuples()) {
                             if(axisVecTuple.getBb().maxY == pti.getPosition().y) {
                                 found = true;

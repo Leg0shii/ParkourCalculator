@@ -4,8 +4,10 @@ import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.simulation.player.Player;
 import de.legoshi.parkourcalculator.simulation.player.Player_1_8;
 import de.legoshi.parkourcalculator.util.*;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import lombok.Getter;
 
@@ -83,6 +85,14 @@ public abstract class ABlock {
     public void setMaterialColor(Color materialColor) {
         this.materialColor = materialColor;
         this.updateBoxes();
+    }
+
+    public void applyMaterialColor(Color materialColor) {
+        boxesArrayList.forEach(b -> b.setMaterial(new PhongMaterial(materialColor)));
+    }
+
+    public void resetAndApplyMaterialColor() {
+        boxesArrayList.forEach(b -> b.setMaterial(new PhongMaterial(this.materialColor)));
     }
 
     public void setSpecularColor(Color specularColor) {

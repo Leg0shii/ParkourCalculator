@@ -108,11 +108,6 @@ public class PositionVisualizer extends Observable implements Observer {
         notifyObservers();
     }
 
-    public PlayerTickInformation calcLastTick() {
-        List<InputTick> playerInputs = inputTickManager.getInputTicks();
-        return movement.getLastTick(playerInputs);
-    }
-
     public List<PlayerTickInformation> getUpdatedPlayerPos() {
         List<InputTick> playerInputs = inputTickManager.getInputTicks();
         return movement.updatePath(playerInputs);

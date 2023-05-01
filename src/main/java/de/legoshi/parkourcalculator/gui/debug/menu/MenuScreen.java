@@ -12,10 +12,13 @@ import javafx.scene.layout.VBox;
 
 public class MenuScreen extends VBox {
 
+    private final Application application;
+
     public VersionSettings versionSettings;
     public BlockSettings blockSettings;
     public PlayerSettings playerSettings;
     public ScreenSettings screenSeetings;
+    public BruteforceSettings bruteforceSettings;
     public ExperimentalSettings experimentalSettings;
 
     private final CoordinateScreen coordinateScreen;
@@ -24,6 +27,7 @@ public class MenuScreen extends VBox {
     private final NumberBinding remainingHeight;
 
     public MenuScreen(Application application, NumberBinding remainingHeight) {
+        this.application = application;
         this.configProperties = application.configGUI.getConfigProperties();
         this.coordinateScreen = application.coordinateScreen;
         this.positionVisualizer = application.positionVisualizer;
@@ -41,8 +45,12 @@ public class MenuScreen extends VBox {
         this.playerSettings = new PlayerSettings(coordinateScreen, parkour, positionVisualizer);
         this.screenSeetings = new ScreenSettings(configProperties, playerSettings, coordinateScreen);
 
+        if (this.bruteforceSettings != null) this.bruteforceSettings.reset();
+        this.bruteforceSettings = new BruteforceSettings(application);
+
         Accordion accordion = new Accordion();
-        accordion.getPanes().addAll(versionSettings, blockSettings, playerSettings, screenSeetings, experimentalSettings);
+        accordion.getPanes().addAll(versionSettings, blockSettings, playerSettings, screenSeetings,
+                bruteforceSettings, experimentalSettings);
 
         ScrollPane scrollPane = new ScrollPane(accordion);
         scrollPane.setFitToWidth(true);

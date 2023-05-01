@@ -31,12 +31,6 @@ public class Movement_1_12 extends Movement {
         this.playerTickInformations = new ArrayList<>();
     }
 
-    public PlayerTickInformation getLastTick(List<InputTick> inputTicks) {
-        player_1_12.resetPlayer();
-        for (InputTick inputTick : inputTicks) calculateTick(inputTick);
-        return player_1_12.getPlayerTickInformation();
-    }
-
     // check if player is on ground.... (STUPID)
     private boolean preparePlayer() {
         boolean onGround = false;
@@ -49,6 +43,13 @@ public class Movement_1_12 extends Movement {
         player_1_12.resetPlayer();
 
         return onGround;
+    }
+
+    @Override
+    public PlayerTickInformation getLandOnBlock(List<InputTick> inputTicks, ABlock aBlock) {
+        player_1_12.resetPlayer();
+        for (InputTick inputTick : inputTicks) calculateTick(inputTick);
+        return getLandTick(aBlock);
     }
 
     public void resetPlayer() {
@@ -460,24 +461,6 @@ public class Movement_1_12 extends Movement {
             player_1_12.velocity.x = player_1_12.velocity.x + strafe * cos - forward * sin;
             player_1_12.velocity.z = player_1_12.velocity.z + forward * cos + strafe * sin;
         }
-    }
-
-    public PlayerTickInformation getLandTick() {
-        PlayerTickInformation playerTickInformation = null;
-        PlayerTickInformation prevTick = null;
-        for (PlayerTickInformation pti : playerTickInformations) {
-            if (pti.isGround() && prevTick != null && !prevTick.isGround()) playerTickInformation = prevTick;
-            prevTick = pti;
-        }
-        return playerTickInformation;
-    }
-
-    public PlayerTickInformation getJumpTick() {
-        PlayerTickInformation playerTickInformation = null;
-        for (PlayerTickInformation pti : playerTickInformations) {
-            if (pti.isJump()) playerTickInformation = pti;
-        }
-        return playerTickInformation;
     }
 
     private boolean isOffsetPositionInLiquid(double x, double y, double z) {

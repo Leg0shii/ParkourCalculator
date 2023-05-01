@@ -29,7 +29,6 @@ public class VersionSettings extends TitledPane{
         gridPane.setPadding(new Insets(10, 10, 10, 10));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
-        gridPane.setAlignment(Pos.CENTER);
         gridPane.add(new Label("Select Version"), 0, 0);
         gridPane.add(versionComboBox, 1, 0);
 
