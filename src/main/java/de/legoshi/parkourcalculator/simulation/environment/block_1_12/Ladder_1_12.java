@@ -1,13 +1,13 @@
 package de.legoshi.parkourcalculator.simulation.environment.block_1_12;
 
-import de.legoshi.parkourcalculator.simulation.environment.block.FacingBlock;
+import de.legoshi.parkourcalculator.simulation.environment.block.Ladder;
 import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.ImageHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class Ladder_1_12 extends FacingBlock {
+public class Ladder_1_12 extends Ladder {
 
     public Ladder_1_12(Vec3 vec3) {
         super(vec3);

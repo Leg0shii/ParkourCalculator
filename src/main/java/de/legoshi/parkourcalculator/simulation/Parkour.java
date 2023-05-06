@@ -4,6 +4,7 @@ import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockMan
 import de.legoshi.parkourcalculator.simulation.movement.Movement;
 import de.legoshi.parkourcalculator.simulation.player.Player;
 import de.legoshi.parkourcalculator.util.Vec3;
+import lombok.Getter;
 
 public abstract class Parkour {
 
@@ -11,20 +12,8 @@ public abstract class Parkour {
     public static final Vec3 DEFAULT_START = new Vec3(-0.5, 1.0, 0.5);
     public static final Vec3 DEFAULT_VELOCITY = new Vec3(0, -0.0784000015258789, 0);
 
-    protected Player player;
-    protected Movement movement;
-    protected BlockManager blockManager;
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Movement getMovement() {
-        return movement;
-    }
-
-    public BlockManager getBlockManager() {
-        return blockManager;
-    }
+    @Getter protected Player player;
+    @Getter protected Movement movement;
+    @Getter protected BlockManager blockManager;
 
 }

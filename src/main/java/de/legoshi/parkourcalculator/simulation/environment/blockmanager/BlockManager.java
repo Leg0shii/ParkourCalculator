@@ -1,11 +1,12 @@
 package de.legoshi.parkourcalculator.simulation.environment.blockmanager;
 
-import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
-import de.legoshi.parkourcalculator.simulation.environment.block.Air;
-import de.legoshi.parkourcalculator.simulation.environment.block.StandardBlock;
+import de.legoshi.parkourcalculator.simulation.environment.block.*;
+import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.AxisVecTuple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.Observer;
 
 public abstract class BlockManager implements Observer {
@@ -21,6 +22,24 @@ public abstract class BlockManager implements Observer {
             }
         }
         return new Air();
+    }
+
+    public List<AxisAlignedBB> getAllBlockHitboxes() {
+        List<AxisAlignedBB> boundingBoxes = new ArrayList<>();
+        for (ABlock aBlock : aBlocks) {
+            for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
+                if (!(aBlock instanceof BlockLiquid || aBlock instanceof Vine || aBlock instanceof Cobweb))
+                    boundingBoxes.add(axisVecTuple.getBb());
+            }
+        }
+        return boundingBoxes;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        List<Object> objects = (List<Object>) arg;
+        if (objects.get(0).equals("add")) addBlock((ABlock) objects.get(1));
+        else removeBlock((ABlock) objects.get(1));
     }
 
     public void updateCurrentBlock(ABlock aBlock) {
