@@ -14,8 +14,8 @@ import java.util.List;
 
 public class Bruteforcer {
 
-    private PositionVisualizer positionVisualizer;
-    private InputTickManager inputTickManager;
+    private final PositionVisualizer positionVisualizer;
+    private final InputTickManager inputTickManager;
 
     private final Parkour parkour;
     private ABlock startBlock;
@@ -23,24 +23,13 @@ public class Bruteforcer {
 
     private double precision;
 
-    private boolean optimizeStartNorth = true;
-    private boolean optimizeStartSouth;
-
-    private boolean optimizeStartWest;
-    private boolean optimizeStartEast;
-
-    private boolean optimizeEndNorth;
-    private boolean optimizeEndSouth;
-    private boolean optimizeEndWest;
-    private boolean optimizeEndEast;
-
     public Bruteforcer(PositionVisualizer positionVisualizer, InputTickManager inputTickManager, Parkour parkour) {
         this.positionVisualizer = positionVisualizer;
         this.inputTickManager = inputTickManager;
         this.parkour = parkour;
     }
 
-    public void applyAndBruteforce(ABlock s, ABlock e, double p, boolean sX, boolean sZ, boolean eX, boolean eZ) {
+    public void applyAndBruteforce(ABlock s, ABlock e, double p) {
         this.startBlock = s;
         this.endBlock = e;
         this.precision = p;
@@ -68,10 +57,7 @@ public class Bruteforcer {
     }
 
     private boolean isImprovement(Vec3 newStartPos, Vec3 bestStartPos) {
-        if (optimizeStartNorth) {
-            return newStartPos.z >= bestStartPos.z;
-        }
-        return false;
+        return newStartPos.z >= bestStartPos.z;
     }
 
     private PlayerTickInformation getLandTick(Vec3 vec3) {

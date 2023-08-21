@@ -8,7 +8,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import lombok.Getter;
@@ -25,10 +24,6 @@ public class BruteforceSettings extends TitledPane {
     private final Button resetButton;
 
     private final TextField errorTextField;
-    private final RadioButton maxStartXRadioButton;
-    private final RadioButton maxStartZRadioButton;
-    private final RadioButton maxEndXRadioButton;
-    private final RadioButton maxEndZRadioButton;
 
     @Getter public ABlock startBlock;
     @Getter public ABlock endBlock;
@@ -51,26 +46,9 @@ public class BruteforceSettings extends TitledPane {
         errorTextField = new TextField(PRECISION);
         errorTextField.setPromptText("0.1 to 1e-15");
 
-        // RadioButtons
-        maxStartXRadioButton = new RadioButton();
-        Label maxStartXLabel = new Label("Maximize-Jump-X");
-        maxStartZRadioButton = new RadioButton();
-        Label maxStartZLabel = new Label("Maximize-Jump-Z");
-
-        maxEndXRadioButton = new RadioButton();
-        Label maxEndXLabel = new Label("Maximize-Land-X");
-        maxEndZRadioButton = new RadioButton();
-        Label maxEndZLabel = new Label("Maximize-Land-Z");
-
         // ToggleGroups for RadioButtons
         ToggleGroup startGroup = new ToggleGroup();
         ToggleGroup endGroup = new ToggleGroup();
-
-        maxStartXRadioButton.setToggleGroup(startGroup);
-        maxStartZRadioButton.setToggleGroup(endGroup);
-
-        maxEndXRadioButton.setToggleGroup(startGroup);
-        maxEndZRadioButton.setToggleGroup(endGroup);
 
         // Add components to the GridPane
         GridPane gridPane = new GridPane();
@@ -88,16 +66,6 @@ public class BruteforceSettings extends TitledPane {
         Label endLabel = new Label("End");
         gridPane.add(startLabel, 0, 0);
         gridPane.add(endLabel, 1, 0);
-
-        HBox startMaxXBox = new HBox(5, maxStartXRadioButton, maxStartXLabel);
-        HBox startMaxZBox = new HBox(5, maxStartZRadioButton, maxStartZLabel);
-        VBox startGroupBox = new VBox(10, startMaxXBox, startMaxZBox);
-        gridPane.add(startGroupBox, 0, 1);
-
-        HBox endMaxXBox = new HBox(5, maxEndXRadioButton, maxEndXLabel);
-        HBox endMaxZBox = new HBox(5, maxEndZRadioButton, maxEndZLabel);
-        VBox endGroupBox = new VBox(10, endMaxXBox, endMaxZBox);
-        gridPane.add(endGroupBox, 1, 1);
 
         HBox bruteForceBox = new HBox(5, bruteforceButton);
         bruteForceBox.setAlignment(Pos.BASELINE_CENTER);
@@ -122,10 +90,6 @@ public class BruteforceSettings extends TitledPane {
 
     public void reset() {
         errorTextField.setText(PRECISION);
-        maxStartXRadioButton.setSelected(false);
-        maxStartZRadioButton.setSelected(false);
-        maxEndXRadioButton.setSelected(false);
-        maxEndZRadioButton.setSelected(false);
         if (startBlock != null) {
             this.startBlock.resetAndApplyMaterialColor();
             this.startBlock = null;
@@ -149,11 +113,7 @@ public class BruteforceSettings extends TitledPane {
         bruteforcer.applyAndBruteforce(
                 this.startBlock,
                 this.endBlock,
-                Double.parseDouble(this.errorTextField.getText()),
-                maxStartXRadioButton.isSelected(),
-                maxStartZRadioButton.isSelected(),
-                maxEndXRadioButton.isSelected(),
-                maxEndZRadioButton.isSelected()
+                Double.parseDouble(this.errorTextField.getText())
         );
     }
 
