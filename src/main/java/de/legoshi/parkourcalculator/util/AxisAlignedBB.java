@@ -194,7 +194,7 @@ public class AxisAlignedBB {
      * Returns if the supplied Vec3D is completely inside the bounding box
      */
     public boolean isVecInside(Vec3 vec) {
-        return vec.x > this.minX && vec.x < this.maxX ? (vec.y > this.minY && vec.y < this.maxY ? vec.z > this.minZ && vec.z < this.maxZ : false) : false;
+        return vec.x > this.minX && vec.x < this.maxX && vec.y > this.minY && vec.y < this.maxY && vec.z > this.minZ && vec.z < this.maxZ;
     }
 
     /**

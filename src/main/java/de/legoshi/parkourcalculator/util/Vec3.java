@@ -1,5 +1,7 @@
 package de.legoshi.parkourcalculator.util;
 
+import java.util.Objects;
+
 public class Vec3 {
 
 	public double x;
@@ -175,5 +177,20 @@ public class Vec3 {
 	public Vec3 copy() {
 		return new Vec3(this.x, this.y, this.z);
 	}
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vec3 vec3 = (Vec3) o;
+        return Double.compare(vec3.x, x) == 0 &&
+            Double.compare(vec3.y, y) == 0 &&
+            Double.compare(vec3.z, z) == 0;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
+    }
 
 }

@@ -117,11 +117,7 @@ public class MinecraftGUI extends Observable {
         if (mouseEvent.getButton().equals(addBlock)) {
 
             ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
-            if (startBlock) {
-                this.startBlock = false;
-                application.menuScreen.bruteforceSettings.setStartBlock(clickedBlock);
-                return;
-            } else if (endBlock) {
+            if (endBlock) {
                 this.endBlock = false;
                 application.menuScreen.bruteforceSettings.setEndBlock(clickedBlock);
                 return;
