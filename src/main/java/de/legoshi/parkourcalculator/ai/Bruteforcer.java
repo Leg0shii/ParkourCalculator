@@ -1,5 +1,7 @@
 package de.legoshi.parkourcalculator.ai;
 
+import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.movement.Movement;
@@ -16,6 +18,7 @@ public class Bruteforcer {
 
     private final PositionVisualizer positionVisualizer;
     private final InputTickManager inputTickManager;
+    private final InputTickGUI inputTickGUI;
     
     private final int NUM_TRIALS = 200;
     private final int TICKS_PER_TRIAL = 25;
@@ -28,16 +31,22 @@ public class Bruteforcer {
     private final Parkour parkour;
     private ABlock endBlock;
 
-    public Bruteforcer(PositionVisualizer positionVisualizer, InputTickManager inputTickManager, Parkour parkour) {
-        this.positionVisualizer = positionVisualizer;
-        this.inputTickManager = inputTickManager;
-        this.parkour = parkour;
+    public Bruteforcer(Application application) {
+        this.positionVisualizer = application.positionVisualizer;
+        this.inputTickManager = application.inputTickManager;
+        this.inputTickGUI = application.inputTickGUI;
+        this.parkour = application.currentParkour;
     }
 
     public void applyAndBruteforce(ABlock e) {
         this.endBlock = e;
-        this.ticksMap.clear();
+        this.clearBruteforce();
         this.findPath();
+    }
+
+    private void clearBruteforce() {
+        this.ticksMap.clear();
+        this.inputTickGUI.resetTicks();
     }
     
     private void findPath() {
@@ -53,18 +62,20 @@ public class Bruteforcer {
                 }
                 
                 for (int j = 0; j < TICKS_PER_TRIAL; j++) {
-                    boolean facingChange = random.nextDouble() > 0.9;
-                    float facing = (float) ((random.nextDouble() * 360) % 90);
+                    boolean facingChange = random.nextDouble() > 0.1;
+                    float facing = 90 * ((int) (Math.random() * 4));
                     if (inputTicks.size() > 0 && facingChange) {
-                        facing = inputTicks.get(inputTicks.size() - 1).YAW;
+                        facing = 0;
+                    } else if (!facingChange) {
+                        facing = (float) (Math.random() * 360);
                     }
-                    
+
                     InputTick tick = new InputTick(
-                        random.nextDouble() >= 0.2,
-                        random.nextDouble() >= 0.5,
+                        random.nextDouble() >= 0.05,
+                        random.nextDouble() >= 0.9,
                         false,
-                        random.nextDouble() >= 0.5,
-                        random.nextDouble() > 0.5,
+                        random.nextDouble() >= 0.9,
+                        random.nextDouble() > 0.9,
                         random.nextDouble() > 0.2,
                         false,
                         facing
@@ -92,6 +103,7 @@ public class Bruteforcer {
         System.out.println(System.currentTimeMillis() - startTime);
         inputTickManager.setInputTicks(foundInputs);
         positionVisualizer.generatePlayerPath();
+        inputTickGUI.importTicks(foundInputs);
     }
     
     private void saveInputs(List<InputTick> inputTicks) {
@@ -119,25 +131,22 @@ public class Bruteforcer {
     private List<InputTick> findFastestLanding() {
         AxisAlignedBB endBlockAABB = endBlock.getAxisVecTuples().get(0).getBb()
             .expand(1, 0, 1)
-            .offset(0, 1, 0);
+            .offset(0, 0.5, 0);
         
         List<List<InputTick>> lists = getListsInRange(endBlockAABB);
         List<InputTick> shortest = new ArrayList<>();
         
         int listSize = Integer.MAX_VALUE;
-        System.out.println("NEU: ");
         for (List<InputTick> list : lists) {
-            System.out.println(list.size());
-            parkour.getMovement().updatePath(list);
-            PlayerTickInformation pti = parkour.getMovement().getLandTick(endBlock);
+            PlayerTickInformation pti = parkour.getMovement().getLandOnBlock(list, endBlock);
             if (pti == null) continue;
-    
-            System.out.println(pti.getPosition());
             
             if (listSize >= list.size()) {
                 listSize = list.size();
                 shortest = new ArrayList<>(list);
             }
+
+            System.out.println("SIZE: " + list.size() + " On Ground: " + pti.isGround());
         }
         
         return shortest;
@@ -154,9 +163,9 @@ public class Bruteforcer {
     public List<List<InputTick>> getListsInRange(AxisAlignedBB boundingBox) {
         List<List<InputTick>> result = new ArrayList<>();
         
-        for (Map.Entry<Vec3, List<InputTick>> entry : ticksMap.entrySet()) {
-            if (boundingBox.isVecInside(entry.getKey())) {
-                result.add(entry.getValue());
+        for (Vec3 key : ticksMap.keySet()) {
+            if (boundingBox.isVecInside(key)) {
+                result.add(ticksMap.get(key));
             }
         }
         

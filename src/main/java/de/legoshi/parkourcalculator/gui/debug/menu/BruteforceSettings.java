@@ -26,7 +26,7 @@ public class BruteforceSettings extends TitledPane {
 
     public BruteforceSettings(Application application) {
         this.application = application;
-        this.bruteforcer = new Bruteforcer(application.positionVisualizer, application.inputTickManager, application.currentParkour);
+        this.bruteforcer = new Bruteforcer(application);
         Text titleText = new Text("Bruteforce Settings");
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);

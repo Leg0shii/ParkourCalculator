@@ -516,7 +516,7 @@ public abstract class Movement {
                 for (AxisVecTuple axisVecTuple : aBlock.getAxisVecTuples()) {
                     AxisAlignedBB bb = axisVecTuple.getBb();
                     Vec3 pPos = pti.getPosition();
-                    if (bb.minX < pPos.x && bb.maxX > pPos.x && bb.minZ < pPos.z && bb.maxZ > pPos.z) {
+                    if (bb.minX - 0.3 < pPos.x && bb.maxX + 0.3 > pPos.x && bb.minZ - 0.3 < pPos.z && bb.maxZ + 0.3 > pPos.z) {
                         playerTickInformation = prevTick;
                         break;
                     }
