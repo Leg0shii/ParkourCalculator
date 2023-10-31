@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.simulation.player;
 
+import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.environment.block.Ladder;
 import de.legoshi.parkourcalculator.simulation.environment.block.Vine;
@@ -12,6 +13,7 @@ import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 
 public abstract class Player {
 
@@ -60,6 +62,8 @@ public abstract class Player {
         slipperiness = Movement.Slipperiness.BLOCK;
         updatePlayerBB();
     }
+    
+    public abstract Player clone();
 
     public void updateTick(InputTick inputTick) {
         if (this.sprintToggleTimer > 0) {

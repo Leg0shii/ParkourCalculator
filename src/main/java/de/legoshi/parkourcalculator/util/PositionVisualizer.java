@@ -27,6 +27,7 @@ import java.util.Observer;
 public class PositionVisualizer extends Observable implements Observer {
 
     private static final double ALLOWED_ERROR = 1e-15;
+    private static final int MAX_ITERATIONS = 15;
 
     private Parkour parkour;
     private Movement movement;
@@ -141,7 +142,7 @@ public class PositionVisualizer extends Observable implements Observer {
         double zCoordinate = Double.parseDouble(df.format(coords.getZ()).replace(",", "."));
         double decimalNumber = player.getStartPos().y % 1;
         double roundedDecimalNumber = Double.parseDouble(df.format(-decimalNumber/2).replace(",", "."));
-
+        
         if (zCoordinate == 0) return;
         if (yCoordinate != roundedDecimalNumber && yCoordinate != -0.5 && yCoordinate != -0.75) return;
 
@@ -174,7 +175,8 @@ public class PositionVisualizer extends Observable implements Observer {
 
     private double binarySearchAxis(Player player, Movement movement, double original, double offset, double y, double otherAxis, boolean isX) {
         double low = original, high = original + offset, newVal;
-        while (Math.abs(high - low) > ALLOWED_ERROR) {
+        int currentIteration = 0;
+        while (Math.abs(high - low) > ALLOWED_ERROR && currentIteration <= MAX_ITERATIONS) {
             newVal = (low + high) / 2;
             Vec3 testPos = isX ? new Vec3(newVal, y, otherAxis) : new Vec3(otherAxis, y, newVal);
             player.setStartPos(testPos);
@@ -183,6 +185,7 @@ public class PositionVisualizer extends Observable implements Observer {
             } else {
                 high = newVal;
             }
+            currentIteration++;
         }
         return low;
     }

@@ -170,7 +170,7 @@ public class MenuGUI extends MenuBar {
     }
 
     private void saveBlockMenu() {
-        List<ABlock> aBlocks = parkour.getBlockManager().aBlocks;
+        List<ABlock> aBlocks = parkour.getBlockManager().getAllBlocks();
         List<BlockData> blockDataList = new ArrayList<>();
         for (ABlock aBlock : aBlocks) {
             blockDataList.add(aBlock.toBlockData());

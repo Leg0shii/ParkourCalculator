@@ -32,9 +32,16 @@ public class MenuScreen extends VBox {
         this.coordinateScreen = application.coordinateScreen;
         this.positionVisualizer = application.positionVisualizer;
         this.remainingHeight = remainingHeight;
-        this.experimentalSettings = new ExperimentalSettings();
+        this.experimentalSettings = new ExperimentalSettings(application);
         this.blockSettings = new BlockSettings();
         this.versionSettings = new VersionSettings(application);
+
+        maxHeightProperty().bind(application.window.heightProperty()
+                .subtract(application.menuGUI.heightProperty())
+                .subtract(application.coordinateScreen.heightProperty())
+                .subtract(application.informationScreen.heightProperty())
+                .subtract(application.blockGUI.heightProperty())
+        );
 
         apply(application.currentParkour);
     }

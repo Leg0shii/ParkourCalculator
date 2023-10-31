@@ -15,5 +15,7 @@ public abstract class Parkour {
     @Getter protected Player player;
     @Getter protected Movement movement;
     @Getter protected BlockManager blockManager;
+    
+    public abstract Parkour clone();
 
 }

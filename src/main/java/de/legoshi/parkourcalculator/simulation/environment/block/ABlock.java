@@ -88,10 +88,12 @@ public abstract class ABlock {
     }
 
     public void applyMaterialColor(Color materialColor) {
+        if (boxesArrayList == null || boxesArrayList.isEmpty()) return;
         boxesArrayList.forEach(b -> b.setMaterial(new PhongMaterial(materialColor)));
     }
 
     public void resetAndApplyMaterialColor() {
+        if (boxesArrayList == null || boxesArrayList.isEmpty()) return;
         boxesArrayList.forEach(b -> b.setMaterial(new PhongMaterial(this.materialColor)));
     }
 

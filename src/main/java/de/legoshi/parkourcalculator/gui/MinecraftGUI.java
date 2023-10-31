@@ -24,10 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Box;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 public class MinecraftGUI extends Observable {
 
@@ -50,7 +47,7 @@ public class MinecraftGUI extends Observable {
     private final List<Observer> observers = new ArrayList<>();
 
     private MouseButton addBlock, destroyBlock;
-    private boolean startBlock = false;
+    
     private boolean endBlock = false;
 
     public MinecraftGUI(Application application, Group group) {
@@ -97,9 +94,9 @@ public class MinecraftGUI extends Observable {
             return;
         }
 
-        List<ABlock> aBlocksCopy = new ArrayList<>(blockManager.aBlocks);
+        List<ABlock> aBlocksCopy = new ArrayList<>(blockManager.getAllBlocks());
         aBlocksCopy.forEach(this::addBlock);
-        blockManager.aBlocks = aBlocksCopy;
+        // TODO: blockManager.aBlocks = aBlocksCopy; ???
     }
 
     public void addStartingBlock() {
@@ -126,7 +123,7 @@ public class MinecraftGUI extends Observable {
             Vec3 newBlockPos = getRoundedCoordinatesFromMouseEvent(mouseEvent);
             if(newBlockPos != null) {
                 newBlockPos.x *= -1; // flipping the x axis
-                ABlock curBlock = blockManager.getBlock(newBlockPos.x, newBlockPos.y, newBlockPos.z);
+                ABlock curBlock = blockManager.getBlock((int) newBlockPos.x, (int) newBlockPos.y, (int) newBlockPos.z);
                 if (!(curBlock instanceof Air)) return;
             }
             ABlock newBlock = getNewBlockFromPos(mouseEvent);
@@ -147,7 +144,7 @@ public class MinecraftGUI extends Observable {
     public void handleBoxMouseMove(MouseEvent mouseEvent) {
         if (!ScreenSettings.isPreviewMode()) return;
         if (!(mouseEvent.getTarget() instanceof Box)) return;
-        if (startBlock || endBlock) return;
+        if (endBlock) return;
 
         mouseEvent.consume();
         ABlock newBlock = getNewBlockFromPos(mouseEvent);
@@ -160,13 +157,14 @@ public class MinecraftGUI extends Observable {
         previewBlock(newBlock);
         for (Observer observer : observers) {
             if (observer instanceof InformationScreen) {
-                observer.update(null, getFacingAsString(mouseEvent));
+                Vec3 newBlockPos = getExistingBlockFromPos(mouseEvent).getVec3();
+                observer.update(null, "block-info;"+getFacingAsString(mouseEvent) + ";" + newBlockPos.x + ";" + newBlockPos.y + ";" + newBlockPos.z);
             }
         }
     }
 
     private Vec3 getCoordinatesFromMouseEvent(MouseEvent mouseEvent) {
-        if (!(mouseEvent.getTarget() instanceof Box clickedBox)) return null;
+        if (!(mouseEvent.getTarget() instanceof Box)) return null;
         ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
         if (clickedBlock == null) return null;
 
@@ -222,13 +220,8 @@ public class MinecraftGUI extends Observable {
     }
 
     private ABlock getExistingBlockFromPos(MouseEvent mouseEvent) {
-        for (ABlock aBlock : blockManager.aBlocks) {
-            Box box = (Box) mouseEvent.getTarget();
-            if (aBlock.getBoxesArrayList().contains(box)) {
-                return aBlock;
-            }
-        }
-        return null;
+        Box box = (Box) mouseEvent.getTarget();
+        return blockManager.getBlockFromBox(box);
     }
 
     public void addBlock(ABlock aBlock) {
@@ -287,7 +280,7 @@ public class MinecraftGUI extends Observable {
 
     public void clearScreen() {
         group.getChildren().removeIf(node -> !(node instanceof Group)); // remove all blocks, keep path group
-        blockManager.aBlocks = new ArrayList<>();
+        blockManager.aBlocks = new HashMap<>();
     }
 
     public void addObserver(Observer observer) {
@@ -303,14 +296,8 @@ public class MinecraftGUI extends Observable {
         }
     }
 
-    public void setStartBlock() {
-        this.startBlock = true;
-        this.endBlock = false;
-    }
-
     public void setEndBlock() {
         this.endBlock = true;
-        this.startBlock = false;
     }
 
 }

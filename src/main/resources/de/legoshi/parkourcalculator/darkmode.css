@@ -8,6 +8,7 @@
 .button {
     -fx-background-color: #3a3a3a;
     -fx-text-fill: #ffffff;
+    -fx-max-width: 150px;
     -fx-padding: 8px 16px;
     -fx-border-radius: 4px;
     -fx-background-radius: 4px;
@@ -31,6 +32,7 @@
     -fx-border-color: #4a4a4a;
     -fx-padding: 4px 8px;
     -fx-border-radius: 4px;
+    -fx-max-width: 70px;
 }
 
 .key-text-field {

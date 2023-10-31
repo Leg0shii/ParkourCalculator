@@ -58,6 +58,25 @@ public class AxisAlignedBB {
         return new AxisAlignedBB(d0, d1, d2, d3, d4, d5);
     }
 
+    public double distanceBetween(AxisAlignedBB other) {
+        double dx = 0.0;
+        double dz = 0.0;
+
+        if (this.maxX < other.minX) {
+            dx = other.minX - this.maxX;
+        } else if (this.minX > other.maxX) {
+            dx = this.minX - other.maxX;
+        }
+
+        if (this.maxZ < other.minZ) {
+            dz = other.minZ - this.maxZ;
+        } else if (this.minZ > other.maxZ) {
+            dz = this.minZ - other.maxZ;
+        }
+
+        return Math.sqrt(dx * dx + dz * dz);
+    }
+
     /**
      * Returns a bounding box expanded by the specified vector (if negative numbers are given it will shrink). Args: x,
      * y, z

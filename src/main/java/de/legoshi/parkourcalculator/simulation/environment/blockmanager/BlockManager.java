@@ -3,36 +3,49 @@ package de.legoshi.parkourcalculator.simulation.environment.blockmanager;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
+import de.legoshi.parkourcalculator.util.Vec3;
+import javafx.scene.shape.Box;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 public abstract class BlockManager implements Observer {
 
     public ABlock currentBlock = new StandardBlock();
     public List<ABlock> registeredBlocks = new ArrayList<>();
-    public List<ABlock> aBlocks = new ArrayList<>();
-
-    public ABlock getBlock(double x, double y, double z) {
-        for (ABlock aBlock : aBlocks) {
-            if (aBlock.getVec3().x == x && aBlock.getVec3().y == y && aBlock.getVec3().z == z) {
-                return aBlock;
+    
+    // x, y, z
+    public HashMap<Integer, HashMap<Integer, HashMap<Integer, ABlock>>> aBlocks = new HashMap<>();
+    public HashMap<Box, ABlock> boxBlocks = new HashMap<>();
+    public List<ABlock> allBlocks = new ArrayList<>();
+    
+    public abstract BlockManager clone();
+    
+    public ABlock getBlock(Vec3 vec3) {
+        int x = (int) Math.floor(vec3.x);
+        int y = (int) Math.floor(vec3.y);
+        int z = (int) Math.floor(vec3.z);
+        return getBlock(x, y, z);
+    }
+    
+    public ABlock getBlock(int x, int y, int z) {
+        if (aBlocks.containsKey(x)) {
+            HashMap<Integer, HashMap<Integer, ABlock>> yMap = aBlocks.get(x);
+            if (yMap.containsKey(y)) {
+                HashMap<Integer, ABlock> zMap = yMap.get(y);
+                if (zMap.containsKey(z)) {
+                    return zMap.get(z);
+                }
             }
         }
         return new Air();
     }
-
-    public List<AxisAlignedBB> getAllBlockHitboxes() {
-        List<AxisAlignedBB> boundingBoxes = new ArrayList<>();
-        for (ABlock aBlock : aBlocks) {
-            for (AxisVecTuple axisVecTuple : aBlock.axisVecTuples) {
-                if (!(aBlock instanceof BlockLiquid || aBlock instanceof Vine || aBlock instanceof Cobweb))
-                    boundingBoxes.add(axisVecTuple.getBb());
-            }
-        }
-        return boundingBoxes;
+    
+    public List<ABlock> getAllBlocks() {
+        return allBlocks;
+    }
+    
+    public ABlock getBlockFromBox(Box box) {
+        return boxBlocks.get(box);
     }
 
     @Override
@@ -47,11 +60,36 @@ public abstract class BlockManager implements Observer {
     }
 
     public void addBlock(ABlock block) {
-        aBlocks.add(block);
+        int x = (int) block.getVec3().x;
+        int y = (int) block.getVec3().y;
+        int z = (int) block.getVec3().z;
+        
+        aBlocks
+            .computeIfAbsent(x, k -> new HashMap<>())
+            .computeIfAbsent(y, k -> new HashMap<>())
+            .put(z, block);
+        
+        block.getBoxesArrayList().forEach(box -> boxBlocks.put(box, block));
+        allBlocks.add(block);
     }
-
+    
     public void removeBlock(ABlock block) {
-        aBlocks.remove(block);
+        int x = (int) block.getVec3().x;
+        int y = (int) block.getVec3().y;
+        int z = (int) block.getVec3().z;
+        
+        if (aBlocks.containsKey(x) && aBlocks.get(x).containsKey(y)) {
+            aBlocks.get(x).get(y).remove(z);
+            if (aBlocks.get(x).get(y).isEmpty()) {
+                aBlocks.get(x).remove(y);
+                if (aBlocks.get(x).isEmpty()) {
+                    aBlocks.remove(x);
+                }
+            }
+        }
+    
+        block.getBoxesArrayList().forEach(box -> boxBlocks.remove(box));
+        allBlocks.remove(block);
     }
 
 }

@@ -2,6 +2,11 @@ package de.legoshi.parkourcalculator.simulation.environment.blockmanager;
 
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.simulation.environment.block_1_8.*;
+import javafx.scene.shape.Box;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class BlockManager_1_8 extends BlockManager {
 
@@ -46,5 +51,18 @@ public class BlockManager_1_8 extends BlockManager {
         registeredBlocks.add(new Lava());
         registeredBlocks.add(new Cobweb());
     }
-
+    
+    @Override
+    public BlockManager clone() {
+        HashMap<Integer, HashMap<Integer, HashMap<Integer, ABlock>>> aBlocks_clone = new HashMap<>(aBlocks);
+        HashMap<Box, ABlock> boxBlocks_clone = new HashMap<>(boxBlocks);
+        List<ABlock> allBlocks_clone = new ArrayList<>(allBlocks);
+        
+        BlockManager_1_8 blockManager_1_8 = new BlockManager_1_8();
+        blockManager_1_8.aBlocks = aBlocks_clone;
+        blockManager_1_8.boxBlocks = boxBlocks_clone;
+        blockManager_1_8.allBlocks = allBlocks_clone;
+        return blockManager_1_8;
+    }
+    
 }

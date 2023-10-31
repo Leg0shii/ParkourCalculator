@@ -183,9 +183,10 @@ public class Vec3 {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Vec3 vec3 = (Vec3) o;
-        return Double.compare(vec3.x, x) == 0 &&
-            Double.compare(vec3.y, y) == 0 &&
-            Double.compare(vec3.z, z) == 0;
+        
+        return Double.compare(vec3.x + 0.0, x + 0.0) == 0 &&
+            Double.compare(vec3.y + 0.0, y + 0.0) == 0 &&
+            Double.compare(vec3.z+ 0.0, z + 0.0) == 0;
     }
     
     @Override
