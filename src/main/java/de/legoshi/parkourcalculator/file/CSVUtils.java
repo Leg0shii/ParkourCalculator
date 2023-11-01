@@ -26,7 +26,7 @@ public class CSVUtils {
                 InputTick iTick = tick.getInputTick();
                 Vec3 p = tick.getPosition();
                 Vec3 v = tick.getVelocity();
-                writer.write(String.format(Locale.US, "%.15f,%.15f,%.15f,%.5f,%.5f,%.1f,%.1f,%b,%b,%b,%b,%b,%b,%b,%b,%b,%.15f,%.15f,%.15f",
+                writer.write(String.format(Locale.US, "%.15f,%.15f,%.15f,%.5f,%.5f,%.5f,%.5f,%b,%b,%b,%b,%b,%b,%b,%b,%b,%.15f,%.15f,%.15f",
                         -p.x, p.y, p.z, iTick.YAW, 90.0, iTick.YAW, 0.0, iTick.W, iTick.A, iTick.S, iTick.D, iTick.SPRINT, iTick.SNEAK, iTick.JUMP, false, false, -v.x, v.y, v.z));
                 writer.newLine();
             }

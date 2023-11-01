@@ -34,6 +34,8 @@ public class PositionVisualizer extends Observable implements Observer {
 
     private final InputTickManager inputTickManager;
     private final Group group;
+    private final CacheClearer cacheClearer;
+
     private Box box;
 
     public List<Sphere> spheres = new ArrayList<>();
@@ -47,6 +49,8 @@ public class PositionVisualizer extends Observable implements Observer {
         this.inputTickManager = inputTickManager;
         this.group = group;
         apply(parkour);
+        this.cacheClearer = new CacheClearer(this);
+        this.cacheClearer.startClearCacheScheduler();
         this.resetPlayer();
     }
 
@@ -86,7 +90,7 @@ public class PositionVisualizer extends Observable implements Observer {
             Sphere sphere = new Sphere(0.03);
             if (posCounter == tickClicked) sphere.setMaterial(new PhongMaterial(Color.RED));
             sphere.setTranslateX(pos.x);
-            sphere.setTranslateY(pos.y*-1);
+            sphere.setTranslateY(pos.y * -1);
             sphere.setTranslateZ(pos.z);
             spheres.add(sphere);
             int finalPosCounter = posCounter;
@@ -97,8 +101,8 @@ public class PositionVisualizer extends Observable implements Observer {
         }
 
         for (int i = 0; i < playerPos.size() - 1; i++) {
-            Point3D startPoint = new Point3D(playerPos.get(i).x, playerPos.get(i).y*-1, playerPos.get(i).z);
-            Point3D endPoint = new Point3D(playerPos.get(i+1).x, playerPos.get(i+1).y*-1, playerPos.get(i+1).z);
+            Point3D startPoint = new Point3D(playerPos.get(i).x, playerPos.get(i).y * -1, playerPos.get(i).z);
+            Point3D endPoint = new Point3D(playerPos.get(i + 1).x, playerPos.get(i + 1).y * -1, playerPos.get(i + 1).z);
             Cylinder cylinder = createCylinder(startPoint, endPoint);
             lines.add(cylinder);
             group.getChildren().add(cylinder);
@@ -141,8 +145,8 @@ public class PositionVisualizer extends Observable implements Observer {
         double yCoordinate = Double.parseDouble(df.format(coords.getY()).replace(",", "."));
         double zCoordinate = Double.parseDouble(df.format(coords.getZ()).replace(",", "."));
         double decimalNumber = player.getStartPos().y % 1;
-        double roundedDecimalNumber = Double.parseDouble(df.format(-decimalNumber/2).replace(",", "."));
-        
+        double roundedDecimalNumber = Double.parseDouble(df.format(-decimalNumber / 2).replace(",", "."));
+
         if (zCoordinate == 0) return;
         if (yCoordinate != roundedDecimalNumber && yCoordinate != -0.5 && yCoordinate != -0.75) return;
 
@@ -151,8 +155,8 @@ public class PositionVisualizer extends Observable implements Observer {
             coords = coords.add(node.getTranslateX(), 0, node.getTranslateZ());
         }
 
-        double xOffset = coords.getX()-pOffset.x;
-        double zOffset = coords.getZ()-pOffset.z;
+        double xOffset = coords.getX() - pOffset.x;
+        double zOffset = coords.getZ() - pOffset.z;
         Vec3 updatedVec = handleBoxMovementAndCollision(pOffset, xOffset, zOffset);
         player.setStartPos(updatedVec);
 

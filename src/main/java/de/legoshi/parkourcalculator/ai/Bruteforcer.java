@@ -5,12 +5,9 @@ import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.environment.block.Air;
-import de.legoshi.parkourcalculator.simulation.movement.Movement;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
 import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
-import de.legoshi.parkourcalculator.util.AxisAlignedBB;
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.PositionVisualizer;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.application.Platform;
@@ -193,8 +190,7 @@ public class Bruteforcer {
             lastShown = System.currentTimeMillis();
             Platform.runLater(() -> {
                 this.inputTickGUI.resetTicks();
-                inputTickManager.setInputTicks(new ArrayList<>(inputTicks));
-                positionVisualizer.generatePlayerPath();
+                inputTickManager.setInputTicks(new ArrayList<>(inputTicks)); // handles path generation
             });
         }
     }
