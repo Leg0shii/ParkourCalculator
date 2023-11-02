@@ -246,7 +246,7 @@ public class Bruteforcer {
             }
         }
     
-        int threshold = highestLength - Math.min(highestLength, 50);
+        int threshold = highestLength - Math.min(highestLength, 250);
     
         // Filter the entries that have a List<InputTick> length within the desired range
         List<List<InputTick>> filteredValues = new ArrayList<>();
