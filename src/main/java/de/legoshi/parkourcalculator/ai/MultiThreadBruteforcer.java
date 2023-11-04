@@ -152,12 +152,12 @@ public class MultiThreadBruteforcer {
     }
 
     private void showUpdate() {
-        if (ticksMap.isEmpty()) return;
         if (mainService.isShutdown()) return;
         if (scheduler.isShutdown()) return;
 
         Random random = new Random();
         List<Map.Entry<Vec3, List<InputTick>>> entries = new ArrayList<>(ticksMap.entrySet());
+        if (entries.isEmpty()) entries = new ArrayList<>(bruteforcers.get(0).getTicksMap().entrySet());
         if (!entries.isEmpty()) {
             Map.Entry<Vec3, List<InputTick>> randomEntry = entries.get(random.nextInt(entries.size()));
             List<InputTick> randomValue = randomEntry.getValue();
