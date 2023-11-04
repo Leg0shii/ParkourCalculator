@@ -1,7 +1,10 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
 import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.ai.BruteforceOptions;
 import de.legoshi.parkourcalculator.ai.Bruteforcer;
+import de.legoshi.parkourcalculator.ai.InputGenerator;
+import de.legoshi.parkourcalculator.ai.MultiThreadBruteforcer;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -12,7 +15,7 @@ import lombok.Getter;
 
 public class BruteforceSettings extends TitledPane {
     
-    private final Bruteforcer bruteforcer;
+    private final MultiThreadBruteforcer multiThreadBruteforcer;
     private final Application application;
     
     private final Button setEndBlockButton;
@@ -22,9 +25,12 @@ public class BruteforceSettings extends TitledPane {
     private final Button cancelButton;
     
     private TextField numberOfTrialsField;
+    private TextField recTicksField;
     private TextField ticksPerTrialField;
+    private TextField syncField;
     private TextField repetitionsField;
     private TextField dimensionField;
+    private TextField instancesField;
     private CheckBox stopOnFindField;
     private TextField intervallOfLastShownField;
     
@@ -42,7 +48,7 @@ public class BruteforceSettings extends TitledPane {
     
     public BruteforceSettings(Application application) {
         this.application = application;
-        this.bruteforcer = new Bruteforcer(application);
+        this.multiThreadBruteforcer = new MultiThreadBruteforcer(application);
         Text titleText = new Text("Bruteforce Settings");
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
@@ -69,16 +75,31 @@ public class BruteforceSettings extends TitledPane {
         numberOfTrialsField = new TextField("100");
         gridPane.add(numberOfTrialsLabel, 0, 2);
         gridPane.add(numberOfTrialsField, 1, 2);
+
+        Label recursiveLabel = new Label("Rec. ticks:");
+        recTicksField = new TextField("100");
+        gridPane.add(recursiveLabel, 2, 2);
+        gridPane.add(recTicksField, 3, 2);
         
         Label ticksPerTrialLabel = new Label("Ticks Per Trial:");
         ticksPerTrialField = new TextField("15");
         gridPane.add(ticksPerTrialLabel, 0, 3);
         gridPane.add(ticksPerTrialField, 1, 3);
+
+        Label syncLabel = new Label("Sync. (s):");
+        syncField = new TextField("5");
+        gridPane.add(syncLabel, 2, 3);
+        gridPane.add(syncField, 3, 3);
         
         Label repetitionsLabel = new Label("Repetitions:");
         repetitionsField = new TextField("10000");
         gridPane.add(repetitionsLabel, 0, 4);
         gridPane.add(repetitionsField, 1, 4);
+
+        Label instancesLabel = new Label("Instances:");
+        instancesField = new TextField("1");
+        gridPane.add(instancesLabel, 2, 4);
+        gridPane.add(instancesField, 3, 4);
         
         Label dimensionLabel = new Label("Dimension:");
         dimensionField = new TextField("0.5");
@@ -172,6 +193,9 @@ public class BruteforceSettings extends TitledPane {
             double dimension = Double.parseDouble(dimensionField.getText());
             boolean stopOnFind = stopOnFindField.isSelected();
             int intervallOfLastShown = Integer.parseInt(intervallOfLastShownField.getText());
+            int recTicks = Integer.parseInt(recTicksField.getText());
+            int sync = Integer.parseInt(syncField.getText());
+            int instances = Integer.parseInt(instancesField.getText());
             
             double w = getProbFromText(wField);
             double a = getProbFromText(aField);
@@ -181,10 +205,18 @@ public class BruteforceSettings extends TitledPane {
             double sprint = getProbFromText(sprintField);
             double sneak = getProbFromText(sneakField);
             double fChange = getProbFromText(facingField);
-            
-            bruteforcer.applyConfigValues(numberOfTrials, ticksPerTrial, repetitions, dimension, stopOnFind, intervallOfLastShown);
-            bruteforcer.applyWASDConfig(w, a, s, d, jump, sprint, sneak, fChange);
-            bruteforcer.bruteforce(this.endBlock);
+
+            BruteforceOptions bruteforceOptions = new BruteforceOptions();
+            bruteforceOptions.apply(numberOfTrials, ticksPerTrial, repetitions, dimension, stopOnFind, intervallOfLastShown, recTicks,  instances, sync);
+
+            InputGenerator inputGenerator = new InputGenerator();
+            inputGenerator.apply(w, a, s, d, jump, sprint, sneak, fChange);
+
+            multiThreadBruteforcer.setEndBlock(endBlock);
+            multiThreadBruteforcer.addBruteforceOptions(bruteforceOptions);
+            multiThreadBruteforcer.addInputGenerator(inputGenerator);
+
+            multiThreadBruteforcer.start();
         } catch (NumberFormatException e) {
             System.err.println("Error: Input values are not correctly formatted: " + e.getMessage());
         }
@@ -195,7 +227,7 @@ public class BruteforceSettings extends TitledPane {
     }
     
     private void cancelBruteforce() {
-        bruteforcer.cancelBruteforce();
+        multiThreadBruteforcer.cancelBruteforce();
     }
     
     private double getProbFromText(TextField field) {

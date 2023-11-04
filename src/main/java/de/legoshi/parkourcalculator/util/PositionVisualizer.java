@@ -100,13 +100,14 @@ public class PositionVisualizer extends Observable implements Observer {
             posCounter++;
         }
 
-        for (int i = 0; i < playerPos.size() - 1; i++) {
+        /*for (int i = 0; i < playerPos.size() - 1; i++) {
             Point3D startPoint = new Point3D(playerPos.get(i).x, playerPos.get(i).y * -1, playerPos.get(i).z);
             Point3D endPoint = new Point3D(playerPos.get(i + 1).x, playerPos.get(i + 1).y * -1, playerPos.get(i + 1).z);
             Cylinder cylinder = createCylinder(startPoint, endPoint);
             lines.add(cylinder);
             group.getChildren().add(cylinder);
-        }
+        }*/
+
         group.setOnMouseDragged(this::onMouseDrag);
         group.setOnMouseReleased(this::onMouseDragReleased);
 

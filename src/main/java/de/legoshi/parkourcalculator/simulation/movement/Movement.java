@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.simulation.movement;
 
+import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
@@ -25,6 +26,8 @@ public abstract class Movement {
         this.blockManager = blockManager;
         this.playerTickInformations = new ArrayList<>();
     }
+
+    public abstract Movement clone();
     
     public void calculateTick(InputTick inputTick) {
         
