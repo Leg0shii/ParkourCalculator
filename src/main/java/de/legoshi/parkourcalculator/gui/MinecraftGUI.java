@@ -251,8 +251,9 @@ public class MinecraftGUI extends Observable implements VersionDependent {
         for (Box box : aBlock.getBoxesArrayList()) {
             box.setOnMouseClicked(this::handleMouseClick);
             box.setOnMouseMoved(this::handleBoxMouseMove);
-            // TODO: check if block is already added to the scene
-            group.getChildren().add(box);
+            if (!group.getChildren().contains(box)) {
+                group.getChildren().add(box);
+            }
         }
         notifyObservers(aBlock, "add");
     }
