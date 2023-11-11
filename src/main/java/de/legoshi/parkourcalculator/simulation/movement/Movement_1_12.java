@@ -19,6 +19,23 @@ public class Movement_1_12 extends Movement {
         return new Movement_1_8(player_1_12, blockManager);
     }
 
+    @Override
+    public int tierCalc(double height) {
+        double sum = 1.252;
+        double n = 0.00301;
+        int i;
+        for (i = 4; sum >= height; i++) {
+            sum = sum + n;
+            n = (n - 0.08) * 0.98;
+        }
+        return i + 1;
+    }
+
+    @Override
+    public boolean evalDistance(double distance) {
+        return distance > 1.252;
+    }
+
     public void calculateTick(InputTick inputTick) {
         player.applyInput(inputTick);
 
@@ -57,22 +74,22 @@ public class Movement_1_12 extends Movement {
     }
 
     protected void setPlayerSize(float width, float height) {
-        if (width*2.0D != player.width*2.0D || height != player.height) {
-            float f = player.width*2.0F;
+        if (width * 2.0D != player.width * 2.0D || height != player.height) {
+            float f = player.width * 2.0F;
             player.width = width;
             player.height = height;
 
-            if (player.width*2.0D < f) {
+            if (player.width * 2.0D < f) {
                 double d0 = (double) width;
                 player.playerBB = new AxisAlignedBB(player.position.x - d0, player.position.y, player.position.z - d0, player.position.x + d0, player.position.y + (double) player.height, player.position.z + d0);
                 return;
             }
 
             AxisAlignedBB axisalignedbb = player.playerBB;
-            player.playerBB = new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ, axisalignedbb.minX + (double) player.width*2.0D, axisalignedbb.minY + (double) player.height, axisalignedbb.minZ + (double) player.width*2.0D);
+            player.playerBB = new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ, axisalignedbb.minX + (double) player.width * 2.0D, axisalignedbb.minY + (double) player.height, axisalignedbb.minZ + (double) player.width * 2.0D);
 
-            if (player.width*2.0D > f) {
-                moveEntity((double) (f - player.width*2.0D), 0.0D, (double) (f - player.width*2.0D));
+            if (player.width * 2.0D > f) {
+                moveEntity((double) (f - player.width * 2.0D), 0.0D, (double) (f - player.width * 2.0D));
             }
         }
     }

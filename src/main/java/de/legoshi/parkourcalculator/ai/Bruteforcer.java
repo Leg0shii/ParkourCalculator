@@ -1,13 +1,14 @@
 package de.legoshi.parkourcalculator.ai;
 
 import de.legoshi.parkourcalculator.Application;
-import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.environment.block.Air;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.movement.Movement;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
+import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,39 +18,32 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Bruteforcer implements Runnable {
 
-    private int NUM_TRIALS = 100;
-    private int TICKS_PER_TRIAL = 15;
-    private int REPETITIONS = 20000;
-    private int REC_TICKS = 100;
-    private double DIMENSION = 0.5;
-    private boolean STOP_ON_FIND = true;
-
-    @Getter
-    private HashMap<Vec3, List<InputTick>> ticksMap = new HashMap<>();
-    @Getter
-    private List<InputTick> currentFastestSolution = new ArrayList<>();
+    @Getter private HashMap<Vec3, List<InputTick>> ticksMap = new HashMap<>();
+    @Getter private List<InputTick> currentFastestSolution = new ArrayList<>();
     @Setter private List<Vec3> boundaries;
 
+    private BruteforceOptions bruteforceOptions;
     private InputGenerator inputGenerator;
     @Getter private boolean isActive;
+    private long startTime;
 
+    private int iterationCount;
+    private long iterationTimeStart;
+
+    private final MultiThreadBruteforcer instance;
     private final BlockManager blockManager;
     private final Movement movement;
     private final ABlock endBlock;
 
-    public Bruteforcer(Application application, ABlock endBlock) {
+    public Bruteforcer(Application application, MultiThreadBruteforcer multiThreadBruteforcer, ABlock endBlock) {
+        this.instance = multiThreadBruteforcer;
         this.movement = application.currentParkour.getMovement().clone();
         this.blockManager = application.currentParkour.getBlockManager();
         this.endBlock = endBlock;
     }
 
-    public void addBruteforceSettings(BruteforceOptions bruteforceSettings) {
-        this.NUM_TRIALS = bruteforceSettings.getNumberOfTrials();
-        this.TICKS_PER_TRIAL = bruteforceSettings.getTicksPerTrial();
-        this.REPETITIONS = bruteforceSettings.getRepetitions();
-        this.DIMENSION = bruteforceSettings.getDimension();
-        this.STOP_ON_FIND = bruteforceSettings.isStopOnFind();
-        this.REC_TICKS = bruteforceSettings.getRecTicks();
+    public void addBruteforceSettings(BruteforceOptions bruteforceOptions) {
+        this.bruteforceOptions = bruteforceOptions;
     }
 
     public void addInputGenerator(InputGenerator inputGenerator) {
@@ -62,7 +56,10 @@ public class Bruteforcer implements Runnable {
         this.findPath();
     }
 
-    public void clearBruteforce() {
+    private void clearBruteforce() {
+        this.iterationCount = 0;
+        this.iterationTimeStart = System.currentTimeMillis();
+        this.startTime = System.currentTimeMillis();
         this.ticksMap.clear();
         this.currentFastestSolution.clear();
     }
@@ -74,9 +71,9 @@ public class Bruteforcer implements Runnable {
     private void findPath() {
         isActive = true;
 
-        outer: for (int k = 0; k < REPETITIONS; k++) {
-            List<InputTick> nthEntry = getNthElement(ticksMap, (int) (Math.random() * ticksMap.size()));
-            for (int i = 0; i < NUM_TRIALS; i++) {
+        outer: for (int k = 0; k < bruteforceOptions.getRepetitions(); k++) {
+            List<InputTick> nthEntry = getNthElement();
+            for (int i = 0; i < bruteforceOptions.getNumberOfTrials(); i++) {
                 if (!isActive) {
                     break outer;
                 }
@@ -88,14 +85,19 @@ public class Bruteforcer implements Runnable {
                     startIndex = inputTicks.size();
                 }
 
-                for (int j = 0; j < TICKS_PER_TRIAL; j++) {
+                for (int j = 0; j < bruteforceOptions.getTicksPerTrial(); j++) {
                     inputTicks.add(inputGenerator.getNextTick());
                 }
 
                 saveInputs(boundaries, inputTicks, startIndex);
-                if (STOP_ON_FIND && !currentFastestSolution.isEmpty()) {
+                if (bruteforceOptions.isStopOnFind() && !currentFastestSolution.isEmpty()) {
                     break outer;
                 }
+            }
+
+            if (iterationTimeStart + bruteforceOptions.getIntervalDuration()*1000 < System.currentTimeMillis()) {
+                iterationTimeStart = System.currentTimeMillis();
+                iterationCount++;
             }
         }
 
@@ -134,11 +136,13 @@ public class Bruteforcer implements Runnable {
             possibleLBPos.y--;
             ABlock possibleLB = blockManager.getBlock(possibleLBPos);
 
-            if (!(possibleLB instanceof Air) &&
-                    possibleLB.getVec3().equals(endBlock.getVec3()) &&
-                    (currentFastestSolution.isEmpty() || playerInfo.size() < currentFastestSolution.size())
-            ) {
-                currentFastestSolution = new ArrayList<>(inputTicks);
+            if (!(possibleLB instanceof Air) && possibleLB.getVec3().equals(endBlock.getVec3())) {
+                List<InputTick> shrinkList = new ArrayList<>(inputTicks.subList(0, count));
+                if ((currentFastestSolution.isEmpty() || shrinkList.size() < currentFastestSolution.size())) {
+                    instance.mergeFastestSolution(shrinkList);
+                    System.out.println("New Solution with " + currentFastestSolution.size() + " ticks. Found in: "
+                            + ((System.currentTimeMillis() - startTime) / 1000) + "s");
+                }
             }
 
             count++;
@@ -146,6 +150,7 @@ public class Bruteforcer implements Runnable {
     }
 
     public Vec3 getRoundedVec(Vec3 unRoundedVec) {
+        double DIMENSION = bruteforceOptions.getDimension();
         double roundedX = Math.floor(unRoundedVec.x / DIMENSION) * DIMENSION;
         double roundedY = Math.floor(unRoundedVec.y / DIMENSION) * DIMENSION;
         double roundedZ = Math.floor(unRoundedVec.z / DIMENSION) * DIMENSION;
@@ -161,48 +166,80 @@ public class Bruteforcer implements Runnable {
 
     public boolean isInsideBoundaries(List<Vec3> boundaries, Vec3 vec) {
         for (Vec3 boundary : boundaries) {
-            if (vec.x >= boundary.x && vec.x < boundary.x + 1 &&
-                    vec.y >= boundary.y && vec.y < boundary.y + 3 &&
-                    vec.z >= boundary.z && vec.z < boundary.z + 1) {
-                return true;
+            ABlock landBlock = blockManager.getBlock(boundary);
+
+            for (AxisVecTuple tuple : landBlock.getAxisVecTuples()) {
+                AxisAlignedBB bbBlock = tuple.getBb();
+                if (vec.x >= bbBlock.minX - 0.3 && vec.x < bbBlock.maxX + 0.3 &&
+                        vec.y >= bbBlock.minY && vec.y < bbBlock.maxY + 1.5 &&
+                        vec.z >= bbBlock.minZ - 0.3 && vec.z < bbBlock.maxZ + 0.3) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    public List<InputTick> getNthElement(HashMap<Vec3, List<InputTick>> map, int n) {
-        int i = 0;
-        if (!currentFastestSolution.isEmpty() && Math.random() > 0.8) {
-            int subListStart = (int) (Math.random() * currentFastestSolution.size());
-            return currentFastestSolution.subList(0, subListStart);
-        }
+    private List<InputTick> getNthElement() {
+        int lowestBound;
+        int highestBound;
 
-        int highestLength = 0;
+        if (bruteforceOptions.isWindowed()) {
+            lowestBound = iterationCount * bruteforceOptions.getGenerateInterval();
+            highestBound = lowestBound + bruteforceOptions.getGenerateInterval();
+            if (iterationCount > 0) lowestBound = lowestBound - bruteforceOptions.getOverlap();
 
-        // Determine the highest length of List<InputTick> in the map
-        for (List<InputTick> value : map.values()) {
-            if (value.size() > highestLength) {
-                highestLength = value.size();
+            if (!currentFastestSolution.isEmpty()) {
+                lowestBound = Math.max(0, currentFastestSolution.size() - bruteforceOptions.getGenerateInterval());
+                highestBound = currentFastestSolution.size();
             }
-        }
-
-        int threshold = highestLength - Math.min(highestLength, REC_TICKS);
-
-        // Filter the entries that have a List<InputTick> length within the desired range
-        List<List<InputTick>> filteredValues = new ArrayList<>();
-        for (List<InputTick> value : map.values()) {
-            if (value.size() >= threshold && value.size() <= highestLength) {
-                filteredValues.add(value);
+        } else {
+            highestBound = 0;
+            for (List<InputTick> value : ticksMap.values()) {
+                if (value.size() > highestBound) {
+                    highestBound = value.size();
+                }
             }
+            lowestBound = highestBound - Math.min(highestBound, bruteforceOptions.getRecTicks());
         }
 
-        // Randomly select one of the filtered entries
-        if (filteredValues.isEmpty()) {
-            return null; // No suitable entry found
-        }
-
+        List<InputTick> selectedValue = null;
         Random random = new Random();
-        return filteredValues.get(random.nextInt(filteredValues.size()));
+
+        List<List<InputTick>> eligibleValues = new ArrayList<>();
+        for (List<InputTick> value : ticksMap.values()) {
+            if (isWithinBounds(value.size(), lowestBound, highestBound)) {
+                eligibleValues.add(value);
+            }
+        }
+
+        if (!eligibleValues.isEmpty()) {
+            int randomIndex = random.nextInt(eligibleValues.size());
+            selectedValue = eligibleValues.get(randomIndex);
+        }
+
+        if (selectedValue == null) {
+            int highestValue = 0;
+            for (List<InputTick> value : ticksMap.values()) {
+                if (value.size() > highestValue) {
+                    highestValue = value.size();
+                }
+            }
+            if (highestValue <= lowestBound && iterationCount > 0) {
+                iterationTimeStart = System.currentTimeMillis();
+                iterationCount--;
+            }
+        }
+
+        return selectedValue;
+    }
+
+    private boolean isWithinBounds(int size, int lowestBound, int highestBound) {
+        return size >= lowestBound && size <= highestBound;
+    }
+
+    public void setCurrentFastestSolution(List<InputTick> solution) {
+        this.currentFastestSolution = new ArrayList<>(solution);
     }
 
 }

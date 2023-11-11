@@ -8,14 +8,14 @@ public class InputGenerator {
     
     private Random random;
     
-    private double wProb = 1.0;
-    private double aProb = 0.1;
-    private double sProb = 0.0;
-    private double dProb = 0.1;
-    private double jumpProb = 0.1;
-    private double sprintProb = 1.0;
-    private double sneakProb = 0.0;
-    private double fChangeProb = 0.02;
+    private double wProb;
+    private double aProb;
+    private double sProb;
+    private double dProb;
+    private double jumpProb;
+    private double sprintProb;
+    private double sneakProb;
+    private double fChangeProb;
     
     public InputGenerator() {
         this.random = new Random();

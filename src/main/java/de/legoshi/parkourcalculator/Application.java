@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator;
 
 import de.legoshi.parkourcalculator.gui.BlockGUI;
+import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.gui.menu.ConfigGUI;
 import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
@@ -27,12 +28,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 public class Application extends javafx.application.Application {
 
     public static String APP_NAME = "Parkour Calculator Alpha v1.1.0";
 
     public Scene scene;
     public BorderPane window;
+    private List<VersionDependent> versionDependentList;
 
     public DebugUI debugUI;
     public InputTickGUI inputTickGUI;
@@ -107,6 +113,7 @@ public class Application extends javafx.application.Application {
         this.positionVisualizer.addObserver(coordinateScreen);
         this.positionVisualizer.generatePlayerPath();
 
+        fillVersionDependencyList();
         updateConfigValues(configGUI.getConfigProperties());
 
         stage.setTitle(APP_NAME);
@@ -121,6 +128,16 @@ public class Application extends javafx.application.Application {
             stage.setWidth(screenBounds.getWidth() - 150);
             stage.setHeight(screenBounds.getHeight() - 150);
         }
+    }
+
+    private void fillVersionDependencyList() {
+        versionDependentList = new ArrayList<>();
+        versionDependentList.add(coordinateScreen);
+        versionDependentList.add(minecraftGUI);
+        versionDependentList.add(blockGUI);
+        versionDependentList.add(menuScreen);
+        versionDependentList.add(menuGUI);
+        versionDependentList.add(positionVisualizer);
     }
 
     public static void main(String[] args) {
@@ -146,23 +163,16 @@ public class Application extends javafx.application.Application {
     }
 
     public void applyParkour(ParkourVersion parkourVersion) {
-        switch (parkourVersion) {
-            case V_1_8 -> {
-                currentParkour = parkour_1_8 == null ? new Parkour_1_8() : parkour_1_8;
-                parkour_1_8 = (Parkour_1_8) currentParkour;
-            }
-            default -> {
-                currentParkour = parkour_1_12 == null ? new Parkour_1_12() : parkour_1_12;
-                parkour_1_12 = (Parkour_1_12) currentParkour;
-            }
+        if (parkourVersion == ParkourVersion.V_1_8) {
+            currentParkour = parkour_1_8 == null ? new Parkour_1_8() : parkour_1_8;
+            parkour_1_8 = (Parkour_1_8) currentParkour;
+        } else {
+            currentParkour = parkour_1_12 == null ? new Parkour_1_12() : parkour_1_12;
+            parkour_1_12 = (Parkour_1_12) currentParkour;
         }
-        if (coordinateScreen != null) this.coordinateScreen.apply(currentParkour);
-        if (menuScreen != null) this.menuScreen.apply(currentParkour);
-        if (menuGUI != null) this.menuGUI.apply(currentParkour);
-        if (blockGUI != null) this.blockGUI.apply(currentParkour);
-        if (minecraftGUI != null) this.minecraftGUI.apply(currentParkour);
-        if (positionVisualizer != null) this.positionVisualizer.apply(currentParkour);
-        if (informationScreen != null) informationScreen.updateVersionLabel(parkourVersion.toString());
+        if (versionDependentList != null) {
+            versionDependentList.stream().filter(Objects::nonNull).forEach(versionDependent -> versionDependent.apply(currentParkour));
+        }
         this.parkourVersion = parkourVersion;
     }
 

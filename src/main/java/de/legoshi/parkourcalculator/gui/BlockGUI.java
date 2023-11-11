@@ -14,7 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
-public class BlockGUI extends ScrollPane {
+public class BlockGUI extends ScrollPane implements VersionDependent {
 
     private BlockManager blockManager;
     private final HBox hBox;
@@ -33,6 +33,7 @@ public class BlockGUI extends ScrollPane {
         apply(parkour);
     }
 
+    @Override
     public void apply(Parkour parkour) {
         this.blockManager = parkour.getBlockManager();
         hBox.getChildren().clear();

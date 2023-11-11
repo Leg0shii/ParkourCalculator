@@ -26,7 +26,7 @@ import lombok.Getter;
 
 import java.util.*;
 
-public class MinecraftGUI extends Observable {
+public class MinecraftGUI extends Observable implements VersionDependent {
 
     public static final double BLOCK_OFFSET_X = 0.5;
     public static final double BLOCK_OFFSET_Y = 0.5;
@@ -47,8 +47,10 @@ public class MinecraftGUI extends Observable {
     private final List<Observer> observers = new ArrayList<>();
 
     private MouseButton addBlock, destroyBlock;
-    
-    private boolean endBlock = false;
+
+    private boolean startBlockFlag = false;
+    private boolean endBlockFlag = false;
+    private boolean pathBlockFlag = false;
 
     public MinecraftGUI(Application application, Group group) {
         this.application = application;
@@ -80,6 +82,7 @@ public class MinecraftGUI extends Observable {
         destroyBlock = MouseButton.valueOf(configProperties.getDestroyBlock());
     }
 
+    @Override
     public void apply(Parkour parkour) {
         group.getChildren().removeIf(node -> !(node instanceof Group));
 
@@ -114,11 +117,7 @@ public class MinecraftGUI extends Observable {
         if (mouseEvent.getButton().equals(addBlock)) {
 
             ABlock clickedBlock = getExistingBlockFromPos(mouseEvent);
-            if (endBlock) {
-                this.endBlock = false;
-                application.menuScreen.bruteforceSettings.setEndBlock(clickedBlock);
-                return;
-            }
+            if (handleBruteforceClick(clickedBlock)) return;
 
             Vec3 newBlockPos = getRoundedCoordinatesFromMouseEvent(mouseEvent);
             if(newBlockPos != null) {
@@ -134,6 +133,25 @@ public class MinecraftGUI extends Observable {
         }
     }
 
+    public boolean handleBruteforceClick(ABlock clickedBlock) {
+        if (endBlockFlag) {
+            this.endBlockFlag = false;
+            application.menuScreen.bruteforceSettings.setEndBlock(clickedBlock);
+            return true;
+        }
+        if (startBlockFlag) {
+            this.startBlockFlag = false;
+            application.menuScreen.bruteforceSettings.setStartBlock(clickedBlock);
+            return true;
+        }
+        if (pathBlockFlag) {
+            this.pathBlockFlag = false;
+            application.menuScreen.bruteforceSettings.setPathBlock(clickedBlock);
+            return true;
+        }
+        return false;
+    }
+
     public void handleBackgroundMouseMove(MouseEvent mouseEvent) {
         for(Box box : previewBlockBoxes) {
             group.getChildren().remove(box);
@@ -144,7 +162,8 @@ public class MinecraftGUI extends Observable {
     public void handleBoxMouseMove(MouseEvent mouseEvent) {
         if (!ScreenSettings.isPreviewMode()) return;
         if (!(mouseEvent.getTarget() instanceof Box)) return;
-        if (endBlock) return;
+        if (endBlockFlag) return;
+        if (startBlockFlag) return;
 
         mouseEvent.consume();
         ABlock newBlock = getNewBlockFromPos(mouseEvent);
@@ -158,7 +177,7 @@ public class MinecraftGUI extends Observable {
         for (Observer observer : observers) {
             if (observer instanceof InformationScreen) {
                 Vec3 newBlockPos = getExistingBlockFromPos(mouseEvent).getVec3();
-                observer.update(null, "block-info;"+getFacingAsString(mouseEvent) + ";" + newBlockPos.x + ";" + newBlockPos.y + ";" + newBlockPos.z);
+                observer.update(null, "block-info;"+getFacingAsString(mouseEvent) + ";" + newBlockPos.x * (-1) + ";" + newBlockPos.y + ";" + newBlockPos.z);
             }
         }
     }
@@ -232,6 +251,7 @@ public class MinecraftGUI extends Observable {
         for (Box box : aBlock.getBoxesArrayList()) {
             box.setOnMouseClicked(this::handleMouseClick);
             box.setOnMouseMoved(this::handleBoxMouseMove);
+            // TODO: check if block is already added to the scene
             group.getChildren().add(box);
         }
         notifyObservers(aBlock, "add");
@@ -297,7 +317,14 @@ public class MinecraftGUI extends Observable {
     }
 
     public void setEndBlock() {
-        this.endBlock = true;
+        this.endBlockFlag = true;
     }
 
+    public void setStartBlock() {
+        this.startBlockFlag = true;
+    }
+
+    public void setPathBlock() {
+        this.pathBlockFlag = true;
+    }
 }

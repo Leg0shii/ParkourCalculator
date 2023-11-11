@@ -113,4 +113,16 @@ public abstract class ABlock {
         }
     }
 
+    public double getHighestY() {
+        double highestY = Integer.MIN_VALUE;
+        if (axisVecTuples == null || axisVecTuples.isEmpty()) {
+            return highestY;
+        }
+
+        for (AxisVecTuple vecTuple : this.axisVecTuples) {
+            highestY = Math.max(highestY, vecTuple.getBb().maxY);
+        }
+        return highestY;
+    }
+
 }

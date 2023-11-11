@@ -3,9 +3,11 @@ package de.legoshi.parkourcalculator.ai;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.environment.block.Air;
+import de.legoshi.parkourcalculator.simulation.environment.block.Stair;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.movement.Movement;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
+import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.paint.Color;
 import lombok.Setter;
@@ -23,6 +25,7 @@ public class AStarPathfinder {
     public AStarPathfinder(Parkour parkour) {
         this.blockManager = parkour.getBlockManager();
         this.movement = parkour.getMovement();
+        setColorize(true);
     }
     
     public List<ABlock> findShortestPath(Vec3 start, Vec3 end) {
@@ -74,6 +77,17 @@ public class AStarPathfinder {
         }
         return new ArrayList<>();
     }
+
+    public List<Vec3> calculateBoundaries(Vec3 startPos, Vec3 endPos) {
+        List<ABlock> boundaryBlocks = findShortestPath(startPos, endPos);
+        List<Vec3> boundaries = new ArrayList<>();
+        for (ABlock block : boundaryBlocks) {
+            if (!(block instanceof Air)) {
+                boundaries.add(block.getVec3());
+            }
+        }
+        return boundaries;
+    }
     
     private List<ABlock> reconstructPath(Node currentNode) {
         List<ABlock> path = new ArrayList<>();
@@ -100,10 +114,10 @@ public class AStarPathfinder {
             for (int y = (int) position.y - 1; y <= position.y + 1; y++) {
                 for (int z = (int) position.z - 1; z <= position.z + 1; z++) {
                     if (x != position.x || y != position.y || z != position.z) {
-                        if (hasBlock(x, y + 1, z)) continue;
-                        if (hasBlock(x, y + 2, z)) continue;
+                        if (canNotStand(x, y + 1, z)) continue;
+                        if (canNotStand(x, y + 2, z)) continue;
                         if (y == position.y - 1) {
-                            if (hasBlock(x, y + 3, z)) continue;
+                            if (canNotStand(x, y + 3, z)) continue;
                         }
 
                         Vec3 startPos = node.lastGroundPos.copy();
@@ -119,24 +133,68 @@ public class AStarPathfinder {
         }
         return neighbors;
     }
-    
-    private boolean hasBlock(int x, int y, int z) {
+
+    private boolean canNotStand(int x, int y, int z) {
         ABlock checkBlock = blockManager.getBlock(x, y, z);
-        return !(checkBlock instanceof Air);
+        if (checkBlock instanceof Air) return false;
+
+        // Assuming each block has a 1x1x1 size, we define the bounds of the checkBlock
+        double checkBlockMinX = x;
+        double checkBlockMinZ = z;
+        double checkBlockMaxX = x + 1.0;
+        double checkBlockMaxZ = z + 1.0;
+
+        // The ranges that need to be covered by the surrounding blocks
+        double coveredRangeXMin = checkBlockMinX;
+        double coveredRangeXMax = checkBlockMaxX;
+        double coveredRangeZMin = checkBlockMinZ;
+        double coveredRangeZMax = checkBlockMaxZ;
+
+        // Check the surrounding blocks to expand the covered range
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                // Skip the center block where the entity is trying to stand
+                if (dx == 0 && dz == 0) continue;
+
+                ABlock otherBlock = blockManager.getBlock(x + dx, y, z + dz);
+                if (!(otherBlock instanceof Air)) {
+
+                    // Expand the covered range if this block extends beyond the current range
+                    for (AxisVecTuple tuple : otherBlock.getAxisVecTuples()) {
+                        AxisAlignedBB otherBlockBox = tuple.getBb();
+                        coveredRangeXMin = Math.min(coveredRangeXMin, otherBlockBox.minX);
+                        coveredRangeXMax = Math.max(coveredRangeXMax, otherBlockBox.maxX);
+                        coveredRangeZMin = Math.min(coveredRangeZMin, otherBlockBox.minZ);
+                        coveredRangeZMax = Math.max(coveredRangeZMax, otherBlockBox.maxZ);
+                    }
+                }
+            }
+        }
+
+        // Determine if the covered ranges fully encompass the checkBlock's ranges
+        boolean isCoveredX = coveredRangeXMin <= checkBlockMinX && coveredRangeXMax >= checkBlockMaxX;
+        boolean isCoveredZ = coveredRangeZMin <= checkBlockMinZ && coveredRangeZMax >= checkBlockMaxZ;
+
+        // If both the x and z ranges are fully covered, the entity cannot stand here
+        return isCoveredX && isCoveredZ;
     }
 
     private boolean allowDistance(Vec3 start, Vec3 end) {
         ABlock endBlock = blockManager.getBlock(end);
+        ABlock startBlock = blockManager.getBlock(start);
 
-        double verticalDistance = end.y - start.y;
-        if (verticalDistance > 1.6) {
-            return false;
-        }
-
-        AxisAlignedBB startBlockBB = blockManager.getBlock(start).getAxisVecTuples().get(0).getBb();
+        AxisAlignedBB startBlockBB = startBlock.axisVecTuples.get(0).getBb();
         AxisAlignedBB endBlockBB = new AxisAlignedBB(end.copy(), new Vec3(end.x + 1, end.y + 1, end.z + 1));
+
         if (!(endBlock instanceof Air)) {
             endBlockBB = endBlock.getAxisVecTuples().get(0).getBb();
+        }
+
+        double endBlockY = endBlock.getHighestY() == Integer.MIN_VALUE ? end.y + 1 : endBlock.getHighestY();
+        double verticalDistance = endBlockY - startBlock.getHighestY();
+
+        if (movement.evalDistance(verticalDistance)) {
+            return false;
         }
 
         double horizontalDistance = startBlockBB.distanceBetween(endBlockBB);

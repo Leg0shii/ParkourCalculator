@@ -1,5 +1,6 @@
 package de.legoshi.parkourcalculator.gui.debug;
 
+import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
 import de.legoshi.parkourcalculator.simulation.Parkour;
@@ -16,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CoordinateScreen extends VBox implements Observer {
+public class CoordinateScreen extends VBox implements Observer, VersionDependent {
 
     private Movement movement;
     private int precision;
@@ -50,6 +51,7 @@ public class CoordinateScreen extends VBox implements Observer {
         updatePrecision();
     }
 
+    @Override
     public void apply(Parkour parkour) {
         this.movement = parkour.getMovement();
         System.out.println("CoordinateScree applied");

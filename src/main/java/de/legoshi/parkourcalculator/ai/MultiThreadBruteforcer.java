@@ -3,8 +3,6 @@ package de.legoshi.parkourcalculator.ai;
 import de.legoshi.parkourcalculator.Application;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
-import de.legoshi.parkourcalculator.simulation.environment.block.Air;
-import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -37,17 +35,15 @@ public class MultiThreadBruteforcer {
     private final List<InputGenerator> inputGenerators;
 
     private final AStarPathfinder aStarPathfinder;
-    private final BlockManager blockManager;
-    private ABlock startBlock;
-    @Setter
-    private ABlock endBlock;
+
+    @Setter private ABlock endBlock;
 
     private List<Vec3> boundaries;
 
     private List<InputTick> currentFastestSolution = new ArrayList<>();
     private final ConcurrentHashMap<Vec3, List<InputTick>> ticksMap = new ConcurrentHashMap<>();
 
-    public MultiThreadBruteforcer(Application application) {
+    public MultiThreadBruteforcer(Application application, List<Vec3> boundaries) {
         this.application = application;
         this.inputTickGUI = application.inputTickGUI;
         this.inputTickManager = application.inputTickManager;
@@ -55,12 +51,10 @@ public class MultiThreadBruteforcer {
         this.bruteforcers = new ArrayList<>();
         this.bruteforceOptions = new ArrayList<>();
         this.inputGenerators = new ArrayList<>();
-        this.boundaries = new ArrayList<>();
+        this.boundaries = boundaries;
 
         this.aStarPathfinder = new AStarPathfinder(application.currentParkour);
         this.aStarPathfinder.setColorize(true);
-
-        this.blockManager = application.currentParkour.getBlockManager();
     }
 
     public void addBruteforceOptions(BruteforceOptions bruteforceOptions) {
@@ -77,31 +71,17 @@ public class MultiThreadBruteforcer {
         this.inputGenerators.add(inputGenerator);
     }
 
-    public void calculateBoundaries() {
-        Vec3 playerStart = application.currentParkour.getPlayer().startPos.copy();
-        playerStart.subtract(0, 1, 0);
-
-        this.startBlock = blockManager.getBlock(playerStart);
-
-        Vec3 startPos = this.startBlock.getVec3();
-        Vec3 endPos = this.endBlock.getVec3();
-
-        List<ABlock> boundaryBlock = aStarPathfinder.findShortestPath(startPos, endPos);
-        this.boundaries = getBoundaries(boundaryBlock);
-    }
-
     public void buildBruteforcer() {
         for (int i = 0; i < BF_INSTANCES; i++) {
-            Bruteforcer bruteforcer = new Bruteforcer(application, endBlock);
-
-            int bruteforceOptionsIndex = (int) (Math.random() * bruteforceOptions.size());
-            bruteforcer.addBruteforceSettings(bruteforceOptions.get(bruteforceOptionsIndex));
-
-            int inputGeneratorIndex = (int) (Math.random() * inputGenerators.size());
-            bruteforcer.addInputGenerator(inputGenerators.get(inputGeneratorIndex));
-
+            Bruteforcer bruteforcer = new Bruteforcer(application, this, endBlock);
+            bruteforcer.addBruteforceSettings(bruteforceOptions.get(0));
+            bruteforcer.addInputGenerator(inputGenerators.get(0));
             bruteforcers.add(bruteforcer);
         }
+    }
+
+    public void calculateBoundaries(Vec3 start, Vec3 end) {
+        this.boundaries.addAll(aStarPathfinder.calculateBoundaries(start, end));
     }
 
     public void start() {
@@ -113,7 +93,6 @@ public class MultiThreadBruteforcer {
 
         mainService.submit(() -> {
             buildBruteforcer();
-            calculateBoundaries();
 
             for (Bruteforcer bruteforcer : bruteforcers) {
                 bruteforcer.setBoundaries(boundaries);
@@ -133,7 +112,7 @@ public class MultiThreadBruteforcer {
         });
     }
 
-    private void clearAll() {
+    public void clearAll() {
         if (mainService != null && !mainService.isShutdown()) {
             mainService.shutdownNow();
         }
@@ -144,7 +123,6 @@ public class MultiThreadBruteforcer {
             bfService.shutdownNow();
         }
 
-        this.blockManager.allBlocks.forEach(ABlock::resetAndApplyMaterialColor);
         this.bruteforcers.clear();
         this.ticksMap.clear();
         this.currentFastestSolution.clear();
@@ -212,16 +190,6 @@ public class MultiThreadBruteforcer {
         showResult();
     }
 
-    private List<Vec3> getBoundaries(List<ABlock> boundaries) {
-        List<Vec3> result = new ArrayList<>();
-        for (ABlock block : boundaries) {
-            if (!(block instanceof Air)) {
-                result.add(block.getVec3());
-            }
-        }
-        return result;
-    }
-
     private boolean isAllDone() {
         for (Bruteforcer bruteforcer : bruteforcers) {
             if (bruteforcer.isActive()) {
@@ -231,4 +199,9 @@ public class MultiThreadBruteforcer {
         return true;
     }
 
+    public void mergeFastestSolution(List<InputTick> inputTicks) {
+        currentFastestSolution.clear();
+        currentFastestSolution.addAll(inputTicks);
+        bruteforcers.forEach(bf -> bf.setCurrentFastestSolution(inputTicks));
+    }
 }

@@ -6,6 +6,7 @@ import de.legoshi.parkourcalculator.file.FileHandler;
 import de.legoshi.parkourcalculator.file.InputData;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
+import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.gui.debug.menu.BlockSettings;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
@@ -26,7 +27,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuGUI extends MenuBar {
+public class MenuGUI extends MenuBar implements VersionDependent {
 
     private final Window window;
     private final Application application;
@@ -79,6 +80,7 @@ public class MenuGUI extends MenuBar {
         application.configGUI.showConfigScreen();
     }
 
+    @Override
     public void apply(Parkour parkour) {
         this.parkour = parkour;
         this.movement = parkour.getMovement();

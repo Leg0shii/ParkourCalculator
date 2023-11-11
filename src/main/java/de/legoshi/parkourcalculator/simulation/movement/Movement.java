@@ -28,6 +28,10 @@ public abstract class Movement {
     }
 
     public abstract Movement clone();
+
+    public abstract int tierCalc(double height);
+
+    public abstract boolean evalDistance(double distance);
     
     public void calculateTick(InputTick inputTick) {
         
@@ -560,17 +564,6 @@ public abstract class Movement {
             if (pti.isJump()) playerTickInformation = pti;
         }
         return playerTickInformation;
-    }
-
-    public int tierCalc(double height) {
-        double sum = 1.24919;
-        double n = 0.00301;
-        int i;
-        for (i = 4; sum >= height; i++) {
-            sum = sum + n;
-            n = (n - 0.08) * 0.98;
-        }
-        return i+1;
     }
 
     public double approxHorizontalDist(int tier) {

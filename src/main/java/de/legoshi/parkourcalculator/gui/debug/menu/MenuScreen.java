@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
 import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
 import de.legoshi.parkourcalculator.simulation.Parkour;
@@ -10,7 +11,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
-public class MenuScreen extends VBox {
+public class MenuScreen extends VBox implements VersionDependent {
 
     private final Application application;
 
@@ -46,6 +47,7 @@ public class MenuScreen extends VBox {
         apply(application.currentParkour);
     }
 
+    @Override
     public void apply(Parkour parkour) {
         this.getChildren().clear();
 
@@ -54,6 +56,7 @@ public class MenuScreen extends VBox {
 
         if (this.bruteforceSettings != null) this.bruteforceSettings.reset();
         this.bruteforceSettings = new BruteforceSettings(application);
+        this.bruteforceSettings.apply(parkour);
 
         Accordion accordion = new Accordion();
         accordion.getPanes().addAll(versionSettings, blockSettings, playerSettings, screenSeetings,

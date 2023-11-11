@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.util;
 
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
+import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
 import de.legoshi.parkourcalculator.simulation.Parkour;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PositionVisualizer extends Observable implements Observer {
+public class PositionVisualizer extends Observable implements Observer, VersionDependent {
 
     private static final double ALLOWED_ERROR = 1e-15;
     private static final int MAX_ITERATIONS = 15;
@@ -54,6 +55,7 @@ public class PositionVisualizer extends Observable implements Observer {
         this.resetPlayer();
     }
 
+    @Override
     public void apply(Parkour parkour) {
         this.parkour = parkour;
         this.movement = parkour.getMovement();

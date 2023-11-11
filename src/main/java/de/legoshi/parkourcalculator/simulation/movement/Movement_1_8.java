@@ -17,6 +17,23 @@ public class Movement_1_8 extends Movement {
         return new Movement_1_8(player_1_8, blockManager);
     }
 
+    @Override
+    public int tierCalc(double height) {
+        double sum = 1.24919;
+        double n = 0.00301;
+        int i;
+        for (i = 4; sum >= height; i++) {
+            sum = sum + n;
+            n = (n - 0.08) * 0.98;
+        }
+        return i+1;
+    }
+
+    @Override
+    public boolean evalDistance(double distance) {
+        return distance > 1.24919;
+    }
+
     public void calculateTick(InputTick inputTick) {
         player.applyInput(inputTick);
 
