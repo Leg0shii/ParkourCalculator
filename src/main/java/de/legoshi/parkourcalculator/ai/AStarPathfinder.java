@@ -44,7 +44,7 @@ public class AStarPathfinder {
             }
             
             for (Vec3 neighborPosition : getNeighbors(currentNode)) {
-                if (neighborPosition.y < -21) continue; // shows importance of search boundaries for A*
+                if (neighborPosition.y < -26) continue; // shows importance of search boundaries for A*
                 boolean isGround = !(blockManager.getBlock(neighborPosition) instanceof Air);
 
                 if (!nodes.containsKey(neighborPosition)) {

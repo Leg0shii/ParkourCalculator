@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Bruteforcer implements Runnable {
 
-    @Getter private HashMap<Vec3, List<InputTick>> ticksMap = new HashMap<>();
+    @Getter private ConcurrentHashMap<Vec3, List<InputTick>> ticksMap = new ConcurrentHashMap<>();
     @Getter private List<InputTick> currentFastestSolution = new ArrayList<>();
     @Setter private List<Vec3> boundaries;
 
@@ -65,7 +65,7 @@ public class Bruteforcer implements Runnable {
     }
 
     public void syncMap(ConcurrentHashMap<Vec3, List<InputTick>> map) {
-        this.ticksMap = new HashMap<>(map);
+        this.ticksMap = new ConcurrentHashMap<>(map);
     }
 
     private void findPath() {
@@ -104,6 +104,7 @@ public class Bruteforcer implements Runnable {
         isActive = false;
     }
 
+    // TODO: exceptions in threads
     private void saveInputs(List<Vec3> boundaries, List<InputTick> inputTicks, int startIndex) {
         List<PlayerTickInformation> playerInfo = movement.updatePath(inputTicks);
         int count = startIndex == 0 ? 0 : startIndex - 1;
