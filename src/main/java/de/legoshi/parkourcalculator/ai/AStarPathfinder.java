@@ -9,6 +9,7 @@ import de.legoshi.parkourcalculator.simulation.movement.Movement;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
+import javafx.scene.chart.Axis;
 import javafx.scene.paint.Color;
 import lombok.Setter;
 
@@ -114,10 +115,11 @@ public class AStarPathfinder {
             for (int y = (int) position.y - 1; y <= position.y + 1; y++) {
                 for (int z = (int) position.z - 1; z <= position.z + 1; z++) {
                     if (x != position.x || y != position.y || z != position.z) {
-                        if (canNotStand(x, y + 1, z)) continue;
-                        if (canNotStand(x, y + 2, z)) continue;
+                        ABlock floor = blockManager.getBlock(x, y, z);
+                        if (canNotStand(y, x, y + 1, z)) continue;
+                        if (canNotStand(y, x, y + 2, z)) continue;
                         if (y == position.y - 1) {
-                            if (canNotStand(x, y + 3, z)) continue;
+                            if (canNotStand(y, x, y + 3, z)) continue;
                         }
 
                         Vec3 startPos = node.lastGroundPos.copy();
@@ -134,49 +136,35 @@ public class AStarPathfinder {
         return neighbors;
     }
 
-    private boolean canNotStand(int x, int y, int z) {
-        ABlock checkBlock = blockManager.getBlock(x, y, z);
-        if (checkBlock instanceof Air) return false;
+    public boolean canNotStand(int yOriginal, int xAbove, int yAbove, int zAbove) {
+        ABlock aboveBlock = blockManager.getBlock(xAbove, yAbove, zAbove);
+        if (aboveBlock instanceof Air) return false;
+        List<AxisAlignedBB> aboveBB = aboveBlock.getAxisVecTuples().stream().map(AxisVecTuple::getBb).toList();
 
-        // Assuming each block has a 1x1x1 size, we define the bounds of the checkBlock
-        double checkBlockMinX = x;
-        double checkBlockMinZ = z;
-        double checkBlockMaxX = x + 1.0;
-        double checkBlockMaxZ = z + 1.0;
+        ABlock checkBlock = blockManager.getBlock(xAbove, yOriginal, zAbove);
+        List<AxisAlignedBB> checkBB = Collections.singletonList(new AxisAlignedBB(0,0,0,0,0,0));
+        if (!(checkBlock instanceof Air)) {
+            checkBB = checkBlock.getAxisVecTuples().stream().map(AxisVecTuple::getBb).toList();
+        }
 
-        // The ranges that need to be covered by the surrounding blocks
-        double coveredRangeXMin = checkBlockMinX;
-        double coveredRangeXMax = checkBlockMaxX;
-        double coveredRangeZMin = checkBlockMinZ;
-        double coveredRangeZMax = checkBlockMaxZ;
+        if (checkBB.get(0).minX == aboveBB.get(0).minX && checkBB.get(0).maxX == aboveBB.get(0).maxX &&
+            checkBB.get(0).minZ == aboveBB.get(0).minZ && checkBB.get(0).maxZ == aboveBB.get(0).maxZ) {
+            return true;
+        }
 
-        // Check the surrounding blocks to expand the covered range
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                // Skip the center block where the entity is trying to stand
-                if (dx == 0 && dz == 0) continue;
-
-                ABlock otherBlock = blockManager.getBlock(x + dx, y, z + dz);
-                if (!(otherBlock instanceof Air)) {
-
-                    // Expand the covered range if this block extends beyond the current range
-                    for (AxisVecTuple tuple : otherBlock.getAxisVecTuples()) {
-                        AxisAlignedBB otherBlockBox = tuple.getBb();
-                        coveredRangeXMin = Math.min(coveredRangeXMin, otherBlockBox.minX);
-                        coveredRangeXMax = Math.max(coveredRangeXMax, otherBlockBox.maxX);
-                        coveredRangeZMin = Math.min(coveredRangeZMin, otherBlockBox.minZ);
-                        coveredRangeZMax = Math.max(coveredRangeZMax, otherBlockBox.maxZ);
+        final double playerHitBoxSize = 0.6;
+        for (AxisAlignedBB check : checkBB) {
+            for (double x = check.minX; x < check.maxX; x += 0.0625) {
+                for (double z = check.minZ; z < check.maxZ; z += 0.0625) {
+                    AxisAlignedBB playerStandBox = new AxisAlignedBB(x, yOriginal, z, x + playerHitBoxSize, yAbove+1, z + playerHitBoxSize);
+                    if (aboveBB.stream().noneMatch(playerStandBox::intersectsWith)) {
+                        return false;
                     }
                 }
             }
         }
 
-        // Determine if the covered ranges fully encompass the checkBlock's ranges
-        boolean isCoveredX = coveredRangeXMin <= checkBlockMinX && coveredRangeXMax >= checkBlockMaxX;
-        boolean isCoveredZ = coveredRangeZMin <= checkBlockMinZ && coveredRangeZMax >= checkBlockMaxZ;
-
-        // If both the x and z ranges are fully covered, the entity cannot stand here
-        return isCoveredX && isCoveredZ;
+        return true;
     }
 
     private boolean allowDistance(Vec3 start, Vec3 end) {
