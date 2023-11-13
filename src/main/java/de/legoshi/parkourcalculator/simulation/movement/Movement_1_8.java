@@ -40,6 +40,10 @@ public class Movement_1_8 extends Movement {
         handleWaterMovement();
         handleLavaMovement();
 
+        if (player.jumpTicks > 0) {
+            --player.jumpTicks;
+        }
+
         if (Math.abs(player.velocity.x) < 0.005D) player.velocity.x = 0.0D;
         if (Math.abs(player.velocity.y) < 0.005D) player.velocity.y = 0.0D;
         if (Math.abs(player.velocity.z) < 0.005D) player.velocity.z = 0.0D;

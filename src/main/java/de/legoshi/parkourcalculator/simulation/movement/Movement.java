@@ -1,6 +1,5 @@
 package de.legoshi.parkourcalculator.simulation.movement;
 
-import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
@@ -38,14 +37,17 @@ public abstract class Movement {
         if (player.JUMP) {
             if (player.WATER || player.LAVA) {
                 player.velocity.y += 0.03999999910593033D;
-            } else if (player.GROUND) {
+            } else if (player.GROUND && player.jumpTicks == 0) {
                 player.velocity.y = 0.42F;
                 if (player.SPRINT) {
                     float f = player.YAW * 0.017453292F;
                     player.velocity.x = player.velocity.x - MinecraftMathHelper.sin(f) * 0.2F;
                     player.velocity.z = player.velocity.z + MinecraftMathHelper.cos(f) * 0.2F;
                 }
+                player.jumpTicks = 10;
             }
+        } else {
+            player.jumpTicks = 0;
         }
         
         player.moveStrafe = player.moveStrafe * 0.98F;
