@@ -40,6 +40,7 @@ public abstract class Player {
     public float moveStrafe, moveForward;
 
     public float jumpMovementFactor = 0.02F;
+    public int jumpTicks;
 
     public boolean isCollidedHorizontally;
     public boolean isCollidedVertically;
@@ -124,6 +125,7 @@ public abstract class Player {
         isCollidedVertically = false;
         isCollided = false;
         slipperiness = Movement.Slipperiness.BLOCK;
+        jumpTicks = 0;
         updatePlayerBB();
         resetPositionToBB();
     }
