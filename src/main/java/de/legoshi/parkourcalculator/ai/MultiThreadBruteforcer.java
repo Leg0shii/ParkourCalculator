@@ -73,7 +73,7 @@ public class MultiThreadBruteforcer {
 
     public void buildBruteforcer() {
         for (int i = 0; i < BF_INSTANCES; i++) {
-            Bruteforcer bruteforcer = new Bruteforcer(application, this, endBlock);
+            Bruteforcer bruteforcer = new Bruteforcer(application, this, endBlock, i);
             bruteforcer.addBruteforceSettings(bruteforceOptions.get(0));
             bruteforcer.addInputGenerator(inputGenerators.get(0));
             bruteforcers.add(bruteforcer);
@@ -106,9 +106,9 @@ public class MultiThreadBruteforcer {
                 }
 
                 syncAllToMain();
-            }, 0, SYNC_INTERVAL, TimeUnit.SECONDS);
+            }, SYNC_INTERVAL, SYNC_INTERVAL, TimeUnit.SECONDS);
 
-            scheduler.scheduleAtFixedRate(this::showUpdate, 0, SHOW_INTERVAL, TimeUnit.MILLISECONDS);
+            scheduler.scheduleAtFixedRate(this::showUpdate, SHOW_INTERVAL, SHOW_INTERVAL, TimeUnit.MILLISECONDS);
         });
     }
 
@@ -135,7 +135,7 @@ public class MultiThreadBruteforcer {
 
         Random random = new Random();
         List<Map.Entry<Vec3, List<InputTick>>> entries = new ArrayList<>(ticksMap.entrySet());
-        if (entries.isEmpty()) entries = new ArrayList<>(bruteforcers.get(0).getTicksMap().entrySet());
+        if (entries.isEmpty()) entries = new ArrayList<>(bruteforcers.get((int) (Math.random()*bruteforcers.size())).getTicksMap().entrySet());
         if (!entries.isEmpty()) {
             Map.Entry<Vec3, List<InputTick>> randomEntry = entries.get(random.nextInt(entries.size()));
             List<InputTick> randomValue = randomEntry.getValue();

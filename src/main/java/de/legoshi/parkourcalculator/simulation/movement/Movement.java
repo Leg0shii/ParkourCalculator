@@ -127,10 +127,10 @@ public abstract class Movement {
                 player.velocity.z *= 0.5D;
                 player.velocity.y -= 0.02D;
                 
-                if (player.isCollidedHorizontally
+                /*if (player.isCollidedHorizontally
                     && this.isOffsetPositionInLiquid(player.velocity.x, player.velocity.y + 0.6000000238418579D - player.position.y + d1, player.velocity.z)) {
                     player.velocity.y = 0.30000001192092896D;
-                }
+                }*/
             }
         } else {
             double d0 = player.position.y;
@@ -162,10 +162,10 @@ public abstract class Movement {
             player.velocity.z *= (double) f1;
             player.velocity.y -= 0.02D;
             
-            if (player.isCollidedHorizontally
+            /*if (player.isCollidedHorizontally
                 && isOffsetPositionInLiquid(player.velocity.x, player.velocity.y + 0.6000000238418579D - player.position.y + d0, player.velocity.z)) {
                 player.velocity.y = 0.30000001192092896D;
-            }
+            }*/
         }
         
         player.jumpMovementFactor = 0.02F;
@@ -365,11 +365,11 @@ public abstract class Movement {
         }
         
         if (!player.WATER) {
-            handleWaterMovement();
+            //handleWaterMovement();
         }
         
         if (!player.LAVA) {
-            handleLavaMovement();
+            //handleLavaMovement();
         }
         
         // if movedX != updatedX -> motionX = 0
@@ -436,11 +436,11 @@ public abstract class Movement {
     
     void handleWaterMovement() {
         // this.fire = 0;
-        player.WATER = handleMaterialAcceleration(player.playerBB.expand(0.0D, -0.4000000059604645D, 0.0D).contract(0.001D, 0.001D, 0.001D));
+        //player.WATER = handleMaterialAcceleration(player.playerBB.expand(0.0D, -0.4000000059604645D, 0.0D).contract(0.001D, 0.001D, 0.001D));
     }
     
     void handleLavaMovement() {
-        player.LAVA = handleMaterialAcceleration(player.playerBB.expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D));
+        //player.LAVA = handleMaterialAcceleration(player.playerBB.expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D));
     }
     
     private boolean handleMaterialAcceleration(AxisAlignedBB bb) {

@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Bruteforcer implements Runnable {
 
-    @Getter private ConcurrentHashMap<Vec3, List<InputTick>> ticksMap = new ConcurrentHashMap<>();
+    @Getter private HashMap<Vec3, List<InputTick>> ticksMap = new HashMap<>();
     @Getter private List<InputTick> currentFastestSolution = new ArrayList<>();
     @Setter private List<Vec3> boundaries;
 
@@ -26,6 +26,9 @@ public class Bruteforcer implements Runnable {
     private InputGenerator inputGenerator;
     @Getter private boolean isActive;
     private long startTime;
+
+    private int id;
+    private boolean found;
 
     private int iterationCount;
     private long iterationTimeStart;
@@ -35,11 +38,12 @@ public class Bruteforcer implements Runnable {
     private final Movement movement;
     private final ABlock endBlock;
 
-    public Bruteforcer(Application application, MultiThreadBruteforcer multiThreadBruteforcer, ABlock endBlock) {
+    public Bruteforcer(Application application, MultiThreadBruteforcer multiThreadBruteforcer, ABlock endBlock, int id) {
         this.instance = multiThreadBruteforcer;
         this.movement = application.currentParkour.getMovement().clone();
         this.blockManager = application.currentParkour.getBlockManager();
         this.endBlock = endBlock;
+        this.id = id;
     }
 
     public void addBruteforceSettings(BruteforceOptions bruteforceOptions) {
@@ -52,8 +56,12 @@ public class Bruteforcer implements Runnable {
 
     @Override
     public void run() {
-        this.clearBruteforce();
-        this.findPath();
+        try {
+            this.clearBruteforce();
+            this.findPath();
+        } catch (Exception e) {
+            System.out.println(this + " crashed...");
+        }
     }
 
     private void clearBruteforce() {
@@ -64,8 +72,8 @@ public class Bruteforcer implements Runnable {
         this.currentFastestSolution.clear();
     }
 
-    public void syncMap(ConcurrentHashMap<Vec3, List<InputTick>> map) {
-        this.ticksMap = new ConcurrentHashMap<>(map);
+    public synchronized void syncMap(ConcurrentHashMap<Vec3, List<InputTick>> map) {
+        this.ticksMap = new HashMap<>(map);
     }
 
     private void findPath() {
@@ -104,7 +112,6 @@ public class Bruteforcer implements Runnable {
         isActive = false;
     }
 
-    // TODO: exceptions in threads
     private void saveInputs(List<Vec3> boundaries, List<InputTick> inputTicks, int startIndex) {
         List<PlayerTickInformation> playerInfo = movement.updatePath(inputTicks);
         int count = startIndex == 0 ? 0 : startIndex - 1;
@@ -139,10 +146,14 @@ public class Bruteforcer implements Runnable {
 
             if (!(possibleLB instanceof Air) && possibleLB.getVec3().equals(endBlock.getVec3())) {
                 List<InputTick> shrinkList = new ArrayList<>(inputTicks.subList(0, count));
+                if (!found) {
+                    System.out.println("Bruteforcer " + id + " found SOLUTION! (" + (System.currentTimeMillis() - startTime)/1000 + "s)");
+                    found = true;
+                }
                 if ((currentFastestSolution.isEmpty() || shrinkList.size() < currentFastestSolution.size())) {
                     instance.mergeFastestSolution(shrinkList);
-                    System.out.println("New Solution with " + currentFastestSolution.size() + " ticks. Found in: "
-                            + ((System.currentTimeMillis() - startTime) / 1000) + "s");
+                    //System.out.println("New Solution with " + currentFastestSolution.size() + " ticks. Found in: "
+                    //        + ((System.currentTimeMillis() - startTime) / 1000) + "s");
                 }
             }
 

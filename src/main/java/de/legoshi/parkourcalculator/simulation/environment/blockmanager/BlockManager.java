@@ -1,43 +1,70 @@
 package de.legoshi.parkourcalculator.simulation.environment.blockmanager;
 
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
-import de.legoshi.parkourcalculator.util.AxisAlignedBB;
-import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.shape.Box;
 
 import java.util.*;
 
-public abstract class BlockManager implements Observer {
+public abstract class BlockManager implements Observer, Cloneable {
+
+    private static final int OFFSET = 250; // Adjust this based on the expected range of x, y, z
+    private static final int SIZE = 500; // This should be at least 2 * OFFSET
+
+    public ABlock[][][] blocks = new ABlock[SIZE][SIZE][SIZE];
+    public HashMap<Box, ABlock> boxBlocks = new HashMap<>();
 
     public ABlock currentBlock = new StandardBlock();
     public List<ABlock> registeredBlocks = new ArrayList<>();
-    
-    // x, y, z
-    public HashMap<Integer, HashMap<Integer, HashMap<Integer, ABlock>>> aBlocks = new HashMap<>();
-    public HashMap<Box, ABlock> boxBlocks = new HashMap<>();
     public List<ABlock> allBlocks = new ArrayList<>();
-    
-    public abstract BlockManager clone();
-    
-    public ABlock getBlock(Vec3 vec3) {
-        int x = (int) Math.floor(vec3.x);
-        int y = (int) Math.floor(vec3.y);
-        int z = (int) Math.floor(vec3.z);
-        return getBlock(x, y, z);
+
+    // other methods and fields remain unchanged
+
+    private int toInternalIndex(int coordinate) {
+        return coordinate + OFFSET;
     }
-    
+
+    public ABlock getBlock(Vec3 vec3) {
+        return getBlock((int) vec3.x, (int) vec3.y, (int) vec3.z);
+    }
+
     public ABlock getBlock(int x, int y, int z) {
-        if (aBlocks.containsKey(x)) {
-            HashMap<Integer, HashMap<Integer, ABlock>> yMap = aBlocks.get(x);
-            if (yMap.containsKey(y)) {
-                HashMap<Integer, ABlock> zMap = yMap.get(y);
-                if (zMap.containsKey(z)) {
-                    return zMap.get(z);
-                }
-            }
+        try {
+            ABlock block = blocks[toInternalIndex(x)][toInternalIndex(y)][toInternalIndex(z)];
+            return block == null ? Air.getInstance() : block;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null; // or handle differently
         }
-        return new Air();
+    }
+
+    public void addBlock(ABlock block) {
+        int x = toInternalIndex((int) block.getVec3().x);
+        int y = toInternalIndex((int) block.getVec3().y);
+        int z = toInternalIndex((int) block.getVec3().z);
+
+        try {
+            blocks[x][y][z] = block;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // handle the case where the block is outside the array bounds
+        }
+
+        allBlocks.add(block);
+        block.getBoxesArrayList().forEach(box -> boxBlocks.put(box, block));
+    }
+
+    public void removeBlock(ABlock block) {
+        int x = toInternalIndex((int) block.getVec3().x);
+        int y = toInternalIndex((int) block.getVec3().y);
+        int z = toInternalIndex((int) block.getVec3().z);
+
+        try {
+            blocks[x][y][z] = null;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // handle the case where the block is outside the array bounds
+        }
+
+        block.getBoxesArrayList().forEach(box -> boxBlocks.remove(box));
+        allBlocks.remove(block);
     }
     
     public List<ABlock> getAllBlocks() {
@@ -51,45 +78,29 @@ public abstract class BlockManager implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         List<Object> objects = (List<Object>) arg;
-        if (objects.get(0).equals("add")) addBlock((ABlock) objects.get(1));
-        else removeBlock((ABlock) objects.get(1));
+        if (objects.get(0).equals("add")) {
+            addBlock((ABlock) objects.get(1));
+        } else {
+            removeBlock((ABlock) objects.get(1));
+        }
     }
 
     public void updateCurrentBlock(ABlock aBlock) {
         currentBlock = aBlock;
     }
 
-    public void addBlock(ABlock block) {
-        int x = (int) block.getVec3().x;
-        int y = (int) block.getVec3().y;
-        int z = (int) block.getVec3().z;
-        
-        aBlocks
-            .computeIfAbsent(x, k -> new HashMap<>())
-            .computeIfAbsent(y, k -> new HashMap<>())
-            .put(z, block);
-        
-        block.getBoxesArrayList().forEach(box -> boxBlocks.put(box, block));
-        allBlocks.add(block);
-    }
-    
-    public void removeBlock(ABlock block) {
-        int x = (int) block.getVec3().x;
-        int y = (int) block.getVec3().y;
-        int z = (int) block.getVec3().z;
-        
-        if (aBlocks.containsKey(x) && aBlocks.get(x).containsKey(y)) {
-            aBlocks.get(x).get(y).remove(z);
-            if (aBlocks.get(x).get(y).isEmpty()) {
-                aBlocks.get(x).remove(y);
-                if (aBlocks.get(x).isEmpty()) {
-                    aBlocks.remove(x);
-                }
-            }
-        }
-    
-        block.getBoxesArrayList().forEach(box -> boxBlocks.remove(box));
-        allBlocks.remove(block);
+    public void clear() {
+        allBlocks.clear();
+        boxBlocks.clear();
+        blocks = new ABlock[SIZE][SIZE][SIZE];
     }
 
+    @Override
+    public BlockManager clone() {
+        try {
+            return (BlockManager) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

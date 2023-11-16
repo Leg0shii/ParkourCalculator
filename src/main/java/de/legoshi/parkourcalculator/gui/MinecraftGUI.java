@@ -92,7 +92,7 @@ public class MinecraftGUI extends Observable implements VersionDependent {
         this.blockManager = parkour.getBlockManager();
         this.previewBlockBoxes = new ArrayList<>();
 
-        if (blockManager.aBlocks.isEmpty()) {
+        if (blockManager.blocks[0][0][0] == null) {
             addStartingBlock();
             return;
         }
@@ -301,7 +301,7 @@ public class MinecraftGUI extends Observable implements VersionDependent {
 
     public void clearScreen() {
         group.getChildren().removeIf(node -> !(node instanceof Group)); // remove all blocks, keep path group
-        blockManager.aBlocks = new HashMap<>();
+        blockManager.clear();
     }
 
     public void addObserver(Observer observer) {
