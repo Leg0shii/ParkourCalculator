@@ -122,7 +122,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
         this.cancelButton = addButton(new Button("Cancel"), 1, 17, 1);
         this.resetAllButton = addButton(new Button("Reset ALL"), 2, 17, 2);
         
-	switchWindowedState();
+        switchWindowedState();
         registerNodes();
         setContent(gridPane);
     }
