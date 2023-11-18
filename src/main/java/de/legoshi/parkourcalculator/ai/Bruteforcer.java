@@ -5,6 +5,7 @@ import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.environment.block.Air;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.movement.Movement;
+import de.legoshi.parkourcalculator.simulation.player.Player;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
@@ -27,11 +28,9 @@ public class Bruteforcer implements Runnable {
     @Getter private boolean isActive;
     private long startTime;
 
-    private int id;
-    private boolean found;
-
-    private int iterationCount;
-    private long iterationTimeStart;
+    @Getter private int iterationCount;
+    @Setter private int lowestBound;
+    @Setter private int highestBound;
 
     private final MultiThreadBruteforcer instance;
     private final BlockManager blockManager;
@@ -43,42 +42,21 @@ public class Bruteforcer implements Runnable {
         this.movement = application.currentParkour.getMovement().clone();
         this.blockManager = application.currentParkour.getBlockManager();
         this.endBlock = endBlock;
-        this.id = id;
-    }
-
-    public void addBruteforceSettings(BruteforceOptions bruteforceOptions) {
-        this.bruteforceOptions = bruteforceOptions;
-    }
-
-    public void addInputGenerator(InputGenerator inputGenerator) {
-        this.inputGenerator = inputGenerator;
     }
 
     @Override
     public void run() {
         try {
             this.clearBruteforce();
+            this.isActive = true;
             this.findPath();
+            this.isActive = false;
         } catch (Exception e) {
-            System.out.println(this + " crashed...");
+            e.printStackTrace();
         }
     }
 
-    private void clearBruteforce() {
-        this.iterationCount = 0;
-        this.iterationTimeStart = System.currentTimeMillis();
-        this.startTime = System.currentTimeMillis();
-        this.ticksMap.clear();
-        this.currentFastestSolution.clear();
-    }
-
-    public synchronized void syncMap(ConcurrentHashMap<Vec3, List<InputTick>> map) {
-        this.ticksMap = new HashMap<>(map);
-    }
-
     private void findPath() {
-        isActive = true;
-
         outer: for (int k = 0; k < bruteforceOptions.getRepetitions(); k++) {
             List<InputTick> nthEntry = getNthElement();
             for (int i = 0; i < bruteforceOptions.getNumberOfTrials(); i++) {
@@ -102,14 +80,28 @@ public class Bruteforcer implements Runnable {
                     break outer;
                 }
             }
-
-            if (iterationTimeStart + bruteforceOptions.getIntervalDuration()*1000 < System.currentTimeMillis()) {
-                iterationTimeStart = System.currentTimeMillis();
-                iterationCount++;
-            }
         }
+    }
 
-        isActive = false;
+    public void addBruteforceSettings(BruteforceOptions bruteforceOptions) {
+        this.bruteforceOptions = bruteforceOptions;
+    }
+
+    public void addInputGenerator(InputGenerator inputGenerator) {
+        this.inputGenerator = inputGenerator;
+    }
+
+    private void clearBruteforce() {
+        this.iterationCount = 0;
+        this.lowestBound = 0;
+        this.highestBound = bruteforceOptions.getGenerateInterval();
+        this.startTime = System.currentTimeMillis();
+        this.ticksMap.clear();
+        this.currentFastestSolution.clear();
+    }
+
+    public synchronized void syncMap(ConcurrentHashMap<Vec3, List<InputTick>> map) {
+        this.ticksMap = new HashMap<>(map);
     }
 
     private void saveInputs(List<Vec3> boundaries, List<InputTick> inputTicks, int startIndex) {
@@ -146,14 +138,10 @@ public class Bruteforcer implements Runnable {
 
             if (!(possibleLB instanceof Air) && possibleLB.getVec3().equals(endBlock.getVec3())) {
                 List<InputTick> shrinkList = new ArrayList<>(inputTicks.subList(0, count));
-                if (!found) {
-                    System.out.println("Bruteforcer " + id + " found SOLUTION! (" + (System.currentTimeMillis() - startTime)/1000 + "s)");
-                    found = true;
-                }
                 if ((currentFastestSolution.isEmpty() || shrinkList.size() < currentFastestSolution.size())) {
                     instance.mergeFastestSolution(shrinkList);
-                    //System.out.println("New Solution with " + currentFastestSolution.size() + " ticks. Found in: "
-                    //        + ((System.currentTimeMillis() - startTime) / 1000) + "s");
+                    System.out.println("New Solution with " + currentFastestSolution.size() + " ticks. Found in: "
+                            + ((System.currentTimeMillis() - startTime)) + "ms");
                 }
             }
 
@@ -192,29 +180,11 @@ public class Bruteforcer implements Runnable {
         return false;
     }
 
+    public void setIterationCount(int iterationCount) {
+        this.iterationCount = iterationCount;
+    }
+
     private List<InputTick> getNthElement() {
-        int lowestBound;
-        int highestBound;
-
-        if (bruteforceOptions.isWindowed()) {
-            lowestBound = iterationCount * bruteforceOptions.getGenerateInterval();
-            highestBound = lowestBound + bruteforceOptions.getGenerateInterval();
-            if (iterationCount > 0) lowestBound = lowestBound - bruteforceOptions.getOverlap();
-
-            if (!currentFastestSolution.isEmpty()) {
-                lowestBound = Math.max(0, currentFastestSolution.size() - bruteforceOptions.getGenerateInterval());
-                highestBound = currentFastestSolution.size();
-            }
-        } else {
-            highestBound = 0;
-            for (List<InputTick> value : ticksMap.values()) {
-                if (value.size() > highestBound) {
-                    highestBound = value.size();
-                }
-            }
-            lowestBound = highestBound - Math.min(highestBound, bruteforceOptions.getRecTicks());
-        }
-
         List<InputTick> selectedValue = null;
         Random random = new Random();
 
@@ -228,19 +198,6 @@ public class Bruteforcer implements Runnable {
         if (!eligibleValues.isEmpty()) {
             int randomIndex = random.nextInt(eligibleValues.size());
             selectedValue = eligibleValues.get(randomIndex);
-        }
-
-        if (selectedValue == null) {
-            int highestValue = 0;
-            for (List<InputTick> value : ticksMap.values()) {
-                if (value.size() > highestValue) {
-                    highestValue = value.size();
-                }
-            }
-            if (highestValue <= lowestBound && iterationCount > 0) {
-                iterationTimeStart = System.currentTimeMillis();
-                iterationCount--;
-            }
         }
 
         return selectedValue;

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BruteforceSettings extends TitledPane implements VersionDependent {
-    
+
     private MultiThreadBruteforcer multiThreadBruteforcer;
     private final Application application;
     private final GridPane gridPane;
@@ -31,8 +31,10 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     public BlockManager blockManager;
     public Player player;
 
-    @Getter public ABlock startBlock;
-    @Getter public ABlock endBlock;
+    @Getter
+    public ABlock startBlock;
+    @Getter
+    public ABlock endBlock;
 
     private final Button setStartBlockButton;
     private final Button setEndBlockButton;
@@ -41,11 +43,11 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     private final Button preComputePathButton;
     private final Button addPathButton;
     private final Button removePathButton;
-    
+
     private final Button bruteforceButton;
     private final Button cancelButton;
     private final Button resetAllButton;
-    
+
     private final TextField numberOfTrialsField;
     private final TextField recTicksField;
     private final TextField ticksPerTrialField;
@@ -59,7 +61,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     private final TextField intervalDurationField;
     private final TextField intervalSizeField;
     private final TextField overlapField;
-    
+
     private final TextField wField;
     private final TextField aField;
     private final TextField sField;
@@ -68,7 +70,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     private final TextField sneakField;
     private final TextField sprintField;
     private final TextField facingField;
-    
+
     public BruteforceSettings(Application application) {
         this.application = application;
         this.blockManager = application.currentParkour.getBlockManager();
@@ -86,26 +88,26 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
 
         this.numberOfTrialsField = addPair("Number Of Trials", new TextField("100"), 0, 1, 2);
         this.ticksPerTrialField = addPair("Ticks Per Trial:", new TextField("20"), 0, 1, 3);
-        this.repetitionsField = addPair("Repetitions:", new TextField("10000"), 0, 1, 4);
+        this.repetitionsField = addPair("Repetitions:", new TextField("1000000"), 0, 1, 4);
         this.dimensionField = addPair("Dimension:", new TextField("0.5"), 0, 1, 5);
         this.stopOnFindField = addPair("Stop On Find:", new CheckBox(), 0, 1, 6);
         this.windowedCB = addPair("Windowed:", new CheckBox(), 0, 1, 7);
         this.windowedCB.setSelected(true);
-        this.intervalDurationField = addPair("Interval Duration:", new TextField("3600"), 0, 1, 8);
-        this.intervalSizeField = addPair("Interval Size:", new TextField("100"), 0, 1, 9);
+        this.intervalDurationField = addPair("Interval Duration:", new TextField("15"), 0, 1, 8);
+        this.intervalSizeField = addPair("Interval Size:", new TextField("30"), 0, 1, 9);
         this.intervallOfLastShownField = addPair("Show Path:", new TextField("100"), 0, 1, 10);
 
         this.recTicksField = addPair("Recursive:", new TextField("100"), 2, 3, 2);
         this.syncField = addPair("Sync (s):", new TextField("5"), 2, 3, 3);
-        this.instancesField = addPair("Instance:", new TextField("1"), 2, 3, 4);
-        this.overlapField = addPair("Overlap (t):", new TextField("35"), 2, 3, 9);
+        this.instancesField = addPair("Instance:", new TextField("5"), 2, 3, 4);
+        this.overlapField = addPair("Overlap (t):", new TextField("20"), 2, 3, 9);
 
         this.wField = addPair("W-%:", new TextField("100"), 0, 1, 11);
         this.aField = addPair("A-%:", new TextField("0"), 0, 1, 12);
         this.sField = addPair("S-%:", new TextField("0"), 0, 1, 13);
         this.dField = addPair("D-%:", new TextField("0"), 0, 1, 14);
 
-        this.jumpField = addPair("Jump-%:", new TextField("20"), 2, 3, 11);
+        this.jumpField = addPair("Jump-%:", new TextField("50"), 2, 3, 11);
         this.sneakField = addPair("Sneak-%:", new TextField("0"), 2, 3, 12);
         this.sprintField = addPair("Sprint-%:", new TextField("100"), 2, 3, 13);
         this.facingField = addPair("Yaw-%:", new TextField("25"), 2, 3, 14);
@@ -155,7 +157,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
         this.boundaries.forEach(block -> blockManager.getBlock(block).resetAndApplyMaterialColor());
         this.boundaries.clear();
     }
-    
+
     public void reset() {
         if (startBlock != null) {
             this.startBlock.resetAndApplyMaterialColor();
@@ -173,7 +175,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
         removePathBlocks();
         multiThreadBruteforcer.clearAll();
     }
-    
+
     private void registerNodes() {
         setStartBlockButton.setOnAction(event -> onStartBlockClick());
         setEndBlockButton.setOnAction(event -> onEndBlockClick());
@@ -220,7 +222,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
             int intervallDuration = Integer.parseInt(intervalDurationField.getText());
             int generateIntervall = Integer.parseInt(intervalSizeField.getText());
             int overlap = Integer.parseInt(overlapField.getText());
-            
+
             double w = getProbFromText(wField);
             double a = getProbFromText(aField);
             double s = getProbFromText(sField);
@@ -232,7 +234,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
 
             BruteforceOptions bruteforceOptions = new BruteforceOptions();
             bruteforceOptions.apply(numberOfTrials, ticksPerTrial, repetitions, dimension, stopOnFind, intervallOfLastShown,
-                    recTicks, instances, sync, windowed, intervallDuration,generateIntervall, overlap);
+                    recTicks, instances, sync, windowed, intervallDuration, generateIntervall, overlap);
 
             InputGenerator inputGenerator = new InputGenerator();
             inputGenerator.apply(w, a, s, d, jump, sprint, sneak, fChange);
@@ -259,7 +261,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     private void addPathBlock() {
         application.minecraftGUI.setPathBlock();
     }
-    
+
     private void onEndBlockClick() {
         application.minecraftGUI.setEndBlock();
     }
@@ -267,7 +269,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     private void onStartBlockClick() {
         application.minecraftGUI.setStartBlock();
     }
-    
+
     private void cancelBruteforce() {
         multiThreadBruteforcer.cancelBruteforce();
     }
@@ -285,7 +287,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     }
 
     private double getProbFromText(TextField field) {
-        return field.getText().isEmpty() ? 0.0 : Double.parseDouble(field.getText())/100;
+        return field.getText().isEmpty() ? 0.0 : Double.parseDouble(field.getText()) / 100;
     }
 
 }
