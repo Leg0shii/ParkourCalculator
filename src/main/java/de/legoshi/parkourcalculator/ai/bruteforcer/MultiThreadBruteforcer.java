@@ -1,6 +1,11 @@
-package de.legoshi.parkourcalculator.ai;
+package de.legoshi.parkourcalculator.ai.bruteforcer;
 
 import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
+import de.legoshi.parkourcalculator.simulation.Parkour;
+import de.legoshi.parkourcalculator.ai.AStarPathfinder;
+import de.legoshi.parkourcalculator.ai.BruteforceOptions;
+import de.legoshi.parkourcalculator.ai.InputGenerator;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
@@ -8,17 +13,18 @@ import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.application.Platform;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class MultiThreadBruteforcer {
 
+    private static final Logger logger = LogManager.getLogger(MultiThreadBruteforcer.class.getName());
     private long SHOW_INTERVAL;
     private int SYNC_INTERVAL;
+    private long TICK_INTERVAL;
     private int BF_INSTANCES;
     private boolean STOP_ON_FIND = false;
 
@@ -26,7 +32,7 @@ public class MultiThreadBruteforcer {
     private ExecutorService mainService;
     private ExecutorService bfService = Executors.newCachedThreadPool();
 
-    private final Application application;
+    private final Parkour parkour;
     private final InputTickGUI inputTickGUI;
     private final InputTickManager inputTickManager;
 
@@ -38,13 +44,16 @@ public class MultiThreadBruteforcer {
 
     @Setter private ABlock endBlock;
 
-    private List<Vec3> boundaries;
+    private final List<Vec3> boundaries;
+    private int lowestBound;
+    private int highestBound;
+    private int iterationCount;
 
     private List<InputTick> currentFastestSolution = new ArrayList<>();
     private final ConcurrentHashMap<Vec3, List<InputTick>> ticksMap = new ConcurrentHashMap<>();
 
     public MultiThreadBruteforcer(Application application, List<Vec3> boundaries) {
-        this.application = application;
+        this.parkour = application.getParkour();
         this.inputTickGUI = application.inputTickGUI;
         this.inputTickManager = application.inputTickManager;
 
@@ -53,7 +62,7 @@ public class MultiThreadBruteforcer {
         this.inputGenerators = new ArrayList<>();
         this.boundaries = boundaries;
 
-        this.aStarPathfinder = new AStarPathfinder(application.currentParkour);
+        this.aStarPathfinder = new AStarPathfinder(application.getParkour());
         this.aStarPathfinder.setColorize(true);
     }
 
@@ -64,6 +73,7 @@ public class MultiThreadBruteforcer {
         this.BF_INSTANCES = bruteforceOptions.getBruteforceInstances();
         this.SYNC_INTERVAL = bruteforceOptions.getSyncInterval();
         this.STOP_ON_FIND = bruteforceOptions.isStopOnFind();
+        this.TICK_INTERVAL = bruteforceOptions.getIntervalDuration();
     }
 
     public void addInputGenerator(InputGenerator inputGenerator) {
@@ -71,45 +81,13 @@ public class MultiThreadBruteforcer {
         this.inputGenerators.add(inputGenerator);
     }
 
-    public void buildBruteforcer() {
-        for (int i = 0; i < BF_INSTANCES; i++) {
-            Bruteforcer bruteforcer = new Bruteforcer(application, this, endBlock);
-            bruteforcer.addBruteforceSettings(bruteforceOptions.get(0));
-            bruteforcer.addInputGenerator(inputGenerators.get(0));
-            bruteforcers.add(bruteforcer);
-        }
-    }
-
     public void calculateBoundaries(Vec3 start, Vec3 end) {
         this.boundaries.addAll(aStarPathfinder.calculateBoundaries(start, end));
     }
 
-    public void start() {
-        clearAll();
-
-        mainService = Executors.newSingleThreadExecutor();
-        scheduler = Executors.newSingleThreadScheduledExecutor();
-        bfService = Executors.newCachedThreadPool();
-
-        mainService.submit(() -> {
-            buildBruteforcer();
-
-            for (Bruteforcer bruteforcer : bruteforcers) {
-                bruteforcer.setBoundaries(boundaries);
-                bfService.submit(bruteforcer);
-            }
-
-            scheduler.scheduleAtFixedRate(() -> {
-                if ((STOP_ON_FIND && !currentFastestSolution.isEmpty()) || isAllDone()) {
-                    Platform.runLater(this::endRun);
-                    return;
-                }
-
-                syncAllToMain();
-            }, 0, SYNC_INTERVAL, TimeUnit.SECONDS);
-
-            scheduler.scheduleAtFixedRate(this::showUpdate, 0, SHOW_INTERVAL, TimeUnit.MILLISECONDS);
-        });
+    public void cancelBruteforce() {
+        bruteforcers.forEach(Bruteforcer::cancelBruteforce);
+        endRun();
     }
 
     public void clearAll() {
@@ -123,10 +101,73 @@ public class MultiThreadBruteforcer {
             bfService.shutdownNow();
         }
 
+        this.lowestBound = 0;
+        this.highestBound = 0;
+        this.iterationCount = 0;
         this.bruteforcers.clear();
         this.ticksMap.clear();
         this.currentFastestSolution.clear();
         Platform.runLater(this.inputTickGUI::resetTicks);
+    }
+
+    public void start() {
+        clearAll();
+
+        mainService = Executors.newSingleThreadExecutor();
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        bfService = Executors.newCachedThreadPool();
+
+        mainService.submit(() -> {
+            try {
+                buildBruteforcer();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            for (Bruteforcer bruteforcer : bruteforcers) {
+                bruteforcer.setBoundaries(boundaries);
+                bfService.submit(bruteforcer);
+            }
+
+            scheduler.scheduleAtFixedRate(() -> {
+                if ((STOP_ON_FIND && !currentFastestSolution.isEmpty()) || isAllDone()) {
+                    Platform.runLater(this::endRun);
+                }
+            }, 1, 1, TimeUnit.SECONDS);
+
+            scheduler.scheduleAtFixedRate(() -> {
+                this.syncAllToMain();
+                if (setIterationCount()) {
+                    bruteforcers.forEach(bf -> {
+                        bf.setIterationCount(iterationCount);
+                        bf.setLowestBound(lowestBound);
+                        bf.setHighestBound(highestBound);
+                    });
+                }
+            }, TICK_INTERVAL, TICK_INTERVAL, TimeUnit.SECONDS);
+
+            scheduler.scheduleAtFixedRate(this::syncAllToMain, SYNC_INTERVAL, SYNC_INTERVAL, TimeUnit.SECONDS);
+            scheduler.scheduleAtFixedRate(this::showUpdate, SHOW_INTERVAL, SHOW_INTERVAL, TimeUnit.MILLISECONDS);
+        });
+    }
+
+    protected void mergeFastestSolution(List<InputTick> inputTicks) {
+        currentFastestSolution.clear();
+        currentFastestSolution.addAll(inputTicks);
+        bruteforcers.forEach(bf -> bf.setCurrentFastestSolution(inputTicks));
+    }
+
+    private void buildBruteforcer() {
+        if (bruteforceOptions.isEmpty() || inputGenerators.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < BF_INSTANCES; i++) {
+            Bruteforcer bruteforcer = new Bruteforcer(parkour, this, endBlock);
+            bruteforcer.setBruteforceOptions(bruteforceOptions.get(0));
+            bruteforcer.setInputGenerator(inputGenerators.get(0));
+            bruteforcers.add(bruteforcer);
+        }
     }
 
     private void showUpdate() {
@@ -135,20 +176,25 @@ public class MultiThreadBruteforcer {
 
         Random random = new Random();
         List<Map.Entry<Vec3, List<InputTick>>> entries = new ArrayList<>(ticksMap.entrySet());
-        if (entries.isEmpty()) entries = new ArrayList<>(bruteforcers.get(0).getTicksMap().entrySet());
+        if (entries.isEmpty()) {
+            int randIndex = (int) (Math.random() * bruteforcers.size());
+            Set<Map.Entry<Vec3, List<InputTick>>> randomValue = bruteforcers.get(randIndex).getTicksMap().entrySet();
+            entries = new ArrayList<>(randomValue);
+        }
         if (!entries.isEmpty()) {
             Map.Entry<Vec3, List<InputTick>> randomEntry = entries.get(random.nextInt(entries.size()));
             List<InputTick> randomValue = randomEntry.getValue();
             Platform.runLater(() -> {
-                inputTickGUI.resetTicks();
+                inputTickGUI.clearAllTicks();
                 inputTickManager.setInputTicks(randomValue);
             });
         }
     }
 
     private void showResult() {
+        logger.debug("Setting current fastest solution: " + currentFastestSolution.size());
         Platform.runLater(() -> {
-            inputTickGUI.resetTicks();
+            inputTickGUI.clearAllTicks();
             inputTickManager.setInputTicks(currentFastestSolution);
             inputTickGUI.importTicks(currentFastestSolution);
         });
@@ -172,11 +218,44 @@ public class MultiThreadBruteforcer {
         bruteforcers.forEach(bf -> bf.syncMap(ticksMap));
     }
 
-    public void cancelBruteforce() {
-        for (Bruteforcer bruteforcer : bruteforcers) {
-            bruteforcer.cancelBruteforce();
+    private boolean setIterationCount() {
+        int prevValue = iterationCount;
+        iterationCount++;
+
+        int highestValue = 0;
+        for (List<InputTick> value : ticksMap.values()) {
+            if (value.size() > highestValue) {
+                highestValue = value.size();
+            }
         }
-        endRun();
+        if (highestValue <= lowestBound && iterationCount > 0) {
+            iterationCount--;
+        }
+
+        calculateTickBounds();
+        return iterationCount != prevValue;
+    }
+
+    private void calculateTickBounds() {
+        BruteforceOptions bruteforceOptions = this.bruteforceOptions.get(0);
+        if (bruteforceOptions.isWindowed()) {
+            lowestBound = iterationCount * bruteforceOptions.getGenerateInterval();
+            highestBound = lowestBound + bruteforceOptions.getGenerateInterval();
+            if (iterationCount > 0) lowestBound = lowestBound - bruteforceOptions.getOverlap();
+
+            if (!currentFastestSolution.isEmpty()) {
+                lowestBound = Math.max(0, currentFastestSolution.size() - bruteforceOptions.getGenerateInterval());
+                highestBound = currentFastestSolution.size();
+            }
+        } else {
+            highestBound = 0;
+            for (List<InputTick> value : ticksMap.values()) {
+                if (value.size() > highestBound) {
+                    highestBound = value.size();
+                }
+            }
+            lowestBound = highestBound - Math.min(highestBound, bruteforceOptions.getRecTicks());
+        }
     }
 
     private void endRun() {
@@ -186,7 +265,6 @@ public class MultiThreadBruteforcer {
         scheduler.shutdownNow();
         mainService.shutdownNow();
 
-        System.out.println("Setting current fastest solution: " + currentFastestSolution.size());
         showResult();
     }
 
@@ -197,11 +275,5 @@ public class MultiThreadBruteforcer {
             }
         }
         return true;
-    }
-
-    public void mergeFastestSolution(List<InputTick> inputTicks) {
-        currentFastestSolution.clear();
-        currentFastestSolution.addAll(inputTicks);
-        bruteforcers.forEach(bf -> bf.setCurrentFastestSolution(inputTicks));
     }
 }

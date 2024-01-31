@@ -1,7 +1,8 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
+import de.legoshi.parkourcalculator.config.Configurable;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
-import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
+import de.legoshi.parkourcalculator.config.ConfigProperties;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import lombok.Getter;
 
-public class ScreenSettings extends TitledPane {
+public class ScreenSettings extends TitledPane implements Configurable {
 
     @Getter private static final CheckBox previewBlockCB = new CheckBox();
     @Getter private static final CheckBox pathCollisionCB = new CheckBox();
@@ -23,7 +24,7 @@ public class ScreenSettings extends TitledPane {
 
     public static int precision;
 
-    public ScreenSettings(ConfigProperties configProperties, PlayerSettings playerSettings, CoordinateScreen coordinateScreen) {
+    public ScreenSettings(PlayerSettings playerSettings, CoordinateScreen coordinateScreen) {
         Text titleText = new Text("Screen Settings");
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
@@ -46,16 +47,6 @@ public class ScreenSettings extends TitledPane {
         gridPane.add(new Label("Coordinate Precision"), 0, 3);
         gridPane.add(coordinatePrecTF, 1, 3);
 
-        boolean previewBlock = configProperties.isPreviewBlock();
-        boolean pathCollision = configProperties.isPathCollision();
-        boolean tickVel = configProperties.isRealVelocity();
-        precision = configProperties.getCoordinatePrecision();
-
-        previewBlockCB.setSelected(previewBlock);
-        pathCollisionCB.setSelected(pathCollision);
-        realVelCB.setSelected(tickVel);
-
-        coordinatePrecTF.setText("" + precision);
         coordinatePrecTF.setOnKeyTyped(keyEvent -> coordinateScreen.updatePrecision());
         realVelCB.setOnAction(keyEvent -> coordinateScreen.update());
 
@@ -81,6 +72,15 @@ public class ScreenSettings extends TitledPane {
         int val = (int) (d == null ? precision : d);
         precision = val;
         return val;
+    }
+
+    @Override
+    public void applyConfigValues(ConfigProperties configProperties) {
+        precision = configProperties.getCoordinatePrecision();
+        previewBlockCB.setSelected(configProperties.isPreviewBlock());
+        pathCollisionCB.setSelected(configProperties.isPathCollision());
+        realVelCB.setSelected(configProperties.isRealVelocity());
+        coordinatePrecTF.setText("" + configProperties.getCoordinatePrecision());
     }
 
 }

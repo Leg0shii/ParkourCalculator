@@ -1,21 +1,16 @@
 package de.legoshi.parkourcalculator;
 
+import de.legoshi.parkourcalculator.config.ConfigManager;
 import de.legoshi.parkourcalculator.gui.BlockGUI;
 import de.legoshi.parkourcalculator.gui.VersionDependent;
-import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
-import de.legoshi.parkourcalculator.gui.menu.ConfigGUI;
-import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
-import de.legoshi.parkourcalculator.gui.menu.MenuGUI;
+import de.legoshi.parkourcalculator.gui.menu.*;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.debug.DebugUI;
 import de.legoshi.parkourcalculator.gui.debug.InformationScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.MenuScreen;
-import de.legoshi.parkourcalculator.simulation.Parkour;
-import de.legoshi.parkourcalculator.simulation.ParkourVersion;
-import de.legoshi.parkourcalculator.simulation.Parkour_1_12;
-import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
+import de.legoshi.parkourcalculator.simulation.*;
 import de.legoshi.parkourcalculator.util.PositionVisualizer;
 import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
 import javafx.beans.binding.NumberBinding;
@@ -34,11 +29,13 @@ import java.util.Objects;
 
 public class Application extends javafx.application.Application {
 
-    public static String APP_NAME = "Parkour Calculator Alpha v1.1.0";
+    public static String APP_NAME = "Parkour Calculator Alpha v1.2.0";
 
     public Scene scene;
     public BorderPane window;
     private List<VersionDependent> versionDependentList;
+
+    public ConfigManager configManager;
 
     public DebugUI debugUI;
     public InputTickGUI inputTickGUI;
@@ -69,10 +66,11 @@ public class Application extends javafx.application.Application {
         this.scene = new Scene(window, 1400, 1000, true);
         this.scene.getStylesheets().add(Application.class.getResource("darkmode.css").toExternalForm());
 
+        this.configManager = new ConfigManager();
         this.configGUI = new ConfigGUI(this);
 
         // different parkour versions
-        this.parkourVersion = configGUI.getConfigProperties().getVersion();
+        this.parkourVersion = configManager.getConfigProperties().getVersion();
         applyParkour(parkourVersion);
 
         // load the input manager and the UI
@@ -114,7 +112,9 @@ public class Application extends javafx.application.Application {
         this.positionVisualizer.generatePlayerPath();
 
         fillVersionDependencyList();
-        updateConfigValues(configGUI.getConfigProperties());
+
+        addToConfig();
+        configManager.applyConfig();
 
         stage.setTitle(APP_NAME);
         stage.setScene(scene);
@@ -140,26 +140,16 @@ public class Application extends javafx.application.Application {
         versionDependentList.add(positionVisualizer);
     }
 
-    public static void main(String[] args) {
-        launch();
+    private void addToConfig() {
+        configManager.add(minecraftGUI);
+        configManager.add(minecraftGUI.getController());
+        configManager.add(coordinateScreen);
+        configManager.add(menuScreen);
+        configManager.add(menuScreen.screenSeetings);
     }
 
-    public void updateConfigValues(ConfigProperties configProperties) {
-        ScreenSettings.precision = configProperties.getCoordinatePrecision();
-        minecraftGUI.getController().updateConfigValues(configProperties);
-        coordinateScreen.updateConfigValues();
-        minecraftGUI.updateConfigValues(configProperties);
-
-        ScreenSettings.getCoordinatePrecTF().setText(configProperties.getCoordinatePrecision() + "");
-        ScreenSettings.getPreviewBlockCB().setSelected(configProperties.isPreviewBlock());
-        ScreenSettings.getPathCollisionCB().setSelected(configProperties.isPathCollision());
-        ScreenSettings.getRealVelCB().setSelected(configProperties.isRealVelocity());
-
-        if (configProperties.isRealVelocity()) coordinateScreen.update();
-
-        ParkourVersion version = configProperties.getVersion();
-        menuScreen.versionSettings.getVersionComboBox().setValue(version.toString());
-        applyParkour(version);
+    public static void main(String[] args) {
+        launch();
     }
 
     public void applyParkour(ParkourVersion parkourVersion) {
@@ -183,4 +173,8 @@ public class Application extends javafx.application.Application {
                 .subtract(coordinateScreen.heightProperty());
     }
 
+    public Parkour getParkour() {
+        return currentParkour;
+    }
+    
 }

@@ -1,11 +1,9 @@
 package de.legoshi.parkourcalculator.gui.menu;
 
 import de.legoshi.parkourcalculator.Application;
-import de.legoshi.parkourcalculator.gui.MinecraftGUI;
-import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
-import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
+import de.legoshi.parkourcalculator.config.ConfigManager;
+import de.legoshi.parkourcalculator.config.ConfigProperties;
 import de.legoshi.parkourcalculator.simulation.ParkourVersion;
-import de.legoshi.parkourcalculator.util.fxyz.FPSController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,15 +15,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.function.UnaryOperator;
 
 public class ConfigGUI extends Stage {
 
-    @Getter private ConfigProperties configProperties;
-    @Setter private Application application;
+    private final Application application;
+    private final ConfigManager configManager;
 
     private ChoiceBox<String> parkourVersion;
     private TextField forward, backward, left, right, up, down, sprint, placeBlock, destroyBlock;
@@ -34,9 +30,10 @@ public class ConfigGUI extends Stage {
 
     public ConfigGUI(Application application) {
         this.application = application;
-        configProperties = new ConfigProperties();
+        this.configManager = application.configManager;
     }
 
+    // TODO: merge field creation with bruteforce settings
     public void showConfigScreen() {
         setTitle("Config Settings");
 
@@ -48,6 +45,8 @@ public class ConfigGUI extends Stage {
         GridPane gridPane = new GridPane();
         gridPane.setVgap(10);
         gridPane.setHgap(10);
+
+        ConfigProperties configProperties = configManager.getConfigProperties();
 
         parkourVersion = createChoiceBox("PK-Version", configProperties.getVersion(), gridPane, 0);
         forward = createKeyTextField("Forward", configProperties.getForward(), gridPane, 1);
@@ -212,6 +211,7 @@ public class ConfigGUI extends Stage {
     }
 
     private void resetConfig() {
+        ConfigProperties configProperties = configManager.getConfigProperties();
         configProperties.resetToDefault();
         parkourVersion.setValue(configProperties.getVersion().toString());
         forward.setText(configProperties.getForward());
@@ -237,6 +237,8 @@ public class ConfigGUI extends Stage {
     }
 
     private void saveConfig() {
+        ConfigProperties configProperties = configManager.getConfigProperties();
+
         configProperties.setVersion(ParkourVersion.valueOf(parkourVersion.getValue()));
         configProperties.setForward(forward.getText());
         configProperties.setBackward(backward.getText());
@@ -259,7 +261,9 @@ public class ConfigGUI extends Stage {
         configProperties.setPathCollision(pathCollision.isSelected());
         configProperties.setRealVelocity(realVelocity.isSelected());
 
-        configProperties.saveConfig();
+        configManager.saveConfig();
+        configManager.applyConfig();
+        application.applyParkour(configProperties.getVersion());
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Config Saved");
@@ -267,7 +271,6 @@ public class ConfigGUI extends Stage {
         alert.setContentText("Configuration has been saved successfully.");
         alert.showAndWait();
 
-        application.updateConfigValues(configProperties);
         this.close();
     }
 

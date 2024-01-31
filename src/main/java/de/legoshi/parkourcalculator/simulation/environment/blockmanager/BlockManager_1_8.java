@@ -54,12 +54,12 @@ public class BlockManager_1_8 extends BlockManager {
     
     @Override
     public BlockManager clone() {
-        HashMap<Integer, HashMap<Integer, HashMap<Integer, ABlock>>> aBlocks_clone = new HashMap<>(aBlocks);
+        ABlock[][][] aBlocks_clone = blocks.clone();
         HashMap<Box, ABlock> boxBlocks_clone = new HashMap<>(boxBlocks);
         List<ABlock> allBlocks_clone = new ArrayList<>(allBlocks);
         
-        BlockManager_1_8 blockManager_1_8 = new BlockManager_1_8();
-        blockManager_1_8.aBlocks = aBlocks_clone;
+        BlockManager_1_8 blockManager_1_8 = (BlockManager_1_8) super.clone();
+        blockManager_1_8.blocks = aBlocks_clone;
         blockManager_1_8.boxBlocks = boxBlocks_clone;
         blockManager_1_8.allBlocks = allBlocks_clone;
         return blockManager_1_8;

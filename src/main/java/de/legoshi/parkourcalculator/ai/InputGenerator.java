@@ -1,9 +1,11 @@
 package de.legoshi.parkourcalculator.ai;
 
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
+import lombok.ToString;
 
 import java.util.Random;
 
+@ToString
 public class InputGenerator {
     
     private Random random;
@@ -58,5 +60,5 @@ public class InputGenerator {
         }
         return facing;
     }
-    
+
 }

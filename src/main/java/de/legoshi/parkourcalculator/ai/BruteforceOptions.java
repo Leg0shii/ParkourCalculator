@@ -1,7 +1,9 @@
 package de.legoshi.parkourcalculator.ai;
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Getter
 public class BruteforceOptions {
 
