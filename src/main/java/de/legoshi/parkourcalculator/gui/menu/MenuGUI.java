@@ -4,6 +4,7 @@ import de.legoshi.parkourcalculator.Application;
 import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.file.FileHandler;
 import de.legoshi.parkourcalculator.file.InputData;
+import de.legoshi.parkourcalculator.gui.BlockGUI;
 import de.legoshi.parkourcalculator.gui.InputTickGUI;
 import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.gui.VersionDependent;
@@ -23,12 +24,15 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Window;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MenuGUI extends MenuBar implements VersionDependent {
 
+    private static final Logger logger = LogManager.getLogger(MenuGUI.class.getName());
     private final Window window;
     private final Application application;
     private final InputTickGUI inputTickGUI;
@@ -84,7 +88,7 @@ public class MenuGUI extends MenuBar implements VersionDependent {
     public void apply(Parkour parkour) {
         this.parkour = parkour;
         this.movement = parkour.getMovement();
-        System.out.println("MenuGUI applied");
+        logger.info("MenuGUI applied");
     }
 
     private void resetPlayer() {

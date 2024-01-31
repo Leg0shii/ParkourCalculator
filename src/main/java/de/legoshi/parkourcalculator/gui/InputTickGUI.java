@@ -22,8 +22,10 @@ public class InputTickGUI extends ScrollPane {
     private AnchorPane anchorPane;
     private VBox vBox;
 
-    @Getter private final ArrayList<HBox> hBoxes = new ArrayList<>();
-    @Getter private final InputTickManager inputTicks;
+    @Getter
+    private final ArrayList<HBox> hBoxes = new ArrayList<>();
+    @Getter
+    private final InputTickManager inputTicks;
 
     private final VBox buttonVBox = new VBox();
     private final HBox duplicateButtonHBox = new HBox();
@@ -79,7 +81,7 @@ public class InputTickGUI extends ScrollPane {
         addButtons();
     }
 
-    private void clearAllTicks() {
+    public void clearAllTicks() {
         this.getHBoxes().clear();
         this.vBox.getChildren().clear();
         this.inputTicks.getInputTicks().clear();
@@ -122,7 +124,7 @@ public class InputTickGUI extends ScrollPane {
             int i = 0;
             while (iteration != null && i < iteration.intValue()) {
                 if (!inputTicks.getInputTicks().isEmpty()) {
-                    InputTick inputTick = inputTicks.getInputTicks().get(inputTicks.getInputTicks().size()-1).copy();
+                    InputTick inputTick = inputTicks.getInputTicks().get(inputTicks.getInputTicks().size() - 1).copy();
                     duplicateRow(inputTick);
                 }
                 i++;
@@ -169,7 +171,7 @@ public class InputTickGUI extends ScrollPane {
         hBox.setPadding(new Insets(5, 5, 5, 5));
         hBox.setSpacing(15);
 
-        Label label = new Label((inputTicks.getInputTicks().size()+1) + "." );
+        Label label = new Label((inputTicks.getInputTicks().size() + 1) + ".");
         CheckBox w = registerAction("w", new CheckBox(), inputTick);
         CheckBox a = registerAction("a", new CheckBox(), inputTick);
         CheckBox s = registerAction("s", new CheckBox(), inputTick);
@@ -197,8 +199,8 @@ public class InputTickGUI extends ScrollPane {
 
     private void removeLastRow() {
         if (inputTicks.getInputTicks().isEmpty()) return;
-        inputTicks.getInputTicks().remove(inputTicks.getInputTicks().size()-1);
-        HBox hBox = hBoxes.get(hBoxes.size()-1);
+        inputTicks.getInputTicks().remove(inputTicks.getInputTicks().size() - 1);
+        HBox hBox = hBoxes.get(hBoxes.size() - 1);
         vBox.getChildren().remove(hBox);
         hBoxes.remove(hBox);
     }

@@ -1,18 +1,24 @@
 package de.legoshi.parkourcalculator.gui.debug.menu;
 
 import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.config.Configurable;
 import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
-import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
+import de.legoshi.parkourcalculator.config.ConfigProperties;
 import de.legoshi.parkourcalculator.simulation.Parkour;
+import de.legoshi.parkourcalculator.simulation.ParkourProvider;
+import de.legoshi.parkourcalculator.simulation.ParkourVersion;
 import de.legoshi.parkourcalculator.util.PositionVisualizer;
 import javafx.beans.binding.NumberBinding;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class MenuScreen extends VBox implements VersionDependent {
+public class MenuScreen extends VBox implements VersionDependent, Configurable {
 
+    private static final Logger logger = LogManager.getLogger(MenuScreen.class.getName());
     private final Application application;
 
     public VersionSettings versionSettings;
@@ -24,12 +30,10 @@ public class MenuScreen extends VBox implements VersionDependent {
 
     private final CoordinateScreen coordinateScreen;
     private final PositionVisualizer positionVisualizer;
-    private final ConfigProperties configProperties;
     private final NumberBinding remainingHeight;
 
     public MenuScreen(Application application, NumberBinding remainingHeight) {
         this.application = application;
-        this.configProperties = application.configGUI.getConfigProperties();
         this.coordinateScreen = application.coordinateScreen;
         this.positionVisualizer = application.positionVisualizer;
         this.remainingHeight = remainingHeight;
@@ -52,7 +56,7 @@ public class MenuScreen extends VBox implements VersionDependent {
         this.getChildren().clear();
 
         this.playerSettings = new PlayerSettings(coordinateScreen, parkour, positionVisualizer);
-        this.screenSeetings = new ScreenSettings(configProperties, playerSettings, coordinateScreen);
+        this.screenSeetings = new ScreenSettings(playerSettings, coordinateScreen);
 
         if (this.bruteforceSettings != null) this.bruteforceSettings.reset();
         this.bruteforceSettings = new BruteforceSettings(application);
@@ -67,7 +71,12 @@ public class MenuScreen extends VBox implements VersionDependent {
         scrollPane.maxHeightProperty().bind(remainingHeight);
 
         getChildren().addAll(scrollPane);
-        System.out.println("MenuScreen applied");
+        logger.info("MenuScreen applied");
     }
 
+    @Override
+    public void applyConfigValues(ConfigProperties configProperties) {
+        ParkourVersion version = configProperties.getVersion();
+        versionSettings.getVersionComboBox().setValue(version.toString());
+    }
 }

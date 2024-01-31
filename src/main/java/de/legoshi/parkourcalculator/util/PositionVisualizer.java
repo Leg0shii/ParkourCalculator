@@ -16,8 +16,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.*;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,6 +26,8 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class PositionVisualizer extends Observable implements Observer, VersionDependent {
+
+    private static final Logger logger = LogManager.getLogger(PositionVisualizer.class.getName());
 
     private static final double ALLOWED_ERROR = 1e-15;
     private static final int MAX_ITERATIONS = 15;
@@ -68,7 +70,7 @@ public class PositionVisualizer extends Observable implements Observer, VersionD
         this.group.getChildren().add(box);
 
         generatePlayerPath();
-        System.out.println("PositionVisualizer applied");
+        logger.info("PositionVisualizer applied");
     }
 
     public void resetPlayer() {
@@ -101,14 +103,6 @@ public class PositionVisualizer extends Observable implements Observer, VersionD
             group.getChildren().add(sphere);
             posCounter++;
         }
-
-        /*for (int i = 0; i < playerPos.size() - 1; i++) {
-            Point3D startPoint = new Point3D(playerPos.get(i).x, playerPos.get(i).y * -1, playerPos.get(i).z);
-            Point3D endPoint = new Point3D(playerPos.get(i + 1).x, playerPos.get(i + 1).y * -1, playerPos.get(i + 1).z);
-            Cylinder cylinder = createCylinder(startPoint, endPoint);
-            lines.add(cylinder);
-            group.getChildren().add(cylinder);
-        }*/
 
         group.setOnMouseDragged(this::onMouseDrag);
         group.setOnMouseReleased(this::onMouseDragReleased);
@@ -210,23 +204,6 @@ public class PositionVisualizer extends Observable implements Observer, VersionD
                 observer.update(null, null);
             }
         }
-    }
-
-    private Cylinder createCylinder(Point3D startP, Point3D endP) {
-        Point3D yAxis = new Point3D(0, 1, 0);
-        Point3D diff = endP.subtract(startP);
-        double height = diff.magnitude();
-
-        Point3D mid = endP.midpoint(startP);
-        Translate moveToMidpoint = new Translate(mid.getX(), mid.getY(), mid.getZ());
-
-        Point3D axisOfRotation = diff.crossProduct(yAxis);
-        double angle = Math.acos(diff.normalize().dotProduct(yAxis));
-        Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
-
-        Cylinder line = new Cylinder(0.01, height);
-        line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
-        return line;
     }
 
     public void addObserver(Observer observer) {

@@ -2,7 +2,6 @@ package de.legoshi.parkourcalculator.gui;
 
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
-import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager_1_8;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
@@ -13,9 +12,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BlockGUI extends ScrollPane implements VersionDependent {
 
+    private static final Logger logger = LogManager.getLogger(BlockGUI.class.getName());
     private BlockManager blockManager;
     private final HBox hBox;
     private StackPane selectedPane;
@@ -38,7 +40,7 @@ public class BlockGUI extends ScrollPane implements VersionDependent {
         this.blockManager = parkour.getBlockManager();
         hBox.getChildren().clear();
         registerBlocks();
-        System.out.println("BlockGUI applied");
+        logger.info("BlockGUI applied");
     }
 
     private void registerBlocks() {

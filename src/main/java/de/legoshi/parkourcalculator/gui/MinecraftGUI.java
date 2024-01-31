@@ -1,9 +1,10 @@
 package de.legoshi.parkourcalculator.gui;
 
 import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.config.Configurable;
 import de.legoshi.parkourcalculator.gui.debug.InformationScreen;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
-import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
+import de.legoshi.parkourcalculator.config.ConfigProperties;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.BlockFactory;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
@@ -26,7 +27,7 @@ import lombok.Getter;
 
 import java.util.*;
 
-public class MinecraftGUI extends Observable implements VersionDependent {
+public class MinecraftGUI extends Observable implements VersionDependent, Configurable {
 
     public static final double BLOCK_OFFSET_X = 0.5;
     public static final double BLOCK_OFFSET_Y = 0.5;
@@ -34,7 +35,6 @@ public class MinecraftGUI extends Observable implements VersionDependent {
 
     public static final Vec3 BLOCK_POSITION = new Vec3(1, 0, 0);
 
-    private final ConfigProperties configProperties;
     private final Application application;
     private BlockManager blockManager;
 
@@ -54,7 +54,6 @@ public class MinecraftGUI extends Observable implements VersionDependent {
 
     public MinecraftGUI(Application application, Group group) {
         this.application = application;
-        this.configProperties = application.configGUI.getConfigProperties();
         this.blockManager = application.currentParkour.getBlockManager();
 
         this.group = group;
@@ -77,7 +76,8 @@ public class MinecraftGUI extends Observable implements VersionDependent {
         registerCamera();
     }
 
-    public void updateConfigValues(ConfigProperties configProperties) {
+    @Override
+    public void applyConfigValues(ConfigProperties configProperties) {
         addBlock = MouseButton.valueOf(configProperties.getPlaceBlock());
         destroyBlock = MouseButton.valueOf(configProperties.getDestroyBlock());
     }
@@ -281,7 +281,7 @@ public class MinecraftGUI extends Observable implements VersionDependent {
 
     private void registerCamera() {
         AdvancedCamera camera = new AdvancedCamera();
-        this.controller = new FPSController(configProperties);
+        this.controller = new FPSController();
         controller.setScene(application.scene);
 
         camera.setController(controller);

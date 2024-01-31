@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.util.fxyz;
 
-import de.legoshi.parkourcalculator.gui.menu.ConfigProperties;
+import de.legoshi.parkourcalculator.config.ConfigProperties;
+import de.legoshi.parkourcalculator.config.Configurable;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -10,7 +11,7 @@ import javafx.scene.input.ScrollEvent;
 
 import java.util.Locale;
 
-public class FPSController extends CameraController {
+public class FPSController extends CameraController implements Configurable {
 
     private static boolean fwd, strafeL, strafeR, back, up, down, shift, mouseLookEnabled;
     private static double speed, maxSpeed, minSpeed;
@@ -18,12 +19,11 @@ public class FPSController extends CameraController {
 
     private static KeyCode forwardKey, backwardsKey, leftKey, rightKey, upKey, downKey, sprintKey;
 
-    public FPSController(ConfigProperties configProperties) {
+    public FPSController() {
         super(true, AnimationPreference.TIMER);
-        updateConfigValues(configProperties);
     }
 
-    public void updateConfigValues(ConfigProperties configProperties) {
+    public void applyConfigValues(ConfigProperties configProperties) {
         double speedMulti = configProperties.getMaxSpeedMultiplier();
         speed = configProperties.getCameraSpeed();
         minSpeed = speed;
