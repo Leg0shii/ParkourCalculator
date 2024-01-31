@@ -2,6 +2,8 @@ package de.legoshi.parkourcalculator.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 @Setter
 public class ConfigManager extends ArrayList<Configurable> {
 
+    private static final Logger logger = LogManager.getLogger(ConfigManager.class.getName());
     private ConfigProperties configProperties = new ConfigProperties();
 
     public ConfigManager() {
@@ -41,6 +44,7 @@ public class ConfigManager extends ArrayList<Configurable> {
                 configProperties.load(inputStream);
                 saveConfig(); // Save the configuration file to the working directory
             } catch (IOException e) {
+                logger.error("Error while loading configuration file: " + e.getMessage(), e);
                 e.printStackTrace();
             }
         }
@@ -54,6 +58,7 @@ public class ConfigManager extends ArrayList<Configurable> {
                 configProperties.store(outputStream, "Configuration settings");
             }
         } catch (IOException e) {
+            logger.error("Error while saving configuration file: " + e.getMessage(), e);
             e.printStackTrace();
         }
     }

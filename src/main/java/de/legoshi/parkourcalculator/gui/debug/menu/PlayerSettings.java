@@ -53,7 +53,7 @@ public class PlayerSettings extends TitledPane {
         Vec3 startVel = parkour.getPlayer().getStartVel();
 
         // Create the text fields
-        xPosField = new TextField("" + replaceNegZero(-startPos.x));
+        xPosField = new TextField("" + NumberHelper.replaceNegZero(-startPos.x));
         xPosField.setPromptText("X Position");
 
         yPosField = new TextField("" + startPos.y);
@@ -62,7 +62,7 @@ public class PlayerSettings extends TitledPane {
         zPosField = new TextField("" + startPos.z);
         zPosField.setPromptText("Z Position");
 
-        xVelField = new TextField(replaceNegZero((ScreenSettings.isRealVelocity() ? 0 : startVel.x*(-1))) + "");
+        xVelField = new TextField(NumberHelper.replaceNegZero((ScreenSettings.isRealVelocity() ? 0 : startVel.x*(-1))) + "");
         xVelField.setPromptText("X Velocity");
 
         yVelField = new TextField((ScreenSettings.isRealVelocity() ? 0 : startVel.y) + "");
@@ -105,11 +105,11 @@ public class PlayerSettings extends TitledPane {
 
         Button copyButton = new Button("Copy to Clipboard");
         copyButton.setOnAction(event -> {
-            double x = tryParseDouble(xPosField.getText());
-            double y = tryParseDouble(yPosField.getText());
-            double z = tryParseDouble(zPosField.getText());
-            float yaw = tryParseFloat(facingYaw.getText());
-            float pitch = tryParseFloat(facingPitch.getText());
+            double x = NumberHelper.parseDoubleOrZero(xPosField.getText());
+            double y = NumberHelper.parseDoubleOrZero(yPosField.getText());
+            double z = NumberHelper.parseDoubleOrZero(zPosField.getText());
+            float yaw = NumberHelper.parseFloatOrZero(facingYaw.getText());
+            float pitch = NumberHelper.parseFloatOrZero(facingPitch.getText());
 
             String tpCommand = "/tp " + x + " " + y + " " + z + " " + yaw + " " + pitch;
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -140,12 +140,12 @@ public class PlayerSettings extends TitledPane {
         Vec3 startPos = parkour.getPlayer().getStartPos();
         Vec3 startVel = parkour.getPlayer().getStartVel();
 
-        this.xPosField.setText(replaceNegZero(startPos.x*(-1))+ "");
+        this.xPosField.setText(NumberHelper.replaceNegZero(startPos.x*(-1))+ "");
         this.yPosField.setText(startPos.y + "");
         this.zPosField.setText(startPos.z + "");
-        this.facingYaw.setText(replaceNegZero(parkour.getPlayer().getStartYAW()) + "");
+        this.facingYaw.setText(NumberHelper.replaceNegZero(parkour.getPlayer().getStartYAW()) + "");
 
-        this.xVelField.setText(replaceNegZero(startVel.x*(-1)) + "");
+        this.xVelField.setText(NumberHelper.replaceNegZero(startVel.x*(-1)) + "");
         this.yVelField.setText(startVel.y + "");
         this.zVelField.setText(startVel.z + "");
 
@@ -157,89 +157,51 @@ public class PlayerSettings extends TitledPane {
         Player player = parkour.getPlayer();
         this.xPosField.setOnKeyTyped(keyEvent -> {
             Vec3 oldPos = player.getStartPos().copy();
-            double value = getDouble(oldPos.x, xPosField.getText())*(-1);
+            double value = NumberHelper.getDoubleOrOld(oldPos.x, xPosField.getText())*(-1);
             player.setStartPos(new Vec3(value, oldPos.y, oldPos.z));
             syncPathAndScreen();
         });
         this.yPosField.setOnKeyTyped(keyEvent -> {
             Vec3 oldPos = player.getStartPos().copy();
-            double value = getDouble(oldPos.y, yPosField.getText());
+            double value = NumberHelper.getDoubleOrOld(oldPos.y, yPosField.getText());
             player.setStartPos(new Vec3(oldPos.x, value, oldPos.z));
             syncPathAndScreen();
         });
         this.zPosField.setOnKeyTyped(keyEvent -> {
             Vec3 oldPos = player.getStartPos().copy();
-            double value = getDouble(oldPos.z, zPosField.getText());
+            double value = NumberHelper.getDoubleOrOld(oldPos.z, zPosField.getText());
             player.setStartPos(new Vec3(oldPos.x, oldPos.y, value));
             syncPathAndScreen();
         });
         this.facingYaw.setOnKeyTyped(keyEvent -> {
             float oldFacing = player.getStartYAW();
-            float newFacing = getFloat(oldFacing, facingYaw.getText());
+            float newFacing = NumberHelper.getFloatOrOld(oldFacing, facingYaw.getText());
             player.setStartYAW(newFacing);
             syncPathAndScreen();
         });
         this.xVelField.setOnKeyTyped(keyEvent -> {
             Vec3 oldVel = player.getStartVel().copy();
-            double value = getDouble(oldVel.x, xVelField.getText())*(-1);
+            double value = NumberHelper.getDoubleOrOld(oldVel.x, xVelField.getText())*(-1);
             player.setStartVel(new Vec3(value, oldVel.y, oldVel.z));
             syncPathAndScreen();
         });
         this.yVelField.setOnKeyTyped(keyEvent -> {
             Vec3 oldVel = player.getStartVel().copy();
-            double value = getDouble(oldVel.y, yVelField.getText());
+            double value = NumberHelper.getDoubleOrOld(oldVel.y, yVelField.getText());
             player.setStartVel(new Vec3(oldVel.x, value, oldVel.z));
             syncPathAndScreen();
         });
         this.zVelField.setOnKeyTyped(keyEvent -> {
             Vec3 oldVel = player.getStartVel().copy();
-            double value = getDouble(oldVel.z, zVelField.getText());
+            double value = NumberHelper.getDoubleOrOld(oldVel.z, zVelField.getText());
             player.setStartVel(new Vec3(oldVel.x, oldVel.y, value));
             syncPathAndScreen();
         });
     }
 
-    private double tryParseDouble(String text) {
-        try {
-            return Double.parseDouble(text);
-        } catch (NumberFormatException | NullPointerException e) {
-            return 0.0;
-        }
-    }
-
-    private float tryParseFloat(String text) {
-        try {
-            return Float.parseFloat(text);
-        } catch (NumberFormatException | NullPointerException e) {
-            return 0.0F;
-        }
-    }
-
     private void syncPathAndScreen() {
         positionVisualizer.update(null, null);
         coordinateScreen.update(null, null);
-    }
-
-    private double getDouble(double oldVal, String text) {
-        Double d = NumberHelper.parseDouble(text);
-        return d == null ? oldVal : d;
-    }
-
-    private float getFloat(float oldVal, String text) {
-        Float d = NumberHelper.parseFloat(text);
-        return d == null ? oldVal : d;
-    }
-
-    private String replaceNegZero(double val) {
-        String s = val + "";
-        if (val == 0.0) s = s.replace("-", "");
-        return s;
-    }
-
-    private String replaceNegZero(float val) {
-        String s = val + "";
-        if (val == 0.0) s = s.replace("-", "");
-        return s;
     }
 
 }

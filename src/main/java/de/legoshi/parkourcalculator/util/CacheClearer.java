@@ -2,6 +2,8 @@ package de.legoshi.parkourcalculator.util;
 
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Shape3D;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class CacheClearer {
 
+    private static final Logger logger = LogManager.getLogger(CacheClearer.class.getName());
     private final PositionVisualizer positionVisualizer;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -46,6 +49,7 @@ public class CacheClearer {
             clearMethod.setAccessible(true);
             clearMethod.invoke(cylinderCache);
         } catch (Exception e) {
+            logger.error("Error while clearing triangle mesh cache: " + e.getMessage(), e);
             e.printStackTrace();
         }
     }

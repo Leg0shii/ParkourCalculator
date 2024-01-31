@@ -2,8 +2,9 @@ package de.legoshi.parkourcalculator.util;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -12,6 +13,7 @@ import java.io.InputStream;
 
 public class ImageHelper {
 
+    private static final Logger logger = LogManager.getLogger(ImageHelper.class.getName());
     public static final int IMAGE_HEIGHT = 50;
     public static final int IMAGE_WIDTH = 50;
     private static final boolean PRESERVE_RATIO = true;
@@ -36,6 +38,7 @@ public class ImageHelper {
             BufferedImage processedImage = changeWhiteToDarkGray(bufferedImage, IMAGE_HEIGHT, IMAGE_WIDTH, PRESERVE_RATIO, SMOOTH);
             return SwingFXUtils.toFXImage(processedImage, null);
         } catch (IOException e) {
+            logger.error("Error while loading image: " + e.getMessage(), e);
             e.printStackTrace();
         }
         return null;

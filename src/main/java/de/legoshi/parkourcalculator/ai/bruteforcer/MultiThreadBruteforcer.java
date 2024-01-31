@@ -121,6 +121,7 @@ public class MultiThreadBruteforcer {
             try {
                 buildBruteforcer();
             } catch (Exception e) {
+                logger.error("An error occurred while building the bruteforcers: " + e.getMessage(), e);
                 e.printStackTrace();
             }
 

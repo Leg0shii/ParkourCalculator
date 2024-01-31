@@ -3,11 +3,14 @@ package de.legoshi.parkourcalculator.simulation.environment.blockmanager;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.shape.Box;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
 public abstract class BlockManager implements Observer, Cloneable {
 
+    private static final Logger logger = LogManager.getLogger(BlockManager.class.getName());
     private static final int OFFSET = 250; // Adjust this based on the expected range of x, y, z
     private static final int SIZE = 500; // This should be at least 2 * OFFSET
 
@@ -33,6 +36,7 @@ public abstract class BlockManager implements Observer, Cloneable {
             ABlock block = blocks[toInternalIndex(x)][toInternalIndex(y)][toInternalIndex(z)];
             return block == null ? Air.getInstance() : block;
         } catch (ArrayIndexOutOfBoundsException e) {
+            logger.error("Cant get Block. Index out of bounds: " + x + ", " + y + ", " + z + " - " + e.getMessage(), e);
             return null; // or handle differently
         }
     }
@@ -45,6 +49,7 @@ public abstract class BlockManager implements Observer, Cloneable {
         try {
             blocks[x][y][z] = block;
         } catch (ArrayIndexOutOfBoundsException e) {
+            logger.error("Cant place Block. Index out of bounds: " + x + ", " + y + ", " + z + " - " + e.getMessage(), e);
             // handle the case where the block is outside the array bounds
         }
 
@@ -60,6 +65,7 @@ public abstract class BlockManager implements Observer, Cloneable {
         try {
             blocks[x][y][z] = null;
         } catch (ArrayIndexOutOfBoundsException e) {
+            logger.error("Cant remove Block. Index out of bounds: " + x + ", " + y + ", " + z + " - " + e.getMessage(), e);
             // handle the case where the block is outside the array bounds
         }
 
@@ -100,6 +106,7 @@ public abstract class BlockManager implements Observer, Cloneable {
         try {
             return (BlockManager) super.clone();
         } catch (CloneNotSupportedException e) {
+            logger.error("Couldnt clone blockmanager. " + e.getMessage(), e);
             throw new AssertionError();
         }
     }

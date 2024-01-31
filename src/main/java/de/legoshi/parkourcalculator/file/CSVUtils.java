@@ -3,6 +3,8 @@ package de.legoshi.parkourcalculator.file;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.util.BlockColors;
 import de.legoshi.parkourcalculator.util.Vec3;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class CSVUtils {
+
+    private static final Logger logger = LogManager.getLogger(CSVUtils.class.getName());
 
     public static void saveTicksToCSV(List<InputData> inputTicks, String filePath) {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
@@ -32,6 +36,7 @@ public class CSVUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("Error while saving ticks to CSV: " + e.getMessage(), e);
         }
     }
 
@@ -68,6 +73,7 @@ public class CSVUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("Error while loading ticks from CSV: " + e.getMessage());
         }
 
         return inputTicks;
@@ -88,6 +94,7 @@ public class CSVUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("Error while saving blocks to CSV: " + e.getMessage());
         }
     }
 
@@ -122,6 +129,7 @@ public class CSVUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("Error while loading blocks from CSV: " + e.getMessage());
         }
 
         lists.add(solidBlocks);
