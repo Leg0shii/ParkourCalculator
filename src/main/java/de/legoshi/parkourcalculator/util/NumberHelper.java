@@ -25,6 +25,14 @@ public class NumberHelper {
         }
     }
 
+    private static Integer parseInteger(String string) {
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException | NullPointerException e) {
+            return null;
+        }
+    }
+
     public static double parseDoubleOrZero(String text) {
         Double d = parseDouble(text);
         return d == null ? 0.0D : d;
@@ -58,4 +66,8 @@ public class NumberHelper {
         return Double.parseDouble(df.format(val).replace(",", "."));
     }
 
+    public static int getIntOrOld(int oldVal, String text) {
+        Integer f = NumberHelper.parseInteger(text);
+        return f == null ? oldVal : f;
+    }
 }

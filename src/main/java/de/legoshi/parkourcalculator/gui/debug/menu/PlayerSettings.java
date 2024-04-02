@@ -3,6 +3,7 @@ package de.legoshi.parkourcalculator.gui.debug.menu;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.player.Player;
+import de.legoshi.parkourcalculator.simulation.potion.Potion;
 import de.legoshi.parkourcalculator.util.PositionVisualizer;
 import de.legoshi.parkourcalculator.util.NumberHelper;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -39,6 +40,10 @@ public class PlayerSettings extends TitledPane {
 
     @Getter private final TextField facingYaw;
     private final TextField facingPitch;
+
+    private final TextField speedField;
+    private final TextField slownessField;
+    private final TextField jumpField;
 
     public PlayerSettings(CoordinateScreen coordinateScreen, Parkour parkour, PositionVisualizer positionVisualizer) {
         this.parkour = parkour;
@@ -77,6 +82,15 @@ public class PlayerSettings extends TitledPane {
         facingPitch = new TextField("60.0");
         facingPitch.setPromptText("Pitch");
 
+        speedField = new TextField("" + parkour.getPlayer().potionEffects.get(Potion.moveSpeed).getAmplifier());
+        speedField.setPromptText("Speed");
+
+        slownessField = new TextField("" + parkour.getPlayer().potionEffects.get(Potion.moveSlowdown).getAmplifier());
+        slownessField.setPromptText("Slowness");
+
+        jumpField = new TextField("" + parkour.getPlayer().potionEffects.get(Potion.jump).getAmplifier());
+        jumpField.setPromptText("Jumpboost");
+
         // Create a GridPane to hold the text fields
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10, 10, 0, 10));
@@ -88,11 +102,18 @@ public class PlayerSettings extends TitledPane {
         gridPane.add(facingYaw, 0, 1);
         gridPane.add(new Label("Pitch:"), 1, 0);
         gridPane.add(facingPitch, 1, 1);
+        gridPane.add(new Label("Speed:"), 2, 0);
+        gridPane.add(speedField, 2, 1);
 
         gridPane.add(new Label("Position:"), 0, 2);
         gridPane.add(xPosField, 0, 3);
+        gridPane.add(new Label("Slowness:"), 2, 2);
+        gridPane.add(slownessField, 2, 3);
+
         gridPane.add(yPosField, 0, 4);
         gridPane.add(zPosField, 0, 5);
+        gridPane.add(new Label("Jumpboost:"), 2, 4);
+        gridPane.add(jumpField, 2, 5);
 
         gridPane.add(new Label("Velocity:"), 1, 2);
         gridPane.add(xVelField, 1, 3);
@@ -195,6 +216,21 @@ public class PlayerSettings extends TitledPane {
             Vec3 oldVel = player.getStartVel().copy();
             double value = NumberHelper.getDoubleOrOld(oldVel.z, zVelField.getText());
             player.setStartVel(new Vec3(oldVel.x, oldVel.y, value));
+            syncPathAndScreen();
+        });
+        this.speedField.setOnKeyTyped(keyEvent -> {
+            int value = NumberHelper.getIntOrOld(player.getPotionEffects().get(Potion.moveSpeed).getAmplifier(), speedField.getText());
+            player.getPotionEffects().get(Potion.moveSpeed).setAmplifier(value);
+            syncPathAndScreen();
+        });
+        this.slownessField.setOnKeyTyped(keyEvent -> {
+            int value = NumberHelper.getIntOrOld(player.getPotionEffects().get(Potion.moveSlowdown).getAmplifier(), slownessField.getText());
+            player.getPotionEffects().get(Potion.moveSlowdown).setAmplifier(value);
+            syncPathAndScreen();
+        });
+        this.jumpField.setOnKeyTyped(keyEvent -> {
+            int value = NumberHelper.getIntOrOld(player.getPotionEffects().get(Potion.jump).getAmplifier(), jumpField.getText());
+            player.getPotionEffects().get(Potion.jump).setAmplifier(value);
             syncPathAndScreen();
         });
     }

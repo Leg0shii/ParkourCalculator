@@ -1,5 +1,7 @@
 package de.legoshi.parkourcalculator.simulation.player;
 
+import de.legoshi.parkourcalculator.simulation.potion.Potion;
+import de.legoshi.parkourcalculator.simulation.potion.PotionEffect;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.environment.block.Ladder;
 import de.legoshi.parkourcalculator.simulation.environment.block.Vine;
@@ -12,6 +14,9 @@ import de.legoshi.parkourcalculator.util.Movement;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Player {
 
@@ -49,6 +54,8 @@ public abstract class Player {
     public Movement.Slipperiness slipperiness;
     public AxisAlignedBB playerBB;
 
+    @Getter public Map<Potion, PotionEffect> potionEffects;
+
     public Player(Vec3 position, Vec3 velocity, float startYAW) {
         this.startPos = position.copy();
         this.position = position.copy();
@@ -59,6 +66,7 @@ public abstract class Player {
         this.startYAW = startYAW;
 
         slipperiness = Movement.Slipperiness.BLOCK;
+        initPotion();
         updatePlayerBB();
     }
     
@@ -182,6 +190,20 @@ public abstract class Player {
                 GROUND,
                 JUMP
         );
+    }
+
+    private void initPotion() {
+        this.potionEffects = new HashMap<>();
+        potionEffects.put(Potion.moveSpeed, new PotionEffect(Potion.moveSpeed, 0.2));
+        potionEffects.put(Potion.moveSlowdown, new PotionEffect(Potion.moveSlowdown, -0.15));
+        potionEffects.put(Potion.jump, new PotionEffect(Potion.jump, -1));
+    }
+
+    public void resetPotion() {
+        this.potionEffects.forEach((potion, potionEffect) -> {
+            potionEffect.setDuration(-1);
+            potionEffect.setAmplifier(0);
+        });
     }
 
 }

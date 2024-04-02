@@ -4,6 +4,7 @@ import de.legoshi.parkourcalculator.simulation.Parkour_1_8;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.player.Player;
+import de.legoshi.parkourcalculator.simulation.potion.Potion;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
@@ -44,6 +45,13 @@ public abstract class Movement {
                     player.velocity.x = player.velocity.x - MinecraftMathHelper.sin(f) * 0.2F;
                     player.velocity.z = player.velocity.z + MinecraftMathHelper.cos(f) * 0.2F;
                 }
+
+                // always true because the jump potion is always active with amplifier 0
+                // adjusted the code that jump boost 1 has amplifier 1 instead of 0 as it is in the original
+                if (player.potionEffects.containsKey(Potion.jump)) {
+                    player.velocity.y += (double) ((float) (player.potionEffects.get(Potion.jump).getAmplifier()) * 0.1F);
+                }
+
                 player.jumpTicks = 10;
             }
         } else {
@@ -74,7 +82,7 @@ public abstract class Movement {
                 else movement = 0.1F;
                 
                 float movementFactor;
-                if (player.GROUND) movementFactor = movement * acceleration;
+                if (player.GROUND) movementFactor = (getSpeedMulti() * movement) * acceleration;
                 else movementFactor = player.jumpMovementFactor;
                 
                 moveFlying(player.moveStrafe, player.moveForward, movementFactor);
@@ -127,10 +135,10 @@ public abstract class Movement {
                 player.velocity.z *= 0.5D;
                 player.velocity.y -= 0.02D;
                 
-                /*if (player.isCollidedHorizontally
+                if (player.isCollidedHorizontally
                     && this.isOffsetPositionInLiquid(player.velocity.x, player.velocity.y + 0.6000000238418579D - player.position.y + d1, player.velocity.z)) {
                     player.velocity.y = 0.30000001192092896D;
-                }*/
+                }
             }
         } else {
             double d0 = player.position.y;
@@ -162,10 +170,10 @@ public abstract class Movement {
             player.velocity.z *= (double) f1;
             player.velocity.y -= 0.02D;
             
-            /*if (player.isCollidedHorizontally
+            if (player.isCollidedHorizontally
                 && isOffsetPositionInLiquid(player.velocity.x, player.velocity.y + 0.6000000238418579D - player.position.y + d0, player.velocity.z)) {
                 player.velocity.y = 0.30000001192092896D;
-            }*/
+            }
         }
         
         player.jumpMovementFactor = 0.02F;
@@ -174,8 +182,14 @@ public abstract class Movement {
             player.jumpMovementFactor = (float) ((double) player.jumpMovementFactor + (double) 0.02F * 0.3D);
         }
     }
-    
-    
+
+    private float getSpeedMulti() {
+        float speed = (float) ((1 + 0.2D * player.getPotionEffects().get(Potion.moveSpeed).getAmplifier()) *
+                (1 - 0.15D * player.getPotionEffects().get(Potion.moveSlowdown).getAmplifier()));
+        return speed >= 0 ? speed : 0;
+    }
+
+
     void moveEntity(double x, double y, double z) {
         // probably only used for sound calculations
         double startX = player.position.x;
@@ -365,11 +379,11 @@ public abstract class Movement {
         }
         
         if (!player.WATER) {
-            //handleWaterMovement();
+            handleWaterMovement();
         }
         
         if (!player.LAVA) {
-            //handleLavaMovement();
+            handleLavaMovement();
         }
         
         // if movedX != updatedX -> motionX = 0
@@ -435,12 +449,12 @@ public abstract class Movement {
     }
     
     void handleWaterMovement() {
-        // this.fire = 0;
-        //player.WATER = handleMaterialAcceleration(player.playerBB.expand(0.0D, -0.4000000059604645D, 0.0D).contract(0.001D, 0.001D, 0.001D));
+        //this.fire = 0;
+        player.WATER = handleMaterialAcceleration(player.playerBB.expand(0.0D, -0.4000000059604645D, 0.0D).contract(0.001D, 0.001D, 0.001D));
     }
     
     void handleLavaMovement() {
-        //player.LAVA = handleMaterialAcceleration(player.playerBB.expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D));
+        player.LAVA = handleMaterialAcceleration(player.playerBB.expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D));
     }
     
     private boolean handleMaterialAcceleration(AxisAlignedBB bb) {
@@ -486,6 +500,7 @@ public abstract class Movement {
         player.startYAW = Parkour_1_8.START_YAW;
         player.setStartPos(Parkour_1_8.DEFAULT_START);
         player.setStartVel(Parkour_1_8.DEFAULT_VELOCITY);
+        player.resetPotion();
         player.resetPlayer();
     }
     
