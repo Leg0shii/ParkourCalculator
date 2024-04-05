@@ -33,7 +33,7 @@ public class FileHandler {
 
     public static void saveBlocks(List<BlockData> blocks, Window window) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Input");
+        fileChooser.setTitle("Save Blocks");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.bcsv)", "*.bcsv", "*"));
         File file = fileChooser.showSaveDialog(window);
 
@@ -44,7 +44,7 @@ public class FileHandler {
 
     public static List<List<BlockData>> loadBlocks(Window window) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Inputs");
+        fileChooser.setTitle("Open Blocks");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Input Files (*.bcsv)", "*.bcsv", "*"));
         File file = fileChooser.showOpenDialog(window);
 

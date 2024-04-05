@@ -82,7 +82,7 @@ public abstract class Movement {
                 else movement = 0.1F;
                 
                 float movementFactor;
-                if (player.GROUND) movementFactor = (getSpeedMulti() * movement) * acceleration;
+                if (player.GROUND) movementFactor = (float) getSpeedMulti() * movement * acceleration;
                 else movementFactor = player.jumpMovementFactor;
                 
                 moveFlying(player.moveStrafe, player.moveForward, movementFactor);
@@ -160,7 +160,7 @@ public abstract class Movement {
             
             if (f3 > 0.0F) {
                 f1 += (0.54600006F - f1) * f3 / 3.0F;
-                f2 += (movement * 1.0F - f2) * f3 / 3.0F;
+                f2 += (getSpeedMulti() * movement * 1.0F - f2) * f3 / 3.0F;
             }
             
             moveFlying(player.moveStrafe, player.moveForward, f2);
@@ -183,9 +183,9 @@ public abstract class Movement {
         }
     }
 
-    private float getSpeedMulti() {
-        float speed = (float) ((1 + 0.2D * player.getPotionEffects().get(Potion.moveSpeed).getAmplifier()) *
-                (1 - 0.15D * player.getPotionEffects().get(Potion.moveSlowdown).getAmplifier()));
+    private double getSpeedMulti() {
+        double speed = ((1 + player.getPotionEffects().get(Potion.moveSpeed).getSpeedChange() * player.getPotionEffects().get(Potion.moveSpeed).getAmplifier()) *
+                (1 + player.getPotionEffects().get(Potion.moveSlowdown).getSpeedChange() * player.getPotionEffects().get(Potion.moveSlowdown).getAmplifier()));
         return speed >= 0 ? speed : 0;
     }
 

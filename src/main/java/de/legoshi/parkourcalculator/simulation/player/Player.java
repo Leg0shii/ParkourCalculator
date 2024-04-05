@@ -8,17 +8,19 @@ import de.legoshi.parkourcalculator.simulation.environment.block.Vine;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
-import de.legoshi.parkourcalculator.util.AxisAlignedBB;
-import de.legoshi.parkourcalculator.util.MinecraftMathHelper;
-import de.legoshi.parkourcalculator.util.Movement;
-import de.legoshi.parkourcalculator.util.Vec3;
+import de.legoshi.parkourcalculator.util.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class Player {
+
+    private static final Logger logger = LogManager.getLogger(Player.class.getName());
 
     @Getter @Setter public Vec3 startPos;
     @Getter @Setter public Vec3 position;
@@ -56,7 +58,7 @@ public abstract class Player {
 
     @Getter public Map<Potion, PotionEffect> potionEffects;
 
-    public Player(Vec3 position, Vec3 velocity, float startYAW) {
+    public Player(Vec3 position, Vec3 velocity, float startYAW, List<PotionEffect> eFs) {
         this.startPos = position.copy();
         this.position = position.copy();
 
@@ -66,7 +68,7 @@ public abstract class Player {
         this.startYAW = startYAW;
 
         slipperiness = Movement.Slipperiness.BLOCK;
-        initPotion();
+        initPotion(eFs);
         updatePlayerBB();
     }
     
@@ -192,14 +194,15 @@ public abstract class Player {
         );
     }
 
-    private void initPotion() {
+    private void initPotion(List<PotionEffect> pEs) {
         this.potionEffects = new HashMap<>();
-        potionEffects.put(Potion.moveSpeed, new PotionEffect(Potion.moveSpeed, 0.2));
-        potionEffects.put(Potion.moveSlowdown, new PotionEffect(Potion.moveSlowdown, -0.15));
-        potionEffects.put(Potion.jump, new PotionEffect(Potion.jump, -1));
+        potionEffects.put(Potion.moveSpeed, pEs.get(0));
+        potionEffects.put(Potion.moveSlowdown, pEs.get(1));
+        potionEffects.put(Potion.jump, pEs.get(2));
     }
 
     public void resetPotion() {
+        logger.debug("reset potion effects");
         this.potionEffects.forEach((potion, potionEffect) -> {
             potionEffect.setDuration(-1);
             potionEffect.setAmplifier(0);
