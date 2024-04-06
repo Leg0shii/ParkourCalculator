@@ -1,6 +1,5 @@
 package de.legoshi.parkourcalculator.simulation.environment.blockmanager;
 
-import de.legoshi.parkourcalculator.simulation.environment.BlockPosition;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.simulation.environment.block_1_12.*;
 import javafx.scene.shape.Box;

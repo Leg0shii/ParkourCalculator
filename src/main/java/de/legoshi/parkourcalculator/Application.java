@@ -57,6 +57,7 @@ public class Application extends javafx.application.Application {
 
     public Parkour_1_8 parkour_1_8;
     public Parkour_1_12 parkour_1_12;
+    public Parkour_1_20_4 parkour_1_20_4;
 
     public ParkourVersion parkourVersion;
 
@@ -156,9 +157,12 @@ public class Application extends javafx.application.Application {
         if (parkourVersion == ParkourVersion.V_1_8) {
             currentParkour = parkour_1_8 == null ? new Parkour_1_8() : parkour_1_8;
             parkour_1_8 = (Parkour_1_8) currentParkour;
-        } else {
+        } else if (parkourVersion == ParkourVersion.V_1_12) {
             currentParkour = parkour_1_12 == null ? new Parkour_1_12() : parkour_1_12;
             parkour_1_12 = (Parkour_1_12) currentParkour;
+        } else {
+            currentParkour = parkour_1_20_4 == null ? new Parkour_1_20_4() : parkour_1_20_4;
+            parkour_1_20_4 = (Parkour_1_20_4) currentParkour;
         }
         if (versionDependentList != null) {
             versionDependentList.stream().filter(Objects::nonNull).forEach(versionDependent -> versionDependent.apply(currentParkour));

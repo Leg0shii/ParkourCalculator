@@ -201,6 +201,10 @@ public abstract class Player {
         potionEffects.put(Potion.jump, pEs.get(2));
     }
 
+    public boolean hasPotion(Potion potion) {
+        return potionEffects.get(potion).getAmplifier() >= 1;
+    }
+
     public void resetPotion() {
         logger.debug("reset potion effects");
         this.potionEffects.forEach((potion, potionEffect) -> {
