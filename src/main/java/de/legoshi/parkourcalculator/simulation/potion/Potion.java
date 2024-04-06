@@ -4,6 +4,9 @@ public enum Potion {
 
     moveSpeed,
     moveSlowdown,
-    jump
+    jump,
+    slow_falling,
+    levitation,
+    dolphins_grace
 
 }

@@ -4,6 +4,12 @@ import java.util.Objects;
 
 public class Vec3 {
 
+	public static final Vec3 ZERO;
+
+	static {
+		ZERO = new Vec3(0.0D, 0.0D, 0.0D);
+	}
+
 	public double x;
 	public double y;
 	public double z;
@@ -150,6 +156,34 @@ public class Vec3 {
 			double d3 = (z - this.z) / d2;
 			return d3 >= 0.0D && d3 <= 1.0D ? new Vec3(this.x + d0 * d3, this.y + d1 * d3, this.z + d2 * d3) : null;
 		}
+	}
+
+	public Vec3 scale(double var1) {
+		return this.multiply(var1, var1, var1);
+	}
+
+	public Vec3 multiply(Vec3 var1) {
+		return this.multiply(var1.x, var1.y, var1.z);
+	}
+
+	public Vec3 multiply(double var1, double var3, double var5) {
+		return new Vec3(this.x * var1, this.y * var3, this.z * var5);
+	}
+
+	public double horizontalDistance() {
+		return Math.sqrt(this.x * this.x + this.z * this.z);
+	}
+
+	public double horizontalDistanceSqr() {
+		return this.x * this.x + this.z * this.z;
+	}
+
+	public double length() {
+		return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+	}
+
+	public double lengthSqr() {
+		return this.x * this.x + this.y * this.y + this.z * this.z;
 	}
 
 	public String toString() {

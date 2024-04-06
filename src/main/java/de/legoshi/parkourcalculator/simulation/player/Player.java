@@ -33,6 +33,7 @@ public abstract class Player {
 
     public float width = 0.3F;
     public float height = 1.8F;
+    public double speed = 0.699999988079071D;
 
     public boolean GROUND;
     public boolean WEB;
@@ -211,6 +212,10 @@ public abstract class Player {
             potionEffect.setDuration(-1);
             potionEffect.setAmplifier(0);
         });
+    }
+
+    public float getSpeed() {
+        return (float) speed;
     }
 
 }
