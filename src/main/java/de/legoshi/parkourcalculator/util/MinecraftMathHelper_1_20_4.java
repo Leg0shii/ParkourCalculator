@@ -57,6 +57,19 @@ public class MinecraftMathHelper_1_20_4 {
         return var0 < (float)var1 ? var1 - 1 : var1;
     }
 
+    public static boolean fuzzyEquals(double a, double b, double tolerance) {
+        return Math.abs(a - b) <= tolerance;
+    }
+
+    public static int gcd(int a, int b) {
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
     public static int floor(double var0) {
         int var2 = (int)var0;
         return var0 < (double)var2 ? var2 - 1 : var2;

@@ -7,6 +7,8 @@ public enum Potion {
     jump,
     slow_falling,
     levitation,
-    dolphins_grace
+    soul_speed,
+    dolphins_grace,
+    swift_sneak
 
 }

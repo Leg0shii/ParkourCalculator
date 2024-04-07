@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class Player {
 
@@ -212,6 +213,10 @@ public abstract class Player {
             potionEffect.setDuration(-1);
             potionEffect.setAmplifier(0);
         });
+    }
+
+    public void setSpeed(float attributeValue) {
+        this.speed = attributeValue;
     }
 
     public float getSpeed() {

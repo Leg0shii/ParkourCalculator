@@ -2,6 +2,7 @@ package de.legoshi.parkourcalculator.simulation.environment.block;
 
 import de.legoshi.parkourcalculator.file.BlockData;
 import de.legoshi.parkourcalculator.simulation.player.Player;
+import de.legoshi.parkourcalculator.simulation.player.Player_1_20_4;
 import de.legoshi.parkourcalculator.simulation.player.Player_1_8;
 import de.legoshi.parkourcalculator.util.*;
 import javafx.scene.Node;
@@ -125,4 +126,39 @@ public abstract class ABlock {
         return highestY;
     }
 
+    public int getX() {
+        return (int) vec3.x;
+    }
+
+    public int getY() {
+        return (int) vec3.y;
+    }
+
+    public int getZ() {
+        return (int) vec3.z;
+    }
+
+    public float getFriction() {
+        return 0.6F;
+    }
+
+    public void updateEntityAfterFallOn(Player player) {
+
+    }
+
+    public boolean canClimb() {
+        return false;
+    }
+
+    public void entityInside(Player player) {
+
+    }
+
+    public float getJumpFactor() {
+        return 1.0F;
+    }
+
+    public float getSpeedFactor() {
+        return 1.0F;
+    }
 }

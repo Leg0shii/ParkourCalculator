@@ -211,6 +211,24 @@ public class Vec3 {
 	public Vec3 copy() {
 		return new Vec3(this.x, this.y, this.z);
 	}
+
+	public static Vec3 containing(double var0, double var2, double var4) {
+		return new Vec3(MinecraftMathHelper_1_20_4.floor(var0), MinecraftMathHelper_1_20_4.floor(var2), MinecraftMathHelper_1_20_4.floor(var4));
+	}
+
+	public double distanceToSqr(Vec3 var1) {
+		double var2 = var1.x - this.x;
+		double var4 = var1.y - this.y;
+		double var6 = var1.z - this.z;
+		return var2 * var2 + var4 * var4 + var6 * var6;
+	}
+
+	public double distanceToSqr(double var1, double var3, double var5) {
+		double var7 = var1 - this.x;
+		double var9 = var3 - this.y;
+		double var11 = var5 - this.z;
+		return var7 * var7 + var9 * var9 + var11 * var11;
+	}
     
     @Override
     public boolean equals(Object o) {

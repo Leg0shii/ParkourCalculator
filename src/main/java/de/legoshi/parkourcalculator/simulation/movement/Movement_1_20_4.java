@@ -1,6 +1,15 @@
 package de.legoshi.parkourcalculator.simulation.movement;
 
+import de.legoshi.parkourcalculator.simulation.AxisCycle;
+import de.legoshi.parkourcalculator.simulation.Direction;
+import de.legoshi.parkourcalculator.simulation.FluidTags;
+import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
+import de.legoshi.parkourcalculator.simulation.environment.block.Trapdoor;
+import de.legoshi.parkourcalculator.simulation.environment.block_1_20_4.PowderSnowBlock;
+import de.legoshi.parkourcalculator.simulation.environment.block_1_20_4.ScaffoldingBlock;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
+import de.legoshi.parkourcalculator.simulation.environment.voxel.Shapes;
+import de.legoshi.parkourcalculator.simulation.environment.voxel.VoxelShape;
 import de.legoshi.parkourcalculator.simulation.player.Player;
 import de.legoshi.parkourcalculator.simulation.player.Player_1_20_4;
 import de.legoshi.parkourcalculator.simulation.potion.Potion;
@@ -9,7 +18,11 @@ import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper_1_20_4;
 import de.legoshi.parkourcalculator.util.Vec3;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Movement_1_20_4 extends Movement {
 
@@ -79,19 +92,7 @@ public class Movement_1_20_4 extends Movement {
             player.ELYTRA = false;
         }
 
-        Vec3 travelVec = new Vec3((double) xxa, (double) yya, (double) zza);
-
-        // player.java
-        if (player.SWIMMING) {
-            double lookAngleY = player.getLookAngle().y;
-            double var4 = lookAngleY < -0.2D ? 0.085D : 0.06D;
-            if (lookAngleY <= 0.0D || player.JUMP ||
-                    !this.level().getBlockState(BlockPos.containing(this.getX(), this.getY() + 1.0D - 0.1D, this.getZ())).getFluidState().isEmpty()) {
-                player.velocity.add(new Vec3(0.0D, (lookAngleY - player.velocity.y) * var4, 0.0D));
-            }
-        }
-
-        travel(travelVec); // LivingEntity.java
+        travel(new Vec3((double) xxa, (double) yya, (double) zza)); // LivingEntity.java
 
         /*if (!this.level().isClientSide && !this.isDeadOrDying()) {
             int var15 = this.getTicksFrozen();
@@ -102,17 +103,12 @@ public class Movement_1_20_4 extends Movement {
             }
         }*/
 
-        this.removeFrost();
-        this.tryAddFrost();
+        // this.removeFrost();
+        // this.tryAddFrost();
 
         // belongs to player.java
-        this.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED));
-        float var1;
-        if (player.GROUND && !player.SWIMMING) {
-            var1 = Math.min(0.1F, (float) this.getDeltaMovement().horizontalDistance());
-        } else {
-            var1 = 0.0F;
-        }
+        // player.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED));
+        player.setSpeed((float) 0.699999988079071D);
 
         /*if (GROUND && this.getAbilities().flying && !this.minecraft.gameMode.isAlwaysFlying()) {
             this.getAbilities().flying = false;
@@ -122,7 +118,7 @@ public class Movement_1_20_4 extends Movement {
         double clampedX = MinecraftMathHelper_1_20_4.clamp(player.position.x, -2.9999999E7D, 2.9999999E7D);
         double clampedZ = MinecraftMathHelper_1_20_4.clamp(player.position.z, -2.9999999E7D, 2.9999999E7D);
         if (clampedX != player.position.x || clampedZ != player.position.z) {
-            player.setPos(clampedX, player.position.y, clampedZ);
+            setPos(clampedX, player.position.y, clampedZ);
         }
 
         player.updatePlayerPose();
@@ -131,15 +127,25 @@ public class Movement_1_20_4 extends Movement {
     private void travel(Vec3 travelVec) {
         Player_1_20_4 player = (Player_1_20_4) this.player;
 
+        if (player.SWIMMING) {
+            double lookAngleY = getLookAngle().y;
+            double var4 = lookAngleY < -0.2D ? 0.085D : 0.06D;
+
+            ABlock fluidBlock = blockManager.getBlock(Vec3.containing(player.position.x, player.position.y + 1.0D - 0.1D, player.position.z));
+            if (lookAngleY <= 0.0D || player.JUMP || !fluidBlock.getFluidState().isEmpty()) {
+                player.velocity.add(new Vec3(0.0D, (lookAngleY - player.velocity.y) * var4, 0.0D));
+            }
+        }
+
         double var2 = 0.08D;
         if (player.velocity.y <= 0.0D && player.hasPotion(Potion.slow_falling)) {
             var2 = 0.01D;
         }
 
-        FluidState fluidState = this.level().getFluidState(this.blockPosition());
+        FluidState fluidState = player.blockPosition.getFluidState();
         float friction = player.SPRINT ? 0.9F : this.getWaterSlowDown();
         double yPos = player.position.y;
-        if (player.isInWater() && !this.canStandOnFluid(fluidState)) {
+        if (player.isInWater()) {
             float var27 = 0.02F;
             float depthStrider = player.depthStrider;
             if (depthStrider > 3.0F) {
@@ -167,19 +173,19 @@ public class Movement_1_20_4 extends Movement {
             }
 
             player.velocity = var28.multiply((double) friction, 0.800000011920929D, (double) friction);
-            Vec3 var12 = player.getFluidFallingAdjustedMovement(var2, player.velocity.y <= 0.0D, this.player.velocity);
+            Vec3 var12 = getFluidFallingAdjustedMovement(var2, player.velocity.y <= 0.0D, this.player.velocity);
             player.velocity = var12;
-            if (player.horizontalCollision && player.isFree(var12.x, var12.y + 0.6000000238418579D - player.position.y + yPos, var12.z)) {
+            if (player.horizontalCollision && isFree(var12.x, var12.y + 0.6000000238418579D - player.position.y + yPos, var12.z)) {
                 player.velocity = new Vec3(var12.x, 0.30000001192092896D, var12.z);
             }
-        } else if (player.isInLava() && !player.canStandOnFluid(fluidState)) {
+        } else if (player.isInLava()) {
             yPos = player.position.y;
             this.moveRelative(0.02F, travelVec);
             this.move(player.velocity);
             Vec3 var23;
             if (player.getFluidHeight(FluidTags.LAVA) <= player.getFluidJumpThreshold()) {
                 player.velocity = player.velocity.multiply(0.5D, 0.800000011920929D, 0.5D);
-                var23 = player.getFluidFallingAdjustedMovement(var2, player.velocity.y <= 0.0D, this.player.velocity);
+                var23 = getFluidFallingAdjustedMovement(var2, player.velocity.y <= 0.0D, this.player.velocity);
                 player.velocity = var23;
             } else {
                 player.velocity = player.velocity.scale(0.5D);
@@ -188,15 +194,14 @@ public class Movement_1_20_4 extends Movement {
             player.velocity.add(new Vec3(0.0D, -var2 / 4.0D, 0.0D));
 
             var23 = player.velocity;
-            if (player.horizontalCollision && this.isFree(var23.x, var23.y + 0.6000000238418579D - player.position.y + yPos, var23.z)) {
+            if (player.horizontalCollision && isFree(var23.x, var23.y + 0.6000000238418579D - player.position.y + yPos, var23.z)) {
                 player.velocity = new Vec3(var23.x, 0.30000001192092896D, var23.z);
             }
-        } /* ELYTRA */
-        else if (player.ELYTRA) {
+        } /* ELYTRA */ else if (player.ELYTRA) {
             this.checkSlowFallDistance();
             Vec3 playerVel = player.velocity;
             Vec3 lookAngle = this.getLookAngle();
-            friction = this.getXRot() * 0.017453292F;
+            friction = player.PITCH * 0.017453292F;
 
             double var9 = Math.sqrt(lookAngle.x * lookAngle.x + lookAngle.z * lookAngle.z);
             double var11 = playerVel.horizontalDistance();
@@ -220,7 +225,7 @@ public class Movement_1_20_4 extends Movement {
                 playerVel.add(new Vec3((lookAngle.x / var9 * var11 - playerVel.x) * 0.1D, 0.0D, (lookAngle.z / var9 * var11 - playerVel.z) * 0.1D));
             }
 
-            player.velocity = playerVel.multiply(0.9900000095367432D, 0.9800000190734863D, 0.9900000095367432D));
+            player.velocity = playerVel.multiply(0.9900000095367432D, 0.9800000190734863D, 0.9900000095367432D);
             this.move(player.velocity);
 
             if (player.GROUND) {
@@ -228,8 +233,8 @@ public class Movement_1_20_4 extends Movement {
             }
 
         } else {
-            Vec3 movementBlock = this.getBlockPosBelowThatAffectsMyMovement();
-            float blockFriction = this.level().getBlockState(movementBlock).getBlock().getFriction();
+            ABlock movementBlock = player.getBlockPosBelowThatAffectsMyMovement();
+            float blockFriction = movementBlock.getFriction();
             friction = player.GROUND ? blockFriction * 0.91F : 0.91F;
             Vec3 var26 = this.handleRelativeFrictionAndCalculateMovement(travelVec, blockFriction);
             double var10 = var26.y;
@@ -239,7 +244,7 @@ public class Movement_1_20_4 extends Movement {
 
             var10 -= var2;
 
-            if (this.shouldDiscardFriction()) {
+            if (player.shouldDiscardFriction()) {
                 player.velocity = new Vec3(var26.x, var10, var26.z);
             } else {
                 player.velocity = new Vec3(var26.x * (double) friction, var10 * 0.9800000190734863D, var26.z * (double) friction);
@@ -247,9 +252,15 @@ public class Movement_1_20_4 extends Movement {
         }
     }
 
+    public void checkSlowFallDistance() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (player.velocity.y > -0.5D && player.fallDistance > 1.0F) {
+            player.fallDistance = 1.0F;
+        }
+    }
+
     public void move(Vec3 var2) {
         Player_1_20_4 player = (Player_1_20_4) this.player;
-
         if (player.stuckSpeedMultiplier.lengthSqr() > 1.0E-7D) {
             var2 = var2.multiply(player.stuckSpeedMultiplier);
             player.stuckSpeedMultiplier = Vec3.ZERO;
@@ -257,10 +268,16 @@ public class Movement_1_20_4 extends Movement {
         }
 
         var2 = this.maybeBackOffFromEdge(var2);
-        Vec3 var3 = player.collide(var2);
+        Vec3 var3 = collide(var2);
         double var4 = var3.lengthSqr();
         if (var4 > 1.0E-7D) {
-            player.setPos(player.position.x + var3.x, player.position.y + var3.y, player.position.z + var3.z);
+            /*if (player.fallDistance != 0.0F && var4 >= 1.0D) {
+                BlockHitResult var6 = this.level().clip(new ClipContext(this.position(), this.position().add(var3), ClipContext.Block.FALLDAMAGE_RESETTING, ClipContext.Fluid.WATER, this));
+                if (var6.getType() != HitResult.Type.MISS) {
+                    player.fallDistance = 0.0F;
+                }
+            }*/
+            setPos(player.position.x + var3.x, player.position.y + var3.y, player.position.z + var3.z);
         }
 
         boolean var23 = !MinecraftMathHelper_1_20_4.equal(var2.x, var3.x);
@@ -276,80 +293,153 @@ public class Movement_1_20_4 extends Movement {
         }
 
         this.setOnGroundWithKnownMovement(player.verticalCollisionBelow, var3);
-        Vec3 legaceBlockPos = this.getOnPosLegacy();
-        BlockState var9 = this.level().getBlockState(legaceBlockPos);
-        this.checkFallDamage(var3.y, this.onGround(), var9, legaceBlockPos);
-        if (this.isRemoved()) {
-            this.level().getProfiler().pop();
+        this.checkFallDamage(var3.y, player.GROUND);
+
+        if (player.horizontalCollision) {
+            Vec3 var10 = player.velocity;
+            player.velocity = new Vec3(var23 ? 0.0D : var10.x, var10.y, var7 ? 0.0D : var10.z);
+        }
+
+        ABlock block = player.getOnPosLegacy();
+        if (var2.y != var3.y) {
+            block.updateEntityAfterFallOn(player);
+        }
+
+        if (player.GROUND) {
+            block.onEntityCollidedWithBlock(player);
+        }
+
+        this.tryCheckInsideBlocks();
+        float blockSpeedFactor = player.getBlockSpeedFactor();
+        player.velocity = player.velocity.multiply((double) blockSpeedFactor, 1.0D, (double) blockSpeedFactor);
+    }
+
+    private Vec3 collide(Vec3 velocity) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        AxisAlignedBB playerBB = player.playerBB;
+        List<AxisAlignedBB> collidingBBs = getCollidingBoundingBoxes(playerBB.expandTowards(velocity));
+        Vec3 var4 = velocity.lengthSqr() == 0.0D ? velocity : collideBoundingBox(velocity, playerBB, collidingBBs);
+        boolean xHasMoved = velocity.x != var4.x;
+        boolean yHasMoved = velocity.y != var4.y;
+        boolean zHasMoved = velocity.z != var4.z;
+        boolean var8 = player.GROUND || yHasMoved && velocity.y < 0.0D;
+        if (player.maxUpStep > 0.0F && var8 && (xHasMoved || zHasMoved)) {
+            Vec3 velStepUp = collideBoundingBox(new Vec3(velocity.x, (double) player.maxUpStep, velocity.z), playerBB, collidingBBs);
+            Vec3 noVelStepUp = collideBoundingBox(new Vec3(0.0D, (double) player.maxUpStep, 0.0D), playerBB.expandTowards(velocity.x, 0.0D, velocity.z), collidingBBs);
+            if (noVelStepUp.y < (double) player.maxUpStep) {
+                collideBoundingBox(new Vec3(velocity.x, 0.0D, velocity.z), playerBB.offset(noVelStepUp), collidingBBs).add(noVelStepUp);
+                if (noVelStepUp.horizontalDistanceSqr() > velStepUp.horizontalDistanceSqr()) {
+                    velStepUp = noVelStepUp;
+                }
+            }
+
+            if (velStepUp.horizontalDistanceSqr() > var4.horizontalDistanceSqr()) {
+                velStepUp.add(collideBoundingBox(new Vec3(0.0D, -velStepUp.y + velocity.y, 0.0D), playerBB.offset(velStepUp), collidingBBs));
+                return velStepUp;
+            }
+        }
+
+        return var4;
+    }
+
+    public Vec3 collideBoundingBox(Vec3 velocity, AxisAlignedBB playerBB, List<AxisAlignedBB> collidingBBs) {
+        List<AxisAlignedBB> bbs = new ArrayList<>();
+        if (!collidingBBs.isEmpty()) {
+            bbs.addAll(collidingBBs);
+        }
+
+        bbs.addAll(getCollidingBoundingBoxes(playerBB.expandTowards(velocity)));
+
+        List<VoxelShape> voxelShapes = collidingBBs.stream().map(Shapes::create).toList();
+        return collideWithShapes(velocity, playerBB, voxelShapes);
+    }
+
+    private Vec3 collideWithShapes(Vec3 velocity, AxisAlignedBB playerBB, List<VoxelShape> collidingVoxels) {
+        if (collidingVoxels.isEmpty()) {
+            return velocity;
         } else {
-            if (player.horizontalCollision) {
-                Vec3 var10 = player.velocity;
-                player.velocity = new Vec3(var23 ? 0.0D : var10.x, var10.y, var7 ? 0.0D : var10.z);
+            double x = velocity.x;
+            double y = velocity.y;
+            double z = velocity.z;
+            if (y != 0.0D) {
+                y = Shapes.collide(Direction.Axis.Y, playerBB, collidingVoxels, y);
+                if (y != 0.0D) {
+                    playerBB = playerBB.offset(0.0D, y, 0.0D);
+                }
             }
 
-            Block var24 = var9.getBlock();
-            if (var2.y != var3.y) {
-                var24.updateEntityAfterFallOn(this.level(), this);
+            boolean var9 = Math.abs(x) < Math.abs(z);
+            if (var9 && z != 0.0D) {
+                z = Shapes.collide(Direction.Axis.Z, playerBB, collidingVoxels, z);
+                if (z != 0.0D) {
+                    playerBB = playerBB.offset(0.0D, 0.0D, z);
+                }
             }
 
-            if (player.GROUND) {
-                var24.stepOn(this.level(), legaceBlockPos, var9, this);
+            if (x != 0.0D) {
+                x = Shapes.collide(Direction.Axis.X, playerBB, collidingVoxels, x);
+                if (!var9 && x != 0.0D) {
+                    playerBB = playerBB.offset(x, 0.0D, 0.0D);
+                }
             }
 
-            this.tryCheckInsideBlocks();
-            float var25 = this.getBlockSpeedFactor();
-            player.velocity = player.velocity.multiply((double) var25, 1.0D, (double) var25));
+            if (!var9 && z != 0.0D) {
+                z = Shapes.collide(Direction.Axis.Z, playerBB, collidingVoxels, z);
+            }
+
+            return new Vec3(x, y, z);
         }
     }
 
     protected Vec3 maybeBackOffFromEdge(Vec3 var1) {
-        if (!this.abilities.flying && var1.y <= 0.0D && this.isStayingOnGroundSurface() && this.isAboveGround()) {
-            double var3 = var1.x;
-            double var5 = var1.z;
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (var1.y <= 0.0D && player.SNEAK && player.isAboveGround()) {
+            double velX = var1.x;
+            double velZ = var1.z;
             double var7 = 0.05D;
 
             while (true) {
-                while (var3 != 0.0D && this.level().noCollision(this, this.getBoundingBox().move(var3, (double) (-this.maxUpStep()), 0.0D))) {
-                    if (var3 < 0.05D && var3 >= -0.05D) {
-                        var3 = 0.0D;
-                    } else if (var3 > 0.0D) {
-                        var3 -= 0.05D;
+                while (velX != 0.0D && getCollidingBoundingBoxes(player.playerBB.offset(velX, (double) (-player.maxUpStep), 0.0D)).isEmpty()) {
+                    if (velX < 0.05D && velX >= -0.05D) {
+                        velX = 0.0D;
+                    } else if (velX > 0.0D) {
+                        velX -= 0.05D;
                     } else {
-                        var3 += 0.05D;
+                        velX += 0.05D;
                     }
                 }
 
                 while (true) {
-                    while (var5 != 0.0D && this.level().noCollision(this, this.getBoundingBox().move(0.0D, (double) (-this.maxUpStep()), var5))) {
-                        if (var5 < 0.05D && var5 >= -0.05D) {
-                            var5 = 0.0D;
-                        } else if (var5 > 0.0D) {
-                            var5 -= 0.05D;
+                    while (velZ != 0.0D && getCollidingBoundingBoxes(player.playerBB.offset(0.0D, (double) (-player.maxUpStep), velZ)).isEmpty()) {
+                        if (velZ < 0.05D && velZ >= -0.05D) {
+                            velZ = 0.0D;
+                        } else if (velZ > 0.0D) {
+                            velZ -= 0.05D;
                         } else {
-                            var5 += 0.05D;
+                            velZ += 0.05D;
                         }
                     }
 
                     while (true) {
-                        while (var3 != 0.0D && var5 != 0.0D && this.level().noCollision(this, this.getBoundingBox().move(var3, (double) (-this.maxUpStep()), var5))) {
-                            if (var3 < 0.05D && var3 >= -0.05D) {
-                                var3 = 0.0D;
-                            } else if (var3 > 0.0D) {
-                                var3 -= 0.05D;
+                        while (velX != 0.0D && velZ != 0.0D && getCollidingBoundingBoxes(player.playerBB.offset(velX, (double) (-player.maxUpStep), velZ)).isEmpty()) {
+                            if (velX < 0.05D && velX >= -0.05D) {
+                                velX = 0.0D;
+                            } else if (velX > 0.0D) {
+                                velX -= 0.05D;
                             } else {
-                                var3 += 0.05D;
+                                velX += 0.05D;
                             }
 
-                            if (var5 < 0.05D && var5 >= -0.05D) {
-                                var5 = 0.0D;
-                            } else if (var5 > 0.0D) {
-                                var5 -= 0.05D;
+                            if (velZ < 0.05D && velZ >= -0.05D) {
+                                velZ = 0.0D;
+                            } else if (velZ > 0.0D) {
+                                velZ -= 0.05D;
                             } else {
-                                var5 += 0.05D;
+                                velZ += 0.05D;
                             }
                         }
 
-                        var1 = new Vec3(var3, var1.y, var5);
+                        var1 = new Vec3(velX, var1.y, velZ);
                         return var1;
                     }
                 }
@@ -360,21 +450,24 @@ public class Movement_1_20_4 extends Movement {
     }
 
     public Vec3 handleRelativeFrictionAndCalculateMovement(Vec3 var1, float var2) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
         this.moveRelative(this.getFrictionInfluencedSpeed(var2), var1);
         this.player.velocity = this.handleOnClimbable(player.velocity);
         this.move(player.velocity);
-        if ((this.horizontalCollision || player.JUMP) && (this.onClimbable() || this.getFeetBlockState().is(Blocks.POWDER_SNOW) && PowderSnowBlock.canEntityWalkOnPowderSnow(this))) {
+        if ((player.horizontalCollision || player.JUMP) && (this.onClimbable()
+                || (player.feetBlockState instanceof PowderSnowBlock) /*&& PowderSnowBlock.canEntityWalkOnPowderSnow(this))*/)) {
             this.player.velocity = new Vec3(this.player.velocity.x, 0.2D, this.player.velocity.z);
         }
         return this.player.velocity;
     }
 
     private Vec3 handleOnClimbable(Vec3 velocity) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
         if (this.onClimbable()) {
             double x = MinecraftMathHelper_1_20_4.clamp(velocity.x, -0.15000000596046448D, 0.15000000596046448D);
             double z = MinecraftMathHelper_1_20_4.clamp(velocity.z, -0.15000000596046448D, 0.15000000596046448D);
             double y = Math.max(velocity.y, -0.15000000596046448D);
-            if (y < 0.0D && !this.getFeetBlockState().is(Blocks.SCAFFOLDING) && player.SNEAK) {
+            if (y < 0.0D && !(player.feetBlockState instanceof ScaffoldingBlock) && player.SNEAK) {
                 y = 0.0D;
             }
             velocity = new Vec3(x, y, z);
@@ -383,16 +476,31 @@ public class Movement_1_20_4 extends Movement {
     }
 
     public boolean onClimbable() {
-        Vec3 blockPos = this.blockPosition();
-        BlockState var2 = this.getFeetBlockState();
-        if (var2.is(BlockTags.CLIMBABLE)) {
-            player.lastClimbablePos = Optional.of(blockPos);
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        ABlock climbBlock = player.blockPosition;
+        if (climbBlock.canClimb()) {
+            player.lastClimbablePos = Optional.of(climbBlock);
             return true;
-        } else if (var2.getBlock() instanceof TrapDoorBlock && this.trapdoorUsableAsLadder(blockPos, var2)) {
-            player.lastClimbablePos = Optional.of(blockPos);
+        } else if (climbBlock instanceof Trapdoor && this.trapdoorUsableAsLadder(climbBlock)) {
+            player.lastClimbablePos = Optional.of(climbBlock);
             return true;
         } else {
             return false;
+        }
+    }
+
+    public Vec3 getFluidFallingAdjustedMovement(double var1, boolean var3, Vec3 var4) {
+        if (!player.SPRINT) {
+            double var5;
+            if (var3 && Math.abs(var4.y - 0.005D) >= 0.003D && Math.abs(var4.y - var1 / 16.0D) < 0.003D) {
+                var5 = -0.003D;
+            } else {
+                var5 = var4.y - var1 / 16.0D;
+            }
+
+            return new Vec3(var4.x, var5, var4.z);
+        } else {
+            return var4;
         }
     }
 
@@ -402,7 +510,7 @@ public class Movement_1_20_4 extends Movement {
     }
 
     public void moveRelative(float var1, Vec3 var2) {
-        Vec3 var3 = getInputVector(var2, var1, this.getYRot());
+        Vec3 var3 = getInputVector(var2, var1, player.YAW);
         player.velocity.add(var3);
     }
 
@@ -415,6 +523,56 @@ public class Movement_1_20_4 extends Movement {
             float var6 = MinecraftMathHelper_1_20_4.sin(var2 * 0.017453292F);
             float var7 = MinecraftMathHelper_1_20_4.cos(var2 * 0.017453292F);
             return new Vec3(var5.x * (double) var7 - var5.z * (double) var6, var5.y, var5.z * (double) var7 + var5.x * (double) var6);
+        }
+    }
+
+    protected void tryCheckInsideBlocks() {
+        this.checkInsideBlocks();
+    }
+
+    protected void checkInsideBlocks() {
+        AxisAlignedBB var1 = player.playerBB;
+        ABlock aBlock1 = blockManager.getBlock(Vec3.containing(var1.minX + 1.0E-7D, var1.minY + 1.0E-7D, var1.minZ + 1.0E-7D));
+        ABlock aBlock2 = blockManager.getBlock(Vec3.containing(var1.maxX - 1.0E-7D, var1.maxY - 1.0E-7D, var1.maxZ - 1.0E-7D));
+        ABlock aBlockResult;
+
+        for (int var5 = aBlock1.getX(); var5 <= aBlock2.getX(); ++var5) {
+            for (int var6 = aBlock1.getY(); var6 <= aBlock2.getY(); ++var6) {
+                for (int var7 = aBlock1.getZ(); var7 <= aBlock2.getZ(); ++var7) {
+                    aBlockResult = blockManager.getBlock(new Vec3(var5, var6, var7));
+                    aBlockResult.entityInside(player);
+                }
+            }
+        }
+    }
+
+    public void setOnGroundWithKnownMovement(boolean var1, Vec3 var2) {
+        player.GROUND = var1;
+        this.checkSupportingBlock(var1, var2);
+    }
+
+    protected void checkSupportingBlock(boolean var1, Vec3 var2) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (var1) {
+            AxisAlignedBB var3 = player.playerBB;
+            AxisAlignedBB var4 = new AxisAlignedBB(var3.minX, var3.minY - 1.0E-6D, var3.minZ, var3.maxX, var3.minY, var3.maxZ);
+            Optional<ABlock> var5 = findSupportingBlock(var4);
+            if (var5.isEmpty() && !player.onGroundNoBlocks) {
+                if (var2 != null) {
+                    AxisAlignedBB var6 = var4.offset(-var2.x, 0.0D, -var2.z);
+                    var5 = findSupportingBlock(var6);
+                    player.mainSupportingBlockPos = var5;
+                }
+            } else {
+                player.mainSupportingBlockPos = var5;
+            }
+
+            player.onGroundNoBlocks = var5.isEmpty();
+        } else {
+            player.onGroundNoBlocks = false;
+            if (player.mainSupportingBlockPos.isPresent()) {
+                player.mainSupportingBlockPos = Optional.empty();
+            }
         }
     }
 
@@ -437,14 +595,10 @@ public class Movement_1_20_4 extends Movement {
     }
 
     private float getBlockJumpFactor() {
-        /*float var1 = this.level().getBlockState(this.blockPosition()).getBlock().getJumpFactor();
-        float var2 = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getJumpFactor();
-        return (double) var1 == 1.0D ? var2 : var1;*/
-        return 0;
-    }
-
-    protected void goDownInWater() {
-        player.velocity.add(new Vec3(0.0D, -0.03999999910593033D, 0.0D));
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        float var1 = player.blockPosition.getJumpFactor();
+        float var2 = blockManager.getBlock(player.getBlockPosBelowThatAffectsMyMovement()).getJumpFactor();
+        return (double) var1 == 1.0D ? var2 : var1;
     }
 
     protected void jumpInLiquid() {
@@ -453,6 +607,51 @@ public class Movement_1_20_4 extends Movement {
 
     protected float getWaterSlowDown() {
         return 0.8F;
+    }
+
+    public boolean isFree(double var1, double var3, double var5) {
+        return this.isFree(player.playerBB.offset(var1, var3, var5));
+    }
+
+    private boolean isFree(AxisAlignedBB var1) {
+        return getCollidingBoundingBoxes(var1).isEmpty() && containsAnyLiquid(var1);
+    }
+
+    private boolean containsAnyLiquid(AxisAlignedBB var1) {
+        int var2 = MinecraftMathHelper_1_20_4.floor(var1.minX);
+        int var3 = MinecraftMathHelper_1_20_4.ceil(var1.maxX);
+        int var4 = MinecraftMathHelper_1_20_4.floor(var1.minY);
+        int var5 = MinecraftMathHelper_1_20_4.ceil(var1.maxY);
+        int var6 = MinecraftMathHelper_1_20_4.floor(var1.minZ);
+        int var7 = MinecraftMathHelper_1_20_4.ceil(var1.maxZ);
+
+        for(int var9 = var2; var9 < var3; ++var9) {
+            for(int var10 = var4; var10 < var5; ++var10) {
+                for(int var11 = var6; var11 < var7; ++var11) {
+                    ABlock block = blockManager.getBlock(new Vec3(var9, var10, var11));
+                    if (!block.getFluidState().isEmpty()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public Vec3 getLookAngle() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        return this.calculateViewVector(player.PITCH, player.YAW);
+    }
+
+    protected final Vec3 calculateViewVector(float var1, float var2) {
+        float var3 = var1 * 0.017453292F;
+        float var4 = -var2 * 0.017453292F;
+        float var5 = MinecraftMathHelper_1_20_4.cos(var4);
+        float var6 = MinecraftMathHelper_1_20_4.sin(var4);
+        float var7 = MinecraftMathHelper_1_20_4.cos(var3);
+        float var8 = MinecraftMathHelper_1_20_4.sin(var3);
+        return new Vec3((double) (var6 * var7), (double) (-var8), (double) (var5 * var7));
     }
 
     @Override
@@ -470,6 +669,92 @@ public class Movement_1_20_4 extends Movement {
     @Override
     public boolean evalDistance(double distance) {
         return distance > 1.252;
+    }
+
+    public void setPos(double var1, double var3, double var5) {
+        this.setPosRaw(var1, var3, var5);
+        player.playerBB = this.makeBoundingBox(player.position);
+    }
+
+    public AxisAlignedBB makeBoundingBox(Vec3 var1) {
+        return makeBoundingBox(var1.x, var1.y, var1.z);
+    }
+
+    public AxisAlignedBB makeBoundingBox(double var1, double var3, double var5) {
+        float var7 = player.width / 2.0F;
+        float var8 = player.height;
+        return new AxisAlignedBB(var1 - (double) var7, var3, var5 - (double) var7, var1 + (double) var7, var3 + (double) var8, var5 + (double) var7);
+    }
+
+    public final void setPosRaw(double var1, double var3, double var5) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (player.position.x != var1 || player.position.y != var3 || player.position.z != var5) {
+            player.position = new Vec3(var1, var3, var5);
+            int var7 = MinecraftMathHelper_1_20_4.floor(var1);
+            int var8 = MinecraftMathHelper_1_20_4.floor(var3);
+            int var9 = MinecraftMathHelper_1_20_4.floor(var5);
+            if (var7 != player.blockPosition.getX() || var8 != player.blockPosition.getY() || var9 != player.blockPosition.getZ()) {
+                player.blockPosition = blockManager.getBlock(new Vec3(var7, var8, var9));
+                player.feetBlockState = null;
+            }
+        }
+    }
+
+    private boolean trapdoorUsableAsLadder(ABlock block) {
+        /*if ((Boolean)var2.getValue(TrapDoorBlock.OPEN)) {
+            BlockState var3 = this.level().getBlockState(var1.below());
+            if (var3.is(Blocks.LADDER) && var3.getValue(LadderBlock.FACING) == var2.getValue(TrapDoorBlock.FACING)) {
+                return true;
+            }
+        }*/
+        return false;
+    }
+
+    protected void checkFallDamage(double var1, boolean isOnGround) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (!player.isInWater()) {
+            player.updateInWaterStateAndDoWaterCurrentPushing();
+        }
+
+        if (isOnGround && player.fallDistance > 0.0F) {
+            // player.removeSoulSpeed();
+            // player.tryAddSoulSpeed();
+        }
+
+        if (isOnGround) {
+            player.fallDistance = 0.0F;
+        } else if (var1 < 0.0D) {
+            player.fallDistance -= (float) var1;
+        }
+
+        if (isOnGround) {
+            player.lastClimbablePos = Optional.empty();
+        }
+
+    }
+
+    public Optional<ABlock> findSupportingBlock(AxisAlignedBB var2) {
+        ABlock var3 = null;
+        double var4 = Double.MAX_VALUE;
+        BlockCollisions var6 = new BlockCollisions(this, var2, false, (var0, var1x) -> {
+            return var0;
+        });
+
+        while(true) {
+            ABlock var7;
+            double var8;
+            do {
+                if (!var6.hasNext()) {
+                    return Optional.ofNullable(var3);
+                }
+
+                var7 = (BlockPos)var6.next();
+                var8 = var7.distToCenterSqr(var1.position());
+            } while(!(var8 < var4) && (var8 != var4 || var3 != null && var3.compareTo(var7) >= 0));
+
+            var3 = var7.immutable();
+            var4 = var8;
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 package de.legoshi.parkourcalculator.util;
 
+import de.legoshi.parkourcalculator.simulation.Direction;
+
 public class AxisAlignedBB {
     public final double minX;
     public final double minY;
@@ -121,6 +123,60 @@ public class AxisAlignedBB {
         return new AxisAlignedBB(this.minX + x, this.minY + y, this.minZ + z, this.maxX + x, this.maxY + y, this.maxZ + z);
     }
 
+    public AxisAlignedBB offset(Vec3 vec3) {
+        return this.offset(vec3.x, vec3.y, vec3.z);
+    }
+
+    public AxisAlignedBB expandTowards(Vec3 var1) {
+        return this.expandTowards(var1.x, var1.y, var1.z);
+    }
+
+    public AxisAlignedBB deflate(double var1) {
+        return this.inflate(-var1);
+    }
+
+    public AxisAlignedBB inflate(double var1, double var3, double var5) {
+        double var7 = this.minX - var1;
+        double var9 = this.minY - var3;
+        double var11 = this.minZ - var5;
+        double var13 = this.maxX + var1;
+        double var15 = this.maxY + var3;
+        double var17 = this.maxZ + var5;
+        return new AxisAlignedBB(var7, var9, var11, var13, var15, var17);
+    }
+
+    public AxisAlignedBB inflate(double var1) {
+        return this.inflate(var1, var1, var1);
+    }
+
+    public AxisAlignedBB expandTowards(double var1, double var3, double var5) {
+        double var7 = this.minX;
+        double var9 = this.minY;
+        double var11 = this.minZ;
+        double var13 = this.maxX;
+        double var15 = this.maxY;
+        double var17 = this.maxZ;
+        if (var1 < 0.0D) {
+            var7 += var1;
+        } else if (var1 > 0.0D) {
+            var13 += var1;
+        }
+
+        if (var3 < 0.0D) {
+            var9 += var3;
+        } else if (var3 > 0.0D) {
+            var15 += var3;
+        }
+
+        if (var5 < 0.0D) {
+            var11 += var5;
+        } else if (var5 > 0.0D) {
+            var17 += var5;
+        }
+
+        return new AxisAlignedBB(var7, var9, var11, var13, var15, var17);
+    }
+
     /**
      * if instance and the argument bounding boxes overlap in the Y and Z dimensions, calculate the offset between them
      * in the X dimension.  return var2 if the bounding boxes do not overlap or if var2 is closer to 0 then the
@@ -146,6 +202,18 @@ public class AxisAlignedBB {
         } else {
             return offsetX;
         }
+    }
+
+    public double min(Direction.Axis var1) {
+        return var1.choose(this.minX, this.minY, this.minZ);
+    }
+
+    public double max(Direction.Axis var1) {
+        return var1.choose(this.maxX, this.maxY, this.maxZ);
+    }
+
+    public int getSize(Direction.Axis var1) {
+        return var1.choose();
     }
 
     /**
