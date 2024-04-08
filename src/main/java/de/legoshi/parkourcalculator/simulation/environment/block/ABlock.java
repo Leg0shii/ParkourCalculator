@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.simulation.environment.block;
 
 import de.legoshi.parkourcalculator.file.BlockData;
+import de.legoshi.parkourcalculator.simulation.FluidTags;
 import de.legoshi.parkourcalculator.simulation.player.Player;
 import de.legoshi.parkourcalculator.simulation.player.Player_1_20_4;
 import de.legoshi.parkourcalculator.simulation.player.Player_1_8;
@@ -160,5 +161,17 @@ public abstract class ABlock {
 
     public float getSpeedFactor() {
         return 1.0F;
+    }
+
+    public FluidTags getFluidState() {
+        return null;
+    }
+
+    public float getHeight(Vec3 var17) {
+        return 0.0F;
+    }
+
+    public Vec3 getFlow(Vec3 var17) {
+        return Vec3.ZERO;
     }
 }

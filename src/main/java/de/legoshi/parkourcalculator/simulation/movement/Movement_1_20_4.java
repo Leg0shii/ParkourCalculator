@@ -1,10 +1,10 @@
 package de.legoshi.parkourcalculator.simulation.movement;
 
-import de.legoshi.parkourcalculator.simulation.AxisCycle;
 import de.legoshi.parkourcalculator.simulation.Direction;
 import de.legoshi.parkourcalculator.simulation.FluidTags;
-import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
-import de.legoshi.parkourcalculator.simulation.environment.block.Trapdoor;
+import de.legoshi.parkourcalculator.simulation.Pose;
+import de.legoshi.parkourcalculator.simulation.environment.block.*;
+import de.legoshi.parkourcalculator.simulation.environment.block_1_20_4.BubbleWater;
 import de.legoshi.parkourcalculator.simulation.environment.block_1_20_4.PowderSnowBlock;
 import de.legoshi.parkourcalculator.simulation.environment.block_1_20_4.ScaffoldingBlock;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
@@ -18,11 +18,8 @@ import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper_1_20_4;
 import de.legoshi.parkourcalculator.util.Vec3;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Movement_1_20_4 extends Movement {
 
@@ -38,9 +35,13 @@ public class Movement_1_20_4 extends Movement {
 
     @Override
     public void calculateTick(InputTick inputTick) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+
+        player.SNEAK = !player.SWIMMING && this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.CROUCHING)
+                && (inputTick.SNEAK && !this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.STANDING));
+
         player.applyInput(inputTick);
 
-        Player_1_20_4 player = (Player_1_20_4) this.player;
 
         // code from LivingEntity
         if (player.noJumpDelay > 0) {
@@ -92,7 +93,7 @@ public class Movement_1_20_4 extends Movement {
             player.ELYTRA = false;
         }
 
-        travel(new Vec3((double) xxa, (double) yya, (double) zza)); // LivingEntity.java
+        travel(new Vec3((double) xxa, (double) 0.0F, (double) zza)); // LivingEntity.java
 
         /*if (!this.level().isClientSide && !this.isDeadOrDying()) {
             int var15 = this.getTicksFrozen();
@@ -121,7 +122,7 @@ public class Movement_1_20_4 extends Movement {
             setPos(clampedX, player.position.y, clampedZ);
         }
 
-        player.updatePlayerPose();
+        updatePlayerPose();
     }
 
     private void travel(Vec3 travelVec) {
@@ -142,7 +143,7 @@ public class Movement_1_20_4 extends Movement {
             var2 = 0.01D;
         }
 
-        FluidState fluidState = player.blockPosition.getFluidState();
+        // FluidState fluidState = player.blockPosition.getFluidState();
         float friction = player.SPRINT ? 0.9F : this.getWaterSlowDown();
         double yPos = player.position.y;
         if (player.isInWater()) {
@@ -233,7 +234,7 @@ public class Movement_1_20_4 extends Movement {
             }
 
         } else {
-            ABlock movementBlock = player.getBlockPosBelowThatAffectsMyMovement();
+            ABlock movementBlock = getBlockPosBelowThatAffectsMyMovement();
             float blockFriction = movementBlock.getFriction();
             friction = player.GROUND ? blockFriction * 0.91F : 0.91F;
             Vec3 var26 = this.handleRelativeFrictionAndCalculateMovement(travelVec, blockFriction);
@@ -300,7 +301,7 @@ public class Movement_1_20_4 extends Movement {
             player.velocity = new Vec3(var23 ? 0.0D : var10.x, var10.y, var7 ? 0.0D : var10.z);
         }
 
-        ABlock block = player.getOnPosLegacy();
+        ABlock block = getOnPosLegacy();
         if (var2.y != var3.y) {
             block.updateEntityAfterFallOn(player);
         }
@@ -310,7 +311,7 @@ public class Movement_1_20_4 extends Movement {
         }
 
         this.tryCheckInsideBlocks();
-        float blockSpeedFactor = player.getBlockSpeedFactor();
+        float blockSpeedFactor = getBlockSpeedFactor();
         player.velocity = player.velocity.multiply((double) blockSpeedFactor, 1.0D, (double) blockSpeedFactor);
     }
 
@@ -393,7 +394,7 @@ public class Movement_1_20_4 extends Movement {
 
     protected Vec3 maybeBackOffFromEdge(Vec3 var1) {
         Player_1_20_4 player = (Player_1_20_4) this.player;
-        if (var1.y <= 0.0D && player.SNEAK && player.isAboveGround()) {
+        if (var1.y <= 0.0D && player.SNEAK && isAboveGround()) {
             double velX = var1.x;
             double velZ = var1.z;
             double var7 = 0.05D;
@@ -597,7 +598,7 @@ public class Movement_1_20_4 extends Movement {
     private float getBlockJumpFactor() {
         Player_1_20_4 player = (Player_1_20_4) this.player;
         float var1 = player.blockPosition.getJumpFactor();
-        float var2 = blockManager.getBlock(player.getBlockPosBelowThatAffectsMyMovement()).getJumpFactor();
+        float var2 = getBlockPosBelowThatAffectsMyMovement().getJumpFactor();
         return (double) var1 == 1.0D ? var2 : var1;
     }
 
@@ -713,7 +714,7 @@ public class Movement_1_20_4 extends Movement {
     protected void checkFallDamage(double var1, boolean isOnGround) {
         Player_1_20_4 player = (Player_1_20_4) this.player;
         if (!player.isInWater()) {
-            player.updateInWaterStateAndDoWaterCurrentPushing();
+            updateInWaterStateAndDoWaterCurrentPushing();
         }
 
         if (isOnGround && player.fallDistance > 0.0F) {
@@ -736,7 +737,7 @@ public class Movement_1_20_4 extends Movement {
     public Optional<ABlock> findSupportingBlock(AxisAlignedBB var2) {
         ABlock var3 = null;
         double var4 = Double.MAX_VALUE;
-        BlockCollisions var6 = new BlockCollisions(this, var2, false, (var0, var1x) -> {
+        /*BlockCollisions var6 = new BlockCollisions(this, var2, false, (var0, var1x) -> {
             return var0;
         });
 
@@ -754,6 +755,194 @@ public class Movement_1_20_4 extends Movement {
 
             var3 = var7.immutable();
             var4 = var8;
+        }*/
+        return null;
+    }
+
+    public float getBlockSpeedFactor() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        float speedFactor = this.onSoulSpeedBlock() && player.hasPotion(Potion.soul_speed) ? 1.0F : getBlockSpeedFactor2();
+        return !player.ELYTRA ? speedFactor : 1.0F;
+    }
+
+    public ABlock getOnPosLegacy() {
+        return this.getOnPos(0.2F);
+    }
+
+    public ABlock getBlockPosBelowThatAffectsMyMovement() {
+        return this.getOnPos(0.500001F);
+    }
+
+    protected ABlock getOnPos(float var1) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (player.mainSupportingBlockPos.isPresent()) {
+            ABlock block = player.mainSupportingBlockPos.get();
+            if (!(var1 > 1.0E-5F)) {
+                return block;
+            } else {
+                ABlock blockAtY = blockManager.getBlock(new Vec3(block.getVec3().x, MinecraftMathHelper_1_20_4.floor(player.position.y - (double) var1), block.getVec3().z));
+                return (!((double) var1 <= 0.5D) || !(block instanceof Fence) && !(block instanceof Cobblewall) ? blockAtY : block);
+            }
+        } else {
+            int var2 = MinecraftMathHelper_1_20_4.floor(player.position.x);
+            int var3 = MinecraftMathHelper_1_20_4.floor(player.position.y - (double) var1);
+            int var4 = MinecraftMathHelper_1_20_4.floor(player.position.z);
+            return blockManager.getBlock(new Vec3(var2, var3, var4));
+        }
+    }
+
+    public float getBlockSpeedFactor2() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        float var2 = player.blockPosition.getSpeedFactor();
+        if (!(player.blockPosition instanceof Water) && !(player.blockPosition instanceof BubbleWater)) {
+            return (double) var2 == 1.0D ? getBlockPosBelowThatAffectsMyMovement().getSpeedFactor() : var2;
+        } else {
+            return var2;
+        }
+    }
+
+    protected boolean onSoulSpeedBlock() {
+        return this.getBlockPosBelowThatAffectsMyMovement() instanceof Soulsand;
+    }
+
+    protected boolean updateInWaterStateAndDoFluidPushing() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        player.fluidHeight.clear();
+        this.updateInWaterStateAndDoWaterCurrentPushing();
+        double var1 = 0.0023333333333333335D;
+        boolean var3 = this.updateFluidHeightAndDoFluidPushing(FluidTags.LAVA, var1);
+        return player.isInWater() || var3;
+    }
+
+    public void updateInWaterStateAndDoWaterCurrentPushing() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (this.updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0.014D)) {
+            player.fallDistance = 0.0F;
+            player.wasTouchingWater = true;
+        } else {
+            player.wasTouchingWater = false;
+        }
+
+    }
+
+    public boolean updateFluidHeightAndDoFluidPushing(FluidTags var1, double var2) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        AxisAlignedBB playerBB = player.playerBB.deflate(0.001D);
+        int minX = MinecraftMathHelper_1_20_4.floor(playerBB.minX);
+        int maxX = MinecraftMathHelper_1_20_4.ceil(playerBB.maxX);
+        int minY = MinecraftMathHelper_1_20_4.floor(playerBB.minY);
+        int maxY = MinecraftMathHelper_1_20_4.ceil(playerBB.maxY);
+        int minZ = MinecraftMathHelper_1_20_4.floor(playerBB.minZ);
+        int maxZ = MinecraftMathHelper_1_20_4.ceil(playerBB.maxZ);
+        double var11 = 0.0D;
+        boolean var14 = false;
+        Vec3 var15 = Vec3.ZERO;
+        int var16 = 0;
+
+        for (int x = minX; x < maxX; ++x) {
+            for (int y = minY; y < maxY; ++y) {
+                for (int z = minZ; z < maxZ; ++z) {
+                    Vec3 var17 = new Vec3(x, y, z);
+                    ABlock aBlock = blockManager.getBlock(var17);
+                    if (aBlock.getFluidState().equals(var1)) {
+                        double var22 = (double) ((float) y + aBlock.getHeight(var17));
+                        if (var22 >= playerBB.minY) {
+                            var14 = true;
+                            var11 = Math.max(var22 - playerBB.minY, var11);
+                            Vec3 var24 = aBlock.getFlow(var17);
+                            if (var11 < 0.4D) {
+                                var24 = var24.scale(var11);
+                            }
+
+                            var15.add(var24);
+                            ++var16;
+
+                        }
+                    }
+                }
+            }
+        }
+
+        if (var15.length() > 0.0D) {
+            if (var16 > 0) {
+                var15 = var15.scale(1.0D / (double) var16);
+            }
+
+            Vec3 var25 = player.velocity;
+            var15 = var15.scale(var2 * 1.0D);
+            double var26 = 0.003D;
+            if (Math.abs(var25.x) < 0.003D && Math.abs(var25.z) < 0.003D && var15.length() < 0.0045000000000000005D) {
+                var15 = var15.normalize().scale(0.0045000000000000005D);
+            }
+
+            player.velocity.add(var15);
+        }
+
+        player.fluidHeight.put(var1, var11);
+        return var14;
+    }
+
+    private void updateFluidOnEyes() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        player.wasEyeInWater = player.isEyeInFluid(FluidTags.WATER);
+        player.fluidOnEyes.clear();
+        double var1 = player.getEyeY() - 0.1111111119389534D;
+
+        Vec3 var8 = Vec3.containing(player.position.x, var1, player.position.z);
+        ABlock var5 = blockManager.getBlock(var8);
+        double var6 = (double) ((float) var8.y + var5.getHeight(var8));
+        /*if (var6 > var1) {
+            Stream var10000 = var5.getTags();
+            Set var10001 = player.fluidOnEyes;
+            Objects.requireNonNull(var10001);
+            var10000.forEach(var10001::add);
+        }*/
+    }
+
+    public void updatePlayerPose() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
+            Pose poseBefore;
+            if (player.ELYTRA) {
+                poseBefore = Pose.FALL_FLYING;
+            } else if (player.SWIMMING) {
+                poseBefore = Pose.SWIMMING;
+            } else if (player.SNEAK) {
+                poseBefore = Pose.CROUCHING;
+            } else {
+                poseBefore = Pose.STANDING;
+            }
+
+            Pose poseAfter;
+            if (!this.canPlayerFitWithinBlocksAndEntitiesWhen(poseBefore)) {
+                if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.CROUCHING)) {
+                    poseAfter = Pose.CROUCHING;
+                } else {
+                    poseAfter = Pose.SWIMMING;
+                }
+            } else {
+                poseAfter = poseBefore;
+            }
+            player.pose = poseAfter;
+        }
+    }
+
+    public boolean canPlayerFitWithinBlocksAndEntitiesWhen(Pose pose) {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        return getCollidingBoundingBoxes(player.getDimensions(pose).makeBoundingBox(player.position).deflate(1.0E-7D)).isEmpty();
+    }
+
+    public boolean isAboveGround() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        return player.GROUND || player.fallDistance < player.maxUpStep && !getCollidingBoundingBoxes(player.playerBB.offset(0.0D, (double) (player.fallDistance - player.maxUpStep), 0.0D)).isEmpty();
+    }
+
+    public void updateSwimming() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (player.SWIMMING) {
+            player.SWIMMING = player.SPRINT && player.isInWater();
+        } else {
+            player.SWIMMING = player.SPRINT && player.isUnderWater() && player.blockPosition.getFluidState().equals(FluidTags.WATER);
         }
     }
 
