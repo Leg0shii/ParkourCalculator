@@ -240,6 +240,18 @@ public class Vec3 {
             Double.compare(vec3.y + 0.0, y + 0.0) == 0 &&
             Double.compare(vec3.z+ 0.0, z + 0.0) == 0;
     }
+
+	public int getX() {
+		return (int) Math.floor(x);
+	}
+
+	public int getY() {
+		return (int) Math.floor(y);
+	}
+
+	public int getZ() {
+		return (int) Math.floor(z);
+	}
     
     @Override
     public int hashCode() {
