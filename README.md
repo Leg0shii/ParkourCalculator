@@ -1,16 +1,21 @@
 # ParkourCalculator
 
 ## Overview
-ParkourCalculator is an advanced tool designed for simulating and analyzing parkour mechanics in Minecraft. With a focus on versions 1.8.9 and 1.12, it offers an in-depth look into the game's physics, blocks, and player interactions.
-Key Features
+ParkourCalculator is an advanced tool designed for simulating and analyzing parkour mechanics in Minecraft. With a focus on versions 1.8.9, 1.12 and 1.20, it offers an in-depth look into the game's physics, blocks, and player interactions.
 
 ## Detailed Simulation
-- Simulate Minecraft versions 1.8.9 and 1.12 with precision.
+- Simulate Minecraft versions 1.8.9, 1.12, 1.20 with precision.
 - Analyze player movements and interactions with various blocks.
 - Simulate a wide range of player inputs to test different scenarios.
 - Move and adjust player paths for thorough examination.
 
 ![](readme/vid1.gif)
+
+## Pathfinding
+- Utilize advanced AI to generate optimal paths from start to end positions.
+- Highly customizable and capable of navigating complex terrain with precision.
+- Achieves pathfinding accuracy comparable to world record speedruns.
+- Example: https://www.youtube.com/watch?v=-zVK3DKpgr4
 
 ## 3D World Editor
 - Build or import Minecraft worlds for analysis.
@@ -23,7 +28,6 @@ Key Features
 - export macros for practical application in gameplay.
 
 ![](readme/vid3.gif)
-
 
 ## Installation
 ### Windows
