@@ -22,7 +22,7 @@ public class VersionSettings extends TitledPane{
         titleText.setFill(Color.WHITE);
         setGraphic(titleText);
 
-        versionComboBox.getItems().addAll("V_1_8", "V_1_12");
+        versionComboBox.getItems().addAll("V_1_8", "V_1_12", "V_1_20_4");
         versionComboBox.setValue(application.parkourVersion.toString());
 
         GridPane gridPane = new GridPane();

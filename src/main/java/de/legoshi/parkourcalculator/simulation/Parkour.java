@@ -18,7 +18,12 @@ public abstract class Parkour {
     public static final List<PotionEffect> DEFAULT_POTION_EFFECTS = List.of(
             new PotionEffect(Potion.moveSpeed, 0.20000000298023224D),
             new PotionEffect(Potion.moveSlowdown, -0.15000000596046448D),
-            new PotionEffect(Potion.jump, -1)
+            new PotionEffect(Potion.jump, -1),
+            new PotionEffect(Potion.swift_sneak, -1),
+            new PotionEffect(Potion.levitation, -1),
+            new PotionEffect(Potion.soul_speed, -1),
+            new PotionEffect(Potion.dolphins_grace, -1),
+            new PotionEffect(Potion.slow_falling, -1)
     );
 
     @Getter protected Player player;

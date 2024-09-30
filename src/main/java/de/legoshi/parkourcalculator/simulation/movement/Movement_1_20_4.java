@@ -19,7 +19,6 @@ import de.legoshi.parkourcalculator.util.MinecraftMathHelper_1_20_4;
 import de.legoshi.parkourcalculator.util.Vec3;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class Movement_1_20_4 extends Movement {
 
@@ -36,6 +35,9 @@ public class Movement_1_20_4 extends Movement {
     @Override
     public void calculateTick(InputTick inputTick) {
         Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (player.blockPosition == null) {
+            player.blockPosition = new Vec3(-1, 0, 0);
+        }
 
         player.SNEAK = !player.SWIMMING && this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.CROUCHING)
                 && (inputTick.SNEAK && !this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.STANDING));
@@ -52,8 +54,6 @@ public class Movement_1_20_4 extends Movement {
         if (Math.abs(player.velocity.y) < 0.003D) player.velocity.y = 0.0D;
         if (Math.abs(player.velocity.z) < 0.003D) player.velocity.z = 0.0D;
 
-        float xxa = player.moveStrafe;
-        float zza = player.moveForward;
         boolean jumping = inputTick.JUMP;
         /*this.yBobO = this.yBob;
         this.xBobO = this.xBob;
@@ -84,8 +84,10 @@ public class Movement_1_20_4 extends Movement {
             player.noJumpDelay = 0;
         }
 
-        xxa *= 0.98F;
-        zza *= 0.98F;
+        player.moveStrafe *= 0.98F;
+        player.moveForward *= 0.98F;
+
+        // updateFallFlying();
 
         if (player.ELYTRA && !player.GROUND && !player.hasPotion(Potion.levitation)) {
             player.ELYTRA = inputTick.ELYTRA;
@@ -93,7 +95,7 @@ public class Movement_1_20_4 extends Movement {
             player.ELYTRA = false;
         }
 
-        travel(new Vec3((double) xxa, (double) 0.0F, (double) zza)); // LivingEntity.java
+        travel(new Vec3((double) player.moveStrafe, (double) 0.0F, (double) player.moveForward)); // LivingEntity.java
 
         /*if (!this.level().isClientSide && !this.isDeadOrDying()) {
             int var15 = this.getTicksFrozen();
@@ -108,8 +110,7 @@ public class Movement_1_20_4 extends Movement {
         // this.tryAddFrost();
 
         // belongs to player.java
-        // player.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED));
-        player.setSpeed((float) 0.699999988079071D);
+        // player.setSpeed((float) this.getAttributeValue(Attributes.MOVEMENT_SPEED)); setting walking speed
 
         /*if (GROUND && this.getAbilities().flying && !this.minecraft.gameMode.isAlwaysFlying()) {
             this.getAbilities().flying = false;
@@ -128,7 +129,7 @@ public class Movement_1_20_4 extends Movement {
     private void travel(Vec3 travelVec) {
         Player_1_20_4 player = (Player_1_20_4) this.player;
 
-        if (player.SWIMMING) {
+        /*if (player.SWIMMING) {
             double lookAngleY = getLookAngle().y;
             double var4 = lookAngleY < -0.2D ? 0.085D : 0.06D;
 
@@ -136,7 +137,7 @@ public class Movement_1_20_4 extends Movement {
             if (lookAngleY <= 0.0D || player.JUMP || !fluidBlock.getFluidState().isEmpty()) {
                 player.velocity.add(new Vec3(0.0D, (lookAngleY - player.velocity.y) * var4, 0.0D));
             }
-        }
+        }*/
 
         double var2 = 0.08D;
         if (player.velocity.y <= 0.0D && player.hasPotion(Potion.slow_falling)) {
@@ -237,19 +238,35 @@ public class Movement_1_20_4 extends Movement {
             ABlock movementBlock = getBlockPosBelowThatAffectsMyMovement();
             float blockFriction = movementBlock.getFriction();
             friction = player.GROUND ? blockFriction * 0.91F : 0.91F;
-            Vec3 var26 = this.handleRelativeFrictionAndCalculateMovement(travelVec, blockFriction);
-            double var10 = var26.y;
+
+            this.moveRelative(getFrictionInfluencedSpeed(blockFriction), travelVec);
+            this.player.velocity = this.handleOnClimbable(player.velocity);
+            this.move(player.velocity);
+
+            if ((player.horizontalCollision || player.JUMP) && this.onClimbable()) { /* || (getFeetBlockState() instanceof PowderSnowBlock) && PowderSnowBlock.canEntityWalkOnPowderSnow(this))*/
+                player.velocity.y = 0.2D;
+            }
+
+            /*double var10 = player.velocity.y;
             if (player.hasPotion(Potion.levitation)) {
-                var10 += (0.05D * (double) (player.getPotionEffects().get(Potion.levitation).getAmplifier() + 1) - var26.y) * 0.2D;
-            }
+                var10 += (0.05D * (double) (player.getPotionEffects().get(Potion.levitation).getAmplifier() + 1) - player.velocity.y) * 0.2D;
+            }*/
 
-            var10 -= var2;
+            player.velocity.y -= 0.08D;
+            player.velocity.y *= 0.9800000190734863D;
 
-            if (player.shouldDiscardFriction()) {
-                player.velocity = new Vec3(var26.x, var10, var26.z);
+            player.velocity.x = player.velocity.x * friction;
+            player.velocity.z = player.velocity.z * friction;
+
+            // var10 -= var2;
+
+            /*if (player.shouldDiscardFriction()) {
+                player.velocity.y = var10;
             } else {
-                player.velocity = new Vec3(var26.x * (double) friction, var10 * 0.9800000190734863D, var26.z * (double) friction);
-            }
+                player.velocity.x *= friction;
+                player.velocity.y = var10 * 0.9800000190734863D;
+                player.velocity.z *= friction;
+            }*/
         }
     }
 
@@ -303,15 +320,16 @@ public class Movement_1_20_4 extends Movement {
 
         ABlock block = getOnPosLegacy();
         if (var2.y != var3.y) {
-            block.updateEntityAfterFallOn(player);
+            block.onLanded(player);
         }
 
         if (player.GROUND) {
             block.onEntityCollidedWithBlock(player);
         }
 
-        this.tryCheckInsideBlocks();
+        // this.tryCheckInsideBlocks();
         float blockSpeedFactor = getBlockSpeedFactor();
+        if (!player.GROUND) blockSpeedFactor = 0.6F;
         player.velocity = player.velocity.multiply((double) blockSpeedFactor, 1.0D, (double) blockSpeedFactor);
     }
 
@@ -344,14 +362,17 @@ public class Movement_1_20_4 extends Movement {
     }
 
     public Vec3 collideBoundingBox(Vec3 velocity, AxisAlignedBB playerBB, List<AxisAlignedBB> collidingBBs) {
-        List<AxisAlignedBB> bbs = new ArrayList<>();
+        Set<AxisAlignedBB> bbs = new HashSet<>();
         if (!collidingBBs.isEmpty()) {
             bbs.addAll(collidingBBs);
         }
 
         bbs.addAll(getCollidingBoundingBoxes(playerBB.expandTowards(velocity)));
 
-        List<VoxelShape> voxelShapes = collidingBBs.stream().map(Shapes::create).toList();
+        List<VoxelShape> voxelShapes = new ArrayList<>();
+        for (AxisAlignedBB bb : bbs) {
+            voxelShapes.add(Shapes.create(bb));
+        }
         return collideWithShapes(velocity, playerBB, voxelShapes);
     }
 
@@ -450,13 +471,14 @@ public class Movement_1_20_4 extends Movement {
         }
     }
 
-    public Vec3 handleRelativeFrictionAndCalculateMovement(Vec3 var1, float var2) {
+    public Vec3 handleRelativeFrictionAndCalculateMovement(Vec3 travelVec, float blockFriction) {
         Player_1_20_4 player = (Player_1_20_4) this.player;
-        this.moveRelative(this.getFrictionInfluencedSpeed(var2), var1);
+
+        this.moveRelative(getFrictionInfluencedSpeed(blockFriction), travelVec);
         this.player.velocity = this.handleOnClimbable(player.velocity);
         this.move(player.velocity);
         if ((player.horizontalCollision || player.JUMP) && (this.onClimbable()
-                || (player.feetBlockState instanceof PowderSnowBlock) /*&& PowderSnowBlock.canEntityWalkOnPowderSnow(this))*/)) {
+                || (getFeetBlockState() instanceof PowderSnowBlock) /*&& PowderSnowBlock.canEntityWalkOnPowderSnow(this))*/)) {
             this.player.velocity = new Vec3(this.player.velocity.x, 0.2D, this.player.velocity.z);
         }
         return this.player.velocity;
@@ -468,7 +490,7 @@ public class Movement_1_20_4 extends Movement {
             double x = MinecraftMathHelper_1_20_4.clamp(velocity.x, -0.15000000596046448D, 0.15000000596046448D);
             double z = MinecraftMathHelper_1_20_4.clamp(velocity.z, -0.15000000596046448D, 0.15000000596046448D);
             double y = Math.max(velocity.y, -0.15000000596046448D);
-            if (y < 0.0D && !(player.feetBlockState instanceof ScaffoldingBlock) && player.SNEAK) {
+            if (y < 0.0D && !(getFeetBlockState() instanceof ScaffoldingBlock) && player.SNEAK) {
                 y = 0.0D;
             }
             velocity = new Vec3(x, y, z);
@@ -478,11 +500,12 @@ public class Movement_1_20_4 extends Movement {
 
     public boolean onClimbable() {
         Player_1_20_4 player = (Player_1_20_4) this.player;
-        ABlock climbBlock = player.blockPosition;
+        ABlock climbBlock = blockManager.getBlock(player.blockPosition);
+        ABlock feetBlock = this.getFeetBlockState();
         if (climbBlock.canClimb()) {
             player.lastClimbablePos = Optional.of(climbBlock);
             return true;
-        } else if (climbBlock instanceof Trapdoor && this.trapdoorUsableAsLadder(climbBlock)) {
+        } else if (climbBlock instanceof Trapdoor && this.trapdoorUsableAsLadder(climbBlock, feetBlock)) {
             player.lastClimbablePos = Optional.of(climbBlock);
             return true;
         } else {
@@ -507,23 +530,22 @@ public class Movement_1_20_4 extends Movement {
 
     private float getFrictionInfluencedSpeed(float var1) {
         // return player.GROUND ? this.getSpeed() * (0.21600002F / (var1 * var1 * var1)) : this.getFlyingSpeed();
-        return player.getSpeed() * (0.21600002F / (var1 * var1 * var1));
+        float movement;
+        if (player.SPRINT) movement = 0.130000010133F;
+        else movement = 0.1F;
+
+        return movement * (0.21600002F / (var1 * var1 * var1));
     }
 
-    public void moveRelative(float var1, Vec3 var2) {
-        Vec3 var3 = getInputVector(var2, var1, player.YAW);
-        player.velocity.add(var3);
-    }
-
-    private static Vec3 getInputVector(Vec3 var0, float var1, float var2) {
-        double var3 = var0.lengthSqr();
-        if (var3 < 1.0E-7D) {
-            return Vec3.ZERO;
-        } else {
-            Vec3 var5 = (var3 > 1.0D ? var0.normalize() : var0).scale((double) var1);
-            float var6 = MinecraftMathHelper_1_20_4.sin(var2 * 0.017453292F);
-            float var7 = MinecraftMathHelper_1_20_4.cos(var2 * 0.017453292F);
-            return new Vec3(var5.x * (double) var7 - var5.z * (double) var6, var5.y, var5.z * (double) var7 + var5.x * (double) var6);
+    public void moveRelative(float friction, Vec3 moveVec) {
+        double speed = moveVec.lengthSqr();
+        if (speed >= 1.0E-7D) {
+            Vec3 moveStrafeVec = (speed > 1.0D ? moveVec.normalize() : moveVec).scale((double) friction);
+            float sin = MinecraftMathHelper_1_20_4.sin(player.YAW * 0.017453292F);
+            float cos = MinecraftMathHelper_1_20_4.cos(player.YAW * 0.017453292F);
+            player.velocity.x += moveStrafeVec.x * (double) cos - moveStrafeVec.z * (double) sin;
+            // player.velocity.y += moveStrafeVec.y;
+            player.velocity.z += moveStrafeVec.z * (double) cos + moveStrafeVec.x * (double) sin;
         }
     }
 
@@ -549,7 +571,7 @@ public class Movement_1_20_4 extends Movement {
 
     public void setOnGroundWithKnownMovement(boolean var1, Vec3 var2) {
         player.GROUND = var1;
-        this.checkSupportingBlock(var1, var2);
+        // this.checkSupportingBlock(var1, var2);
     }
 
     protected void checkSupportingBlock(boolean var1, Vec3 var2) {
@@ -597,7 +619,7 @@ public class Movement_1_20_4 extends Movement {
 
     private float getBlockJumpFactor() {
         Player_1_20_4 player = (Player_1_20_4) this.player;
-        float var1 = player.blockPosition.getJumpFactor();
+        float var1 = blockManager.getBlock(player.blockPosition).getJumpFactor();
         float var2 = getBlockPosBelowThatAffectsMyMovement().getJumpFactor();
         return (double) var1 == 1.0D ? var2 : var1;
     }
@@ -695,13 +717,13 @@ public class Movement_1_20_4 extends Movement {
             int var8 = MinecraftMathHelper_1_20_4.floor(var3);
             int var9 = MinecraftMathHelper_1_20_4.floor(var5);
             if (var7 != player.blockPosition.getX() || var8 != player.blockPosition.getY() || var9 != player.blockPosition.getZ()) {
-                player.blockPosition = blockManager.getBlock(new Vec3(var7, var8, var9));
+                player.blockPosition = new Vec3(var7, var8, var9);
                 player.feetBlockState = null;
             }
         }
     }
 
-    private boolean trapdoorUsableAsLadder(ABlock block) {
+    private boolean trapdoorUsableAsLadder(ABlock block, ABlock feet) {
         /*if ((Boolean)var2.getValue(TrapDoorBlock.OPEN)) {
             BlockState var3 = this.level().getBlockState(var1.below());
             if (var3.is(Blocks.LADDER) && var3.getValue(LadderBlock.FACING) == var2.getValue(TrapDoorBlock.FACING)) {
@@ -714,7 +736,7 @@ public class Movement_1_20_4 extends Movement {
     protected void checkFallDamage(double var1, boolean isOnGround) {
         Player_1_20_4 player = (Player_1_20_4) this.player;
         if (!player.isInWater()) {
-            updateInWaterStateAndDoWaterCurrentPushing();
+            // updateInWaterStateAndDoWaterCurrentPushing();
         }
 
         if (isOnGround && player.fallDistance > 0.0F) {
@@ -793,8 +815,9 @@ public class Movement_1_20_4 extends Movement {
 
     public float getBlockSpeedFactor2() {
         Player_1_20_4 player = (Player_1_20_4) this.player;
-        float var2 = player.blockPosition.getSpeedFactor();
-        if (!(player.blockPosition instanceof Water) && !(player.blockPosition instanceof BubbleWater)) {
+        ABlock block = blockManager.getBlock(player.blockPosition);
+        float var2 = block.getSpeedFactor();
+        if (!(block instanceof Water) && !(block instanceof BubbleWater)) {
             return (double) var2 == 1.0D ? getBlockPosBelowThatAffectsMyMovement().getSpeedFactor() : var2;
         } else {
             return var2;
@@ -942,8 +965,17 @@ public class Movement_1_20_4 extends Movement {
         if (player.SWIMMING) {
             player.SWIMMING = player.SPRINT && player.isInWater();
         } else {
-            player.SWIMMING = player.SPRINT && player.isUnderWater() && player.blockPosition.getFluidState().equals(FluidTags.WATER);
+            player.SWIMMING = player.SPRINT && player.isUnderWater() && blockManager.getBlock(player.blockPosition).getFluidState().equals(FluidTags.WATER);
         }
+    }
+
+    public ABlock getFeetBlockState() {
+        Player_1_20_4 player = (Player_1_20_4) this.player;
+        if (player.feetBlockState == null) {
+            player.feetBlockState = player.blockPosition;
+        }
+
+        return blockManager.getBlock(player.feetBlockState);
     }
 
 }

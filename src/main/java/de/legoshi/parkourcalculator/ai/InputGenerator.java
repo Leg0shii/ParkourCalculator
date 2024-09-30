@@ -49,6 +49,7 @@ public class InputGenerator {
             random.nextDouble() < jumpProb,
             random.nextDouble() < sprintProb,
             random.nextDouble() < sneakProb,
+            false,
             facing
         );
     }

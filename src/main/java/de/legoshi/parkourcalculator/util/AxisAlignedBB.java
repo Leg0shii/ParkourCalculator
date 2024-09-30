@@ -213,7 +213,8 @@ public class AxisAlignedBB {
     }
 
     public int getSize(Direction.Axis var1) {
-        return var1.choose();
+        // return var1.choose();
+        return 0;
     }
 
     /**

@@ -60,6 +60,7 @@ public class CSVUtils {
                     Boolean.parseBoolean(tokens[13]), // sprint 13
                     Boolean.parseBoolean(tokens[11]), // sneak 11
                     Boolean.parseBoolean(tokens[12]), // jump 12
+                    false,
                     Float.parseFloat(tokens[3])
                 );
 

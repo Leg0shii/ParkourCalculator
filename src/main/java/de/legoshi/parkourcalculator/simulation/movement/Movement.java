@@ -183,7 +183,7 @@ public abstract class Movement {
         }
     }
 
-    private double getSpeedMulti() {
+    double getSpeedMulti() {
         double speed = ((1 + player.getPotionEffects().get(Potion.moveSpeed).getSpeedChange() * player.getPotionEffects().get(Potion.moveSpeed).getAmplifier()) *
                 (1 + player.getPotionEffects().get(Potion.moveSlowdown).getSpeedChange() * player.getPotionEffects().get(Potion.moveSlowdown).getAmplifier()));
         return speed >= 0 ? speed : 0;
@@ -512,8 +512,10 @@ public abstract class Movement {
         playerTickInformations.add(player.getPlayerTickInformation()); // add starting position
         
         player.GROUND = onGround;
+        int tickNumber = 1;
         for (InputTick inputTick : inputTicks) {
             calculateTick(inputTick);
+            System.out.println(tickNumber++ + ": " + player);
             playerTickInformations.add(player.getPlayerTickInformation());
         }
         
@@ -533,7 +535,7 @@ public abstract class Movement {
             for (int z = minZ; z < maxZ; ++z) {
                 for (int y = minY - 1; y < maxY; ++y) {
                     ABlock aBlock = blockManager.getBlock(x, y, z);
-                    if (aBlock instanceof Air) continue;
+                    if (aBlock instanceof Air || aBlock instanceof BlockLiquid || aBlock instanceof Cobweb) continue;
                     list.add(aBlock);
                 }
             }

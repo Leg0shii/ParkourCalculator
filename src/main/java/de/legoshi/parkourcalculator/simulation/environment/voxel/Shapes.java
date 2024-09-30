@@ -13,7 +13,7 @@ public final class Shapes {
    public static final double EPSILON = 1.0E-7D;
    public static final double BIG_EPSILON = 1.0E-6D;
    private static final VoxelShape BLOCK;
-   public static final VoxelShape INFINITY = box(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+   // public static final VoxelShape INFINITY = box(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
    private static final VoxelShape EMPTY = new ArrayVoxelShape(new BitSetDiscreteVoxelShape(0, 0, 0), new double[]{0.0D}, new double[]{0.0D}, new double[]{0.0D});
 
    static {
@@ -35,13 +35,17 @@ public final class Shapes {
 
    public static VoxelShape box(double var0, double var2, double var4, double var6, double var8, double var10) {
       if (!(var0 > var6) && !(var2 > var8) && !(var4 > var10)) {
-         return create(var0, var2, var4, var6, var8, var10);
+         return create2(var0, var2, var4, var6, var8, var10);
       } else {
          throw new IllegalArgumentException("The min values need to be smaller or equals to the max values");
       }
    }
 
-   public static VoxelShape create(double var0, double var2, double var4, double var6, double var8, double var10) {
+   public static VoxelShape create(AxisAlignedBB var0) {
+      return create2(var0.minX, var0.minY, var0.minZ, var0.maxX, var0.maxY, var0.maxZ);
+   }
+
+   public static VoxelShape create2(double var0, double var2, double var4, double var6, double var8, double var10) {
       if (!(var6 - var0 < 1.0E-7D) && !(var8 - var2 < 1.0E-7D) && !(var10 - var4 < 1.0E-7D)) {
          int var12 = findBits(var0, var6);
          int var13 = findBits(var2, var8);
@@ -62,10 +66,6 @@ public final class Shapes {
       } else {
          return empty();
       }
-   }
-
-   public static VoxelShape create(AxisAlignedBB var0) {
-      return create(var0.minX, var0.minY, var0.minZ, var0.maxX, var0.maxY, var0.maxZ);
    }
 
    protected static int findBits(double var0, double var2) {
@@ -163,7 +163,7 @@ public final class Shapes {
    }
 
    private static boolean joinIsNotEmpty(IndexMerger var0, IndexMerger var1, IndexMerger var2, DiscreteVoxelShape var3, DiscreteVoxelShape var4, BooleanOp var5) {
-      return !var0.forMergedIndexes((var5x, var6, var7) -> {
+      return !var0.forMergedIndexes((var5x, var6, var7y) -> {
          return var1.forMergedIndexes((var6x, var7x, var8) -> {
             return var2.forMergedIndexes((var7, var8x, var9) -> {
                return !var5.apply(var3.isFullWide(var5x, var6x, var7), var4.isFullWide(var6, var7x, var8x));

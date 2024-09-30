@@ -3,18 +3,15 @@ package de.legoshi.parkourcalculator.simulation.player;
 import de.legoshi.parkourcalculator.simulation.FluidTags;
 import de.legoshi.parkourcalculator.simulation.Pose;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
-import de.legoshi.parkourcalculator.simulation.environment.block_1_20_4.BubbleWater;
 import de.legoshi.parkourcalculator.simulation.potion.Potion;
 import de.legoshi.parkourcalculator.simulation.potion.PotionEffect;
 import de.legoshi.parkourcalculator.simulation.tick.InputTick;
-import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.MinecraftMathHelper_1_20_4;
 import de.legoshi.parkourcalculator.util.Vec3;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class Player_1_20_4 extends Player {
 
@@ -28,26 +25,22 @@ public class Player_1_20_4 extends Player {
     public float depthStrider;
     public boolean horizontalCollision;
     public boolean verticalCollision;
-    public Pose pose;
+    public Pose pose = Pose.STANDING;
 
-    public Optional<ABlock> lastClimbablePos;
-    public Optional<ABlock> mainSupportingBlockPos;
+    public Optional<ABlock> lastClimbablePos = Optional.empty();
+    public Optional<ABlock> mainSupportingBlockPos = Optional.empty();
     public boolean verticalCollisionBelow;
     public boolean minorHorizontalCollision;
     public Vec3 stuckSpeedMultiplier;
     public boolean onGroundNoBlocks;
     private boolean discardFriction;
     private boolean wasUnderwater;
-    public ABlock blockPosition;
-    public ABlock feetBlockState;
+    public Vec3 blockPosition;
+    public Vec3 feetBlockState;
     public float maxUpStep = 0.6F;
 
-    @Getter
-    @Setter
-    public float PITCH;
-    @Getter
-    @Setter
-    public float startPITCH;
+    @Getter @Setter public float PITCH;
+    @Getter @Setter public float startPITCH;
     public float fallDistance;
     private boolean wasInPowderSnow;
     private boolean isInPowderSnow;
@@ -67,6 +60,9 @@ public class Player_1_20_4 extends Player {
 
     public Player_1_20_4(Vec3 position, Vec3 velocity, float startYAW, List<PotionEffect> eFs) {
         super(position, velocity, startYAW, eFs);
+        fluidHeight.put(FluidTags.WATER, 0.0D);
+        fluidHeight.put(FluidTags.LAVA, 0.0D);
+        stuckSpeedMultiplier = Vec3.ZERO;
     }
 
     @Override
@@ -161,10 +157,39 @@ public class Player_1_20_4 extends Player {
     public void resetPlayer() {
         super.resetPlayer();
         noJumpDelay = 0;
+        //eyeHeight;
+        fluidHeight.put(FluidTags.WATER, 0.0D);
+        fluidHeight.put(FluidTags.LAVA, 0.0D);
+
+        wasTouchingWater = false;
+        SWIMMING = false;
+        ELYTRA = false;
+        wasELYTRA = false;
+        horizontalCollision = false;
+        verticalCollision = false;
+        pose = Pose.STANDING;
+
+        lastClimbablePos = Optional.empty();
+        mainSupportingBlockPos = Optional.empty();
+        verticalCollisionBelow = false;
+        minorHorizontalCollision = false;
+        stuckSpeedMultiplier = Vec3.ZERO.copy();
+        //onGroundNoBlocks;
+        //discardFriction;
+        wasUnderwater = false;
+        blockPosition = null;
+        feetBlockState = null;
+
+        //PITCH;
+        //startPITCH;
+        fallDistance = 0;
+        wasInPowderSnow = false;
+        isInPowderSnow = false;
+        fluidOnEyes = new HashSet<>();
+        wasEyeInWater = false;
     }
 
     private boolean hasEnoughImpulseToStartSprinting() {
-        double var1 = 0.8D;
         return this.isUnderWater() ? hasForwardImpulse() : (double) moveForward >= 0.8D;
     }
 

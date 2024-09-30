@@ -11,6 +11,7 @@ import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
 import de.legoshi.parkourcalculator.util.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@ToString
 public abstract class Player {
 
     private static final Logger logger = LogManager.getLogger(Player.class.getName());
@@ -201,6 +203,11 @@ public abstract class Player {
         potionEffects.put(Potion.moveSpeed, pEs.get(0));
         potionEffects.put(Potion.moveSlowdown, pEs.get(1));
         potionEffects.put(Potion.jump, pEs.get(2));
+        potionEffects.put(Potion.swift_sneak, pEs.get(3));
+        potionEffects.put(Potion.levitation, pEs.get(4));
+        potionEffects.put(Potion.soul_speed, pEs.get(5));
+        potionEffects.put(Potion.dolphins_grace, pEs.get(6));
+        potionEffects.put(Potion.slow_falling, pEs.get(7));
     }
 
     public boolean hasPotion(Potion potion) {

@@ -143,10 +143,6 @@ public abstract class ABlock {
         return 0.6F;
     }
 
-    public void updateEntityAfterFallOn(Player player) {
-
-    }
-
     public boolean canClimb() {
         return false;
     }

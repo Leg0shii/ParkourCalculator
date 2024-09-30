@@ -80,7 +80,7 @@ public class ScreenSettings extends TitledPane implements Configurable {
         previewBlockCB.setSelected(configProperties.isPreviewBlock());
         pathCollisionCB.setSelected(configProperties.isPathCollision());
         realVelCB.setSelected(configProperties.isRealVelocity());
-        coordinatePrecTF.setText("" + configProperties.getCoordinatePrecision());
+        coordinatePrecTF.setText(String.valueOf(precision));
     }
 
 }
