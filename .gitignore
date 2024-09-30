@@ -2,6 +2,10 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+all.log
+config.properties
+dependency-reduced-pom.xml
+
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
