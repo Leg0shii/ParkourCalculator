@@ -32,4 +32,7 @@ public abstract class Parkour {
     
     public abstract Parkour clone();
 
+    public String getVersionString() {
+        return getClass().getSimpleName().replace("Parkour", "V");
+    }
 }

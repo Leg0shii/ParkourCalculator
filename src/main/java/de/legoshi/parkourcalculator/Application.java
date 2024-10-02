@@ -139,6 +139,7 @@ public class Application extends javafx.application.Application {
         versionDependentList.add(menuScreen);
         versionDependentList.add(menuGUI);
         versionDependentList.add(positionVisualizer);
+        versionDependentList.add(informationScreen);
     }
 
     private void addToConfig() {

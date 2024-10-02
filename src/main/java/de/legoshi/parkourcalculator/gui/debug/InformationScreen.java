@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.gui.debug;
 
-import de.legoshi.parkourcalculator.simulation.environment.Facing;
+import de.legoshi.parkourcalculator.gui.VersionDependent;
+import de.legoshi.parkourcalculator.simulation.Parkour;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -8,7 +9,7 @@ import javafx.scene.layout.VBox;
 import java.util.Observable;
 import java.util.Observer;
 
-public class InformationScreen extends VBox implements Observer {
+public class InformationScreen extends VBox implements Observer, VersionDependent {
 
     private final Label screenInfoLabel = new Label("General Screen Information");
     private final Label currentVersion = new Label("Current Version: -");
@@ -26,6 +27,11 @@ public class InformationScreen extends VBox implements Observer {
         this.blockPosLabel.getStyleClass().add("coords-text");
 
         getChildren().addAll(screenInfoLabel, currentVersion, blockFacingLabel, blockPosLabel);
+    }
+
+    @Override
+    public void apply(Parkour parkour) {
+        updateVersionLabel(parkour.getVersionString());
     }
 
     @Override
