@@ -4,7 +4,6 @@ import de.legoshi.parkourcalculator.config.ConfigProperties;
 import de.legoshi.parkourcalculator.config.Configurable;
 import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.gui.debug.menu.ScreenSettings;
-import de.legoshi.parkourcalculator.gui.menu.MenuGUI;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.movement.Movement;
 import de.legoshi.parkourcalculator.simulation.tick.PlayerTickInformation;
@@ -123,21 +122,18 @@ public class CoordinateScreen extends VBox implements Observer, VersionDependent
     }
 
     private String setDecimals(double value) {
-        String parsedValue = String.format("%." + precision + "f", value);
-        if (value == 0) parsedValue = ("" + parsedValue).replace("-", "");
+        String formatString = "%." + precision + "f";
+        String parsedValue = String.format(formatString, value);
+        if (value == 0) parsedValue = (parsedValue).replace("-", "");
         parsedValue = parsedValue.replace(",", ".");
         return parsedValue;
     }
 
     private String setDecimals(float value) {
         String parsedValue = String.format("%.4f", value);
-        if (value == 0) parsedValue = ("" + parsedValue).replace("-", "");
+        if (value == 0) parsedValue = (parsedValue).replace("-", "");
         parsedValue = parsedValue.replace(",", ".");
         return parsedValue;
-    }
-
-    private Label getSpacer() {
-        return new Label(" ");
     }
 
     private void initLabels() {
