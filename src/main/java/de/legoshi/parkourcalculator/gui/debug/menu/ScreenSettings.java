@@ -22,7 +22,7 @@ public class ScreenSettings extends TitledPane implements Configurable {
     @Getter private static final CheckBox realVelCB = new CheckBox();
     @Getter private static final TextField coordinatePrecTF = new TextField();
 
-    public static int precision;
+    public int precision;
 
     public ScreenSettings(PlayerSettings playerSettings, CoordinateScreen coordinateScreen) {
         Text titleText = new Text("Screen Settings");
@@ -47,10 +47,10 @@ public class ScreenSettings extends TitledPane implements Configurable {
         gridPane.add(new Label("Coordinate Precision"), 0, 3);
         gridPane.add(coordinatePrecTF, 1, 3);
 
-        coordinatePrecTF.setOnKeyTyped(keyEvent -> coordinateScreen.updatePrecision());
+        coordinatePrecTF.setOnKeyTyped(keyEvent -> updateCoordinatePrecision(coordinateScreen));
         realVelCB.setOnAction(keyEvent -> coordinateScreen.update());
 
-        coordinateScreen.updatePrecision();
+        updateCoordinatePrecision(coordinateScreen);
         playerSettings.updatePlayerSettings();
         setContent(gridPane);
     }
@@ -67,11 +67,14 @@ public class ScreenSettings extends TitledPane implements Configurable {
         return realVelCB.isSelected();
     }
 
-    public static int getCoordinatePrecision() {
+    private void updateCoordinatePrecision(CoordinateScreen coordinateScreen) {
+        precision = getCoordinatePrecision();
+        coordinateScreen.updatePrecision(precision);
+    }
+
+    private int getCoordinatePrecision() {
         Double d = NumberHelper.parseDouble(coordinatePrecTF.getText());
-        int val = (int) (d == null ? precision : d);
-        precision = val;
-        return val;
+        return (int) (d == null ? precision : d);
     }
 
     @Override

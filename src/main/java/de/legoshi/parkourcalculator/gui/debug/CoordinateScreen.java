@@ -48,13 +48,11 @@ public class CoordinateScreen extends VBox implements Observer, VersionDependent
         initLabels();
         update(null, null);
         indentLabels();
-
-        updatePrecision();
     }
 
     @Override
     public void applyConfigValues(ConfigProperties configProperties) {
-        updatePrecision();
+        updatePrecision(configProperties.getCoordinatePrecision());
         if (configProperties.isRealVelocity()) {
             update();
         }
@@ -104,9 +102,9 @@ public class CoordinateScreen extends VBox implements Observer, VersionDependent
         this.update(null, null);
     }
 
-    public void updatePrecision() {
-        this.precision = Math.min(Math.max(ScreenSettings.getCoordinatePrecision(), 1), 16);
-        this.update(null, null);
+    public void updatePrecision(int precision) {
+        this.precision = Math.min(Math.max(precision, 1), 16);
+        this.update();
     }
 
     private void indentLabels() {
