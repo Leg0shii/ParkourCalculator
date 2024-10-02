@@ -30,6 +30,7 @@ import java.util.Objects;
 public class Application extends javafx.application.Application {
 
     public static String APP_NAME = "Parkour Calculator Alpha v1.2.0";
+    public static boolean OPTIMIZED = true; // disables Liquid calculations
 
     public Scene scene;
     public BorderPane window;
