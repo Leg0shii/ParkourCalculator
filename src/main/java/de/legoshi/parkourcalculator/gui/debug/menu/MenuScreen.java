@@ -6,20 +6,20 @@ import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.config.ConfigProperties;
 import de.legoshi.parkourcalculator.simulation.Parkour;
-import de.legoshi.parkourcalculator.simulation.ParkourProvider;
 import de.legoshi.parkourcalculator.simulation.ParkourVersion;
 import de.legoshi.parkourcalculator.util.PositionVisualizer;
 import javafx.beans.binding.NumberBinding;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class MenuScreen extends VBox implements VersionDependent, Configurable {
 
     private static final Logger logger = LogManager.getLogger(MenuScreen.class.getName());
-    private final Application application;
+    @Setter private Application application;
 
     public VersionSettings versionSettings;
     public BlockSettings blockSettings;

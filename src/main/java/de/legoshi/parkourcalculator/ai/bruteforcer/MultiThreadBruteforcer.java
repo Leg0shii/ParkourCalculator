@@ -12,6 +12,7 @@ import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.application.Platform;
+import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +41,7 @@ public class MultiThreadBruteforcer {
     private final List<BruteforceOptions> bruteforceOptions;
     private final List<InputGenerator> inputGenerators;
 
-    private final AStarPathfinder aStarPathfinder;
+    @Getter private final AStarPathfinder aStarPathfinder;
 
     @Setter private ABlock endBlock;
 
@@ -62,7 +63,7 @@ public class MultiThreadBruteforcer {
         this.inputGenerators = new ArrayList<>();
         this.boundaries = boundaries;
 
-        this.aStarPathfinder = new AStarPathfinder(application.getParkour());
+        this.aStarPathfinder = new AStarPathfinder(application.getParkour(), application.getMinecraftGUI());
         this.aStarPathfinder.setColorize(true);
     }
 

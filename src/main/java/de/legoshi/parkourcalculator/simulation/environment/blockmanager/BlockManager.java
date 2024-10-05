@@ -21,8 +21,6 @@ public abstract class BlockManager implements Observer, Cloneable {
     public List<ABlock> registeredBlocks = new ArrayList<>();
     public List<ABlock> allBlocks = new ArrayList<>();
 
-    // other methods and fields remain unchanged
-
     private int toInternalIndex(int coordinate) {
         return coordinate + OFFSET;
     }
@@ -37,7 +35,7 @@ public abstract class BlockManager implements Observer, Cloneable {
             return block == null ? Air.getInstance() : block;
         } catch (ArrayIndexOutOfBoundsException e) {
             logger.error("Cant get Block. Index out of bounds: " + x + ", " + y + ", " + z + " - " + e.getMessage(), e);
-            return null; // or handle differently
+            return null;
         }
     }
 

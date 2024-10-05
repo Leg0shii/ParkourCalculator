@@ -92,7 +92,7 @@ public class MinecraftGUI extends Observable implements VersionDependent, Config
         this.blockManager = parkour.getBlockManager();
         this.previewBlockBoxes = new ArrayList<>();
 
-        if (blockManager.blocks[0][0][0] == null) {
+        if (blockManager.getBlock(0, 0, 0) instanceof Air) {
             addStartingBlock();
             return;
         }
@@ -244,13 +244,15 @@ public class MinecraftGUI extends Observable implements VersionDependent, Config
     }
 
     public void addBlock(ABlock aBlock) {
-        if (aBlock.getBoxesArrayList().size() == 0) {
+        if (aBlock.getBoxesArrayList().isEmpty()) {
             System.out.println("No block to add... Set a connection?");
             return;
         }
         for (Box box : aBlock.getBoxesArrayList()) {
-            box.setOnMouseClicked(this::handleMouseClick);
-            box.setOnMouseMoved(this::handleBoxMouseMove);
+            if (!(aBlock instanceof Air)) {
+                box.setOnMouseClicked(this::handleMouseClick);
+                box.setOnMouseMoved(this::handleBoxMouseMove);
+            }
             if (!group.getChildren().contains(box)) {
                 group.getChildren().add(box);
             }

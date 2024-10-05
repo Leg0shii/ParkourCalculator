@@ -1,51 +1,53 @@
 package de.legoshi.parkourcalculator.ai;
 
+import de.legoshi.parkourcalculator.gui.MinecraftGUI;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
 import de.legoshi.parkourcalculator.simulation.environment.block.Air;
-import de.legoshi.parkourcalculator.simulation.environment.block.Stair;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.movement.Movement;
 import de.legoshi.parkourcalculator.util.AxisAlignedBB;
 import de.legoshi.parkourcalculator.util.AxisVecTuple;
 import de.legoshi.parkourcalculator.util.Vec3;
-import javafx.scene.chart.Axis;
 import javafx.scene.paint.Color;
 import lombok.Setter;
 
 import java.util.*;
 
 public class AStarPathfinder {
-    
+
+    @Setter
+    private MinecraftGUI minecraftGUI;
     private final BlockManager blockManager;
     private final Movement movement;
 
-    @Setter private boolean colorize = false;
+    @Setter
+    private boolean colorize = false;
     private static final double MAX_AIR_COUNT = 3.4;
-    
-    public AStarPathfinder(Parkour parkour) {
+
+    public AStarPathfinder(Parkour parkour, MinecraftGUI minecraftGUI) {
+        this.minecraftGUI = minecraftGUI;
         this.blockManager = parkour.getBlockManager();
         this.movement = parkour.getMovement();
         setColorize(true);
     }
-    
+
     public List<ABlock> findShortestPath(Vec3 start, Vec3 end) {
         Map<Vec3, Node> nodes = new HashMap<>();
         PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingDouble(node -> node.fCost));
-        
+
         Node startNode = new Node(start, null, 0, start.distanceTo(end), true);
         nodes.put(start, startNode);
         openSet.add(startNode);
-        
+
         while (!openSet.isEmpty()) {
             Node currentNode = openSet.poll();
-            
+
             if (currentNode.position.equals(end)) {
                 return reconstructPath(currentNode);
             }
-            
+
             for (Vec3 neighborPosition : getNeighbors(currentNode)) {
-                if (neighborPosition.y < -26) continue; // shows importance of search boundaries for A*
                 boolean isGround = !(blockManager.getBlock(neighborPosition) instanceof Air);
 
                 if (!nodes.containsKey(neighborPosition)) {
@@ -58,7 +60,7 @@ public class AStarPathfinder {
                 } else {
                     Node neighborNode = nodes.get(neighborPosition);
                     double tentativeGCost = currentNode.gCost + currentNode.position.distanceTo(neighborPosition);
-                    
+
                     if (tentativeGCost < neighborNode.gCost) {
                         neighborNode.parent = currentNode;
                         neighborNode.gCost = tentativeGCost;
@@ -82,37 +84,40 @@ public class AStarPathfinder {
     public List<Vec3> calculateBoundaries(Vec3 startPos, Vec3 endPos) {
         List<ABlock> boundaryBlocks = findShortestPath(startPos, endPos);
         List<Vec3> boundaries = new ArrayList<>();
-        for (ABlock block : boundaryBlocks) {
-            if (!(block instanceof Air)) {
-                boundaries.add(block.getVec3());
-            }
-        }
+        boundaryBlocks.forEach(block -> boundaries.add(block.getVec3()));
         return boundaries;
     }
-    
+
     private List<ABlock> reconstructPath(Node currentNode) {
         List<ABlock> path = new ArrayList<>();
-        
+
         while (currentNode != null) {
             ABlock pathBlock = blockManager.getBlock(currentNode.position);
             if (colorize) {
-                pathBlock.applyMaterialColor(Color.PURPLE);
+                if (pathBlock instanceof Air) {
+                    Vec3 flippedPos = currentNode.position.multiply(new Vec3(-1, 1, 1));
+                    ABlock airBlock = new Air(flippedPos);
+                    minecraftGUI.addBlock(airBlock);
+                    path.add(airBlock);
+                } else {
+                    path.add(pathBlock);
+                    pathBlock.applyMaterialColor(Color.PURPLE);
+                }
             }
-            path.add(pathBlock);
-            
+
             currentNode = currentNode.parent;
         }
-        
+
         Collections.reverse(path);
         return path;
     }
-    
+
     private List<Vec3> getNeighbors(Node node) {
         List<Vec3> neighbors = new ArrayList<>();
         Vec3 position = node.position.copy();
-        
+
         for (int x = (int) position.x - 1; x <= position.x + 1; x++) {
-            for (int y = (int) position.y - 1; y <= position.y + 1; y++) {
+            for (int y = (int) position.y - 1; y <= position.y + 1 && y >= -26; y++) {
                 for (int z = (int) position.z - 1; z <= position.z + 1; z++) {
                     if (x != position.x || y != position.y || z != position.z) {
                         ABlock floor = blockManager.getBlock(x, y, z);
@@ -142,13 +147,13 @@ public class AStarPathfinder {
         List<AxisAlignedBB> aboveBB = aboveBlock.getAxisVecTuples().stream().map(AxisVecTuple::getBb).toList();
 
         ABlock checkBlock = blockManager.getBlock(xAbove, yOriginal, zAbove);
-        List<AxisAlignedBB> checkBB = Collections.singletonList(new AxisAlignedBB(0,0,0,0,0,0));
+        List<AxisAlignedBB> checkBB = Collections.singletonList(new AxisAlignedBB(0, 0, 0, 0, 0, 0));
         if (!(checkBlock instanceof Air)) {
             checkBB = checkBlock.getAxisVecTuples().stream().map(AxisVecTuple::getBb).toList();
         }
 
         if (checkBB.get(0).minX == aboveBB.get(0).minX && checkBB.get(0).maxX == aboveBB.get(0).maxX &&
-            checkBB.get(0).minZ == aboveBB.get(0).minZ && checkBB.get(0).maxZ == aboveBB.get(0).maxZ) {
+                checkBB.get(0).minZ == aboveBB.get(0).minZ && checkBB.get(0).maxZ == aboveBB.get(0).maxZ) {
             return true;
         }
 
@@ -156,7 +161,7 @@ public class AStarPathfinder {
         for (AxisAlignedBB check : checkBB) {
             for (double x = check.minX; x < check.maxX; x += 0.0625) {
                 for (double z = check.minZ; z < check.maxZ; z += 0.0625) {
-                    AxisAlignedBB playerStandBox = new AxisAlignedBB(x, yOriginal, z, x + playerHitBoxSize, yAbove+1, z + playerHitBoxSize);
+                    AxisAlignedBB playerStandBox = new AxisAlignedBB(x, yOriginal, z, x + playerHitBoxSize, yAbove + 1, z + playerHitBoxSize);
                     if (aboveBB.stream().noneMatch(playerStandBox::intersectsWith)) {
                         return false;
                     }
@@ -192,7 +197,7 @@ public class AStarPathfinder {
         double maxAllowedDistance = movement.approxHorizontalDist(tier);
         return horizontalDistance < maxAllowedDistance;
     }
-    
+
     private static class Node {
 
         private Vec3 position;
@@ -202,7 +207,7 @@ public class AStarPathfinder {
         private double gCost;
         private double hCost;
         private double fCost;
-        
+
         public Node(Vec3 position, Node parent, double gCost, double hCost, boolean isGround) {
             this.position = position.copy();
             this.parent = parent;
@@ -217,5 +222,5 @@ public class AStarPathfinder {
             }
         }
     }
-    
+
 }

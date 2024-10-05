@@ -28,7 +28,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     private static final Logger logger = LogManager.getLogger(BruteforceSettings.class.getName());
     private final Application application;
 
-    private MultiThreadBruteforcer multiThreadBruteforcer;
+    @Getter private MultiThreadBruteforcer multiThreadBruteforcer;
     private GridPane gridPane;
 
     public List<Vec3> boundaries = new ArrayList<>();
@@ -157,7 +157,11 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     }
 
     private void removePathBlocks() {
-        this.boundaries.forEach(block -> blockManager.getBlock(block).resetAndApplyMaterialColor());
+        this.boundaries.forEach(block -> {
+            ABlock aBlock = blockManager.getBlock(block);
+            aBlock.resetAndApplyMaterialColor();
+            aBlock.resetColoredAirBlocks();
+        });
         this.boundaries.clear();
     }
 

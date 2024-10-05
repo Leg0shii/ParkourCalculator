@@ -22,6 +22,7 @@ import javafx.scene.SubScene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class Application extends javafx.application.Application {
     public BlockGUI blockGUI;
     public MenuGUI menuGUI;
     public ConfigGUI configGUI;
+    @Getter
     public MinecraftGUI minecraftGUI;
     public SubScene minecraftSubScene;
     public CoordinateScreen coordinateScreen;
@@ -106,6 +108,8 @@ public class Application extends javafx.application.Application {
         this.window.setCenter(this.minecraftSubScene);
         this.minecraftGUI = new MinecraftGUI(this, minecraftScreenGroup);
         this.minecraftScreenGroup.getChildren().add(pathGroup);
+
+        this.menuScreen.bruteforceSettings.getMultiThreadBruteforcer().getAStarPathfinder().setMinecraftGUI(minecraftGUI);
 
         this.inputTickManager.addObserver(positionVisualizer);
         this.inputTickManager.addObserver(coordinateScreen);
@@ -182,5 +186,5 @@ public class Application extends javafx.application.Application {
     public Parkour getParkour() {
         return currentParkour;
     }
-    
+
 }
