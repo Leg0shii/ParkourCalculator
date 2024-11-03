@@ -43,6 +43,12 @@ public class Vec3 {
 		return new Vec3(vec.x - this.x, vec.y - this.y, vec.z - this.z);
 	}
 
+	public double dot(Vec3 other) {
+		return this.x * other.x +
+				this.y * other.y +
+				this.z * other.z;
+	}
+
 	/**
 	 * Normalizes the vector to a length of 1 (except if it is the zero vector)
 	 */
@@ -236,9 +242,9 @@ public class Vec3 {
         if (o == null || getClass() != o.getClass()) return false;
         Vec3 vec3 = (Vec3) o;
         
-        return Double.compare(vec3.x + 0.0, x + 0.0) == 0 &&
-            Double.compare(vec3.y + 0.0, y + 0.0) == 0 &&
-            Double.compare(vec3.z+ 0.0, z + 0.0) == 0;
+        return Double.compare(vec3.x, x) == 0 &&
+            Double.compare(vec3.y, y) == 0 &&
+            Double.compare(vec3.z, z) == 0;
     }
 
 	public int getX() {
