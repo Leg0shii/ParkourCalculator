@@ -11,8 +11,8 @@ public class Air extends ABlock {
         super(vec3);
     }
 
-    public static ABlock getInstance() {
-        return instance;
+    public static ABlock getInstance(Vec3 vec3) {
+        return new Air(vec3);
     }
 
     @Override
