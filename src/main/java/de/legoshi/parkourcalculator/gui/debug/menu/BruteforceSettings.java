@@ -7,6 +7,7 @@ import de.legoshi.parkourcalculator.ai.bruteforcer.MultiThreadBruteforcer;
 import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
+import de.legoshi.parkourcalculator.simulation.environment.block.Air;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.player.Player;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -160,7 +161,9 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
         this.boundaries.forEach(block -> {
             ABlock aBlock = blockManager.getBlock(block);
             aBlock.resetAndApplyMaterialColor();
-            aBlock.resetColoredAirBlocks();
+            if (aBlock instanceof Air) {
+                application.minecraftGUI.removeBlock(aBlock);
+            }
         });
         this.boundaries.clear();
     }

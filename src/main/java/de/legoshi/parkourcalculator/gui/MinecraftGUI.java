@@ -35,7 +35,7 @@ public class MinecraftGUI extends Observable implements VersionDependent, Config
 
     public static final Vec3 BLOCK_POSITION = new Vec3(1, 0, 0);
 
-    private final Application application;
+    @Getter private final Application application;
     private BlockManager blockManager;
 
     private final SubScene subScene;
@@ -265,7 +265,7 @@ public class MinecraftGUI extends Observable implements VersionDependent, Config
             group.getChildren().remove(box);
         }
         previewBlockBoxes = new ArrayList<>();
-        if (aBlock.getBoxesArrayList().size() == 0) return;
+        if (aBlock.getBoxesArrayList().isEmpty()) return;
         for (Box box : aBlock.getBoxesArrayList()) {
             box.setOnMouseMoved(this::handleBoxMouseMove);
             box.setMouseTransparent(true);

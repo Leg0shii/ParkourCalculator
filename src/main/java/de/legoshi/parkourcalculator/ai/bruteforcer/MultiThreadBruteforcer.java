@@ -1,7 +1,6 @@
 package de.legoshi.parkourcalculator.ai.bruteforcer;
 
 import de.legoshi.parkourcalculator.Application;
-import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.ai.AStarPathfinder;
 import de.legoshi.parkourcalculator.ai.BruteforceOptions;
@@ -122,8 +121,7 @@ public class MultiThreadBruteforcer {
             try {
                 buildBruteforcer();
             } catch (Exception e) {
-                logger.error("An error occurred while building the bruteforcers: " + e.getMessage(), e);
-                e.printStackTrace();
+                logger.error("An error occurred while building the bruteforcers: {}", e.getMessage(), e);
             }
 
             for (Bruteforcer bruteforcer : bruteforcers) {
@@ -194,7 +192,7 @@ public class MultiThreadBruteforcer {
     }
 
     private void showResult() {
-        logger.debug("Setting current fastest solution: " + currentFastestSolution.size());
+        logger.debug("Setting current fastest solution: {}", currentFastestSolution.size());
         Platform.runLater(() -> {
             inputTickGUI.clearAllTicks();
             inputTickManager.setInputTicks(currentFastestSolution);

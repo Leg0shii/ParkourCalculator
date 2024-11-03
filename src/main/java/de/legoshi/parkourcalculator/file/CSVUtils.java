@@ -19,6 +19,7 @@ public class CSVUtils {
 
     private static final Logger logger = LogManager.getLogger(CSVUtils.class.getName());
 
+    // TODO: when loading in world (for example: LC) it doesnt import correctly: panes, ladders...
     public static void saveTicksToCSV(List<InputData> inputTicks, String filePath) {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath))) {
             // Write the header
@@ -35,8 +36,7 @@ public class CSVUtils {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.error("Error while saving ticks to CSV: " + e.getMessage(), e);
+            logger.error("Error while saving ticks to CSV: {}", e.getMessage(), e);
         }
     }
 
@@ -73,8 +73,7 @@ public class CSVUtils {
                 inputTicks.add(inputData);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.error("Error while loading ticks from CSV: " + e.getMessage());
+            logger.error("Error while loading ticks from CSV: {}", e.getMessage(), e);
         }
 
         return inputTicks;
@@ -94,8 +93,7 @@ public class CSVUtils {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.error("Error while saving blocks to CSV: " + e.getMessage());
+            logger.error("Error while saving blocks to CSV: {}", e.getMessage(), e);
         }
     }
 
@@ -129,8 +127,7 @@ public class CSVUtils {
                 else transparentBlocks.add(blockData);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            logger.error("Error while loading blocks from CSV: " + e.getMessage());
+            logger.error("Error while loading blocks from CSV: {}", e.getMessage(), e);
         }
 
         lists.add(solidBlocks);
