@@ -513,7 +513,7 @@ public abstract class Movement {
 
     public List<PlayerTickInformation> updatePath(List<InputTick> inputTicks) {
         playerTickInformations = new ArrayList<>();
-        if (inputTicks.size() == 0) return playerTickInformations;
+        if (inputTicks.isEmpty()) return playerTickInformations;
 
         boolean onGround = preparePlayer();
         playerTickInformations.add(player.getPlayerTickInformation()); // add starting position
@@ -522,7 +522,7 @@ public abstract class Movement {
         int tickNumber = 1;
         for (InputTick inputTick : inputTicks) {
             calculateTick(inputTick);
-            System.out.println(tickNumber++ + ": " + player);
+            // System.out.println(tickNumber++ + ": " + player);
             playerTickInformations.add(player.getPlayerTickInformation());
         }
 
@@ -594,7 +594,7 @@ public abstract class Movement {
     }
 
     public double approxHorizontalDist(int tier) {
-        final double START_VEL = 0.26;
+        final double START_VEL = 0.31;
         return 1.91 * START_VEL +
                 0.3274 +
                 ((0.02 * 1.274) / 0.09) * (tier - 2) +
