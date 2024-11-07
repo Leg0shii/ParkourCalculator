@@ -235,17 +235,17 @@ public class Vec3 {
 		double var11 = var5 - this.z;
 		return var7 * var7 + var9 * var9 + var11 * var11;
 	}
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vec3 vec3 = (Vec3) o;
-        
-        return Double.compare(vec3.x, x) == 0 &&
-            Double.compare(vec3.y, y) == 0 &&
-            Double.compare(vec3.z, z) == 0;
-    }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (!(obj instanceof Vec3 other)) return false;
+
+        double epsilon = 1e-9;
+		return Math.abs(this.x - other.x) < epsilon &&
+				Math.abs(this.y - other.y) < epsilon &&
+				Math.abs(this.z - other.z) < epsilon;
+	}
 
 	public int getX() {
 		return (int) Math.floor(x);
@@ -258,10 +258,14 @@ public class Vec3 {
 	public int getZ() {
 		return (int) Math.floor(z);
 	}
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y, z);
-    }
+
+	@Override
+	public int hashCode() {
+		double epsilon = 1e-9;
+		int hashX = Double.valueOf(Math.round(this.x / epsilon)).hashCode();
+		int hashY = Double.valueOf(Math.round(this.y / epsilon)).hashCode();
+		int hashZ = Double.valueOf(Math.round(this.z / epsilon)).hashCode();
+		return 31 * (31 * hashX + hashY) + hashZ;
+	}
 
 }
