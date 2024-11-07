@@ -116,9 +116,12 @@ public class AStarPathfinder {
         List<Vec3> neighbors = new ArrayList<>();
         Vec3 position = currentNode.getPosition().copy();
 
-        for (int x = (int) position.x - 1; x <= position.x + 1 && x > MIN_X && x < MAX_X; x++) {
-            for (int y = (int) position.y - 1; y <= position.y + 1 && y > MIN_Y && y < MAX_Y; y++) {
-                for (int z = (int) position.z - 1; z <= position.z + 1 && z > MIN_Z && z < MAX_Z; z++) {
+        for (int x = (int) position.x - 1; x <= position.x + 1; x++) {
+            if (x < MIN_X || x > MAX_X) continue;
+            for (int y = (int) position.y - 1; y <= position.y + 1; y++) {
+                if (y < MIN_Y || y > MAX_Y) continue;
+                for (int z = (int) position.z - 1; z <= position.z + 1; z++) {
+                    if (z < MIN_Z || z > MAX_Z) continue;
                     if (x == position.x && y == position.y && z == position.z) continue;
 
                     if (canNotStand(y, x, y + 1, z)) continue;
