@@ -49,7 +49,9 @@ public class AStarPathfinder {
 
     public List<ABlock> findShortestPath(Vec3 start, Vec3 end) {
         Map<Vec3, BlockNode> nodes = new HashMap<>();
-        PriorityQueue<BlockNode> openSet = new PriorityQueue<>(Comparator.comparingDouble(BlockNode::getFCost));
+        PriorityQueue<BlockNode> openSet = new PriorityQueue<>(Comparator
+                .comparingDouble(BlockNode::getFCost)
+                .thenComparingDouble(BlockNode::getHCost));
 
         logger.info("A* Started!");
         BlockNode startNode = new BlockNode(start, start.distanceTo(end));
@@ -82,7 +84,7 @@ public class AStarPathfinder {
                     BlockNode neighborNode = nodes.get(neighborPosition);
                     double tentativeGCost = currentNode.getGCost() + currentNode.getPosition().distanceTo(neighborPosition);
 
-                    if (tentativeGCost < neighborNode.getGCost()) {
+                    if (tentativeGCost <= neighborNode.getGCost()) {
                         neighborNode.setParent(currentNode);
                         neighborNode.setGCost(tentativeGCost);
                         neighborNode.setFCost(tentativeGCost + neighborNode.getHCost());

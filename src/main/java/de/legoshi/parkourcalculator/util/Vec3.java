@@ -241,7 +241,7 @@ public class Vec3 {
 		if (this == obj) return true;
 		if (!(obj instanceof Vec3 other)) return false;
 
-        double epsilon = 1e-9;
+        double epsilon = 1e-6;
 		return Math.abs(this.x - other.x) < epsilon &&
 				Math.abs(this.y - other.y) < epsilon &&
 				Math.abs(this.z - other.z) < epsilon;
@@ -261,7 +261,7 @@ public class Vec3 {
 
 	@Override
 	public int hashCode() {
-		double epsilon = 1e-9;
+		double epsilon = 1e-6;
 		int hashX = Double.valueOf(Math.round(this.x / epsilon)).hashCode();
 		int hashY = Double.valueOf(Math.round(this.y / epsilon)).hashCode();
 		int hashZ = Double.valueOf(Math.round(this.z / epsilon)).hashCode();
