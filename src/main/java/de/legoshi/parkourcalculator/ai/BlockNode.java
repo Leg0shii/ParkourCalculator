@@ -15,6 +15,7 @@ public class BlockNode {
     private boolean isJump;
     private boolean isClimb;
     private boolean isSwim;
+    private boolean isSwimJump;
 
     private double gCost;
     private double hCost;
@@ -44,5 +45,7 @@ public class BlockNode {
 
         if (isJump) this.lastGroundPos = parent.lastGroundPos.copy();
         else this.lastGroundPos = position.copy();
+
+        isSwimJump = isJump && (parent.isSwim || parent.isSwimJump);
     }
 }

@@ -34,6 +34,10 @@ public abstract class Movement {
 
     public abstract boolean evalDistance(double distance);
 
+    public boolean evalFluidDistance(double distance) {
+        return distance > 0.5;
+    }
+
     public void calculateTick(InputTick inputTick) {
 
         if (player.JUMP) {
@@ -593,8 +597,7 @@ public abstract class Movement {
         return playerTickInformation;
     }
 
-    public double approxHorizontalDist(int tier) {
-        final double START_VEL = 0.31;
+    public double approxHorizontalDist(int tier, double START_VEL) {
         return 1.91 * START_VEL +
                 0.3274 +
                 ((0.02 * 1.274) / 0.09) * (tier - 2) +

@@ -70,8 +70,7 @@ public class AStarPathfinder {
 
                 Vec3 climbPos = new Vec3(neighborPosition.x, neighborPosition.y + 1, neighborPosition.z);
                 boolean isClimb = isClimbable(blockManager.getBlock(climbPos));
-
-                boolean isSwim = isSwimable(blockManager.getBlock(neighborPosition));
+                boolean isSwim = isSwimable(blockManager.getBlock(climbPos.copy()));
 
                 if (!nodes.containsKey(neighborPosition)) {
                     double tentativeGCost = currentNode.getGCost() + currentNode.getPosition().distanceTo(neighborPosition);
@@ -109,7 +108,9 @@ public class AStarPathfinder {
     private List<Vec3> getNeighbors(BlockNode currentNode) {
         if (currentNode.isClimb()) {
             return getClimbNeighbors(currentNode);
-        } else {
+        } else if (currentNode.isSwim()) {
+            return getSwimNeighbors(currentNode);
+        }else {
             return getBlockNeighbors(currentNode);
         }
     }
@@ -126,7 +127,7 @@ public class AStarPathfinder {
                     if (z < MIN_Z || z > MAX_Z) continue;
                     if (x == position.x && y == position.y && z == position.z) continue;
 
-                    if (!canGoOn(position.getY(), x, y, z)) continue;
+                    if (!canGoOn(position.getX(), position.getY(), position.getZ(), x, y, z)) continue;
 
                     Vec3 endPos = new Vec3(x, y, z);
                     if (!allowJumpDistance(currentNode, endPos.copy())) continue;
@@ -135,14 +136,39 @@ public class AStarPathfinder {
             }
         }
 
-        // remove unreachable neighbors
+        validateDiagonalNeighbors(neighbors, position);
+        return neighbors;
+    }
+
+    private List<Vec3> getSwimNeighbors(BlockNode currentNode) {
+        List<Vec3> neighbors = new ArrayList<>();
+        Vec3 position = currentNode.getPosition().copy();
+
+        for (int x = (int) position.x - 1; x <= position.x + 1; x++) {
+            if (x < MIN_X || x > MAX_X) continue;
+            for (int y = (int) position.y - 1; y <= position.y + 1; y++) {
+                if (y < MIN_Y || y > MAX_Y) continue;
+                for (int z = (int) position.z - 1; z <= position.z + 1; z++) {
+                    if (z < MIN_Z || z > MAX_Z) continue;
+                    if (x == position.x && y == position.y && z == position.z) continue;
+
+                    if (canNotStand(position.getY(), x, y - 1, z)) continue;
+                    if (canNotStand(position.getY(), x, y - 2, z)) continue;
+                    neighbors.add(new Vec3(x, y, z));
+                }
+            }
+        }
+
+        validateDiagonalNeighbors(neighbors, position);
+        return neighbors;
+    }
+
+    private void validateDiagonalNeighbors(List<Vec3> neighbors, Vec3 position) {
         neighbors.removeIf(pos ->
                 Math.abs(pos.x - position.x) == 1 && Math.abs(pos.z - position.z) == 1 &&
                         !neighbors.contains(new Vec3(position.x, pos.y, pos.z)) &&
                         !neighbors.contains(new Vec3(pos.x, pos.y, position.z))
         );
-
-        return neighbors;
     }
 
     private List<Vec3> getClimbNeighbors(BlockNode currentNode) {
@@ -169,22 +195,24 @@ public class AStarPathfinder {
     }
 
     public boolean isTraversable(ABlock block) {
-        return isClimbable(block) && block instanceof Air;
+        return isSwimable(block) || block instanceof Air;
     }
 
-    private boolean canGoOn(int originalY, int x, int y, int z) {
+    private boolean canGoOn(int originalX, int originalY, int originalZ, int x, int y, int z) {
         if (canNotStand(y, x, y + 1, z)) return false;
         if (canNotStand(y, x, y + 2, z)) return false;
         if (y == originalY - 1) {
             return !canNotStand(y, x, y + 3, z);
+        }
+        if (y == originalY + 1) {
+            return !canNotStand(y, originalX, y + 2, originalZ);
         }
         return true;
     }
 
     public boolean canNotStand(int yOriginal, int xPos, int yAbove, int zPos) {
         ABlock aboveBlock = blockManager.getBlock(xPos, yAbove, zPos);
-        if (aboveBlock instanceof Air) return false;
-        if (aboveBlock instanceof Ladder) return false;
+        if (isTraversable(aboveBlock)) return false;
 
         List<AxisAlignedBB> aboveBB = aboveBlock.getAxisVecTuples().stream().map(AxisVecTuple::getBb).toList();
 
@@ -217,7 +245,9 @@ public class AStarPathfinder {
         ABlock endBlock = blockManager.getBlock(endPos);
         double verticalDistance = endBlock.getHighestY() - startBlock.getHighestY();
 
-        if (movement.evalDistance(verticalDistance)) {
+        if (node.isSwimJump() && movement.evalFluidDistance(verticalDistance)) {
+            return false;
+        } else if (movement.evalDistance(verticalDistance)) {
             return false;
         }
 
@@ -227,7 +257,8 @@ public class AStarPathfinder {
 
         // Safety net
         int tier = movement.tierCalc(verticalDistance);
-        double maxAllowedDistance = movement.approxHorizontalDist(tier);
+        double START_VEL = node.isSwimJump() ? -1.0 : 0.31; // should fix water behavior but doesn't...
+        double maxAllowedDistance = movement.approxHorizontalDist(tier, START_VEL);
         if (horizontalDistance >= maxAllowedDistance) return false;
 
         /*if (horizontalDistance > DISTANCE_THRESHOLD && !(endBlock instanceof Air)) {
