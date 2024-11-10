@@ -126,11 +126,7 @@ public class AStarPathfinder {
                     if (z < MIN_Z || z > MAX_Z) continue;
                     if (x == position.x && y == position.y && z == position.z) continue;
 
-                    if (canNotStand(y, x, y + 1, z)) continue;
-                    if (canNotStand(y, x, y + 2, z)) continue;
-                    if (y == position.y - 1) {
-                        if (canNotStand(y, x, y + 3, z)) continue;
-                    }
+                    if (!canGoOn(position.getY(), x, y, z)) continue;
 
                     Vec3 endPos = new Vec3(x, y, z);
                     if (!allowJumpDistance(currentNode, endPos.copy())) continue;
@@ -138,6 +134,14 @@ public class AStarPathfinder {
                 }
             }
         }
+
+        // remove unreachable neighbors
+        neighbors.removeIf(pos ->
+                Math.abs(pos.x - position.x) == 1 && Math.abs(pos.z - position.z) == 1 &&
+                        !neighbors.contains(new Vec3(position.x, pos.y, pos.z)) &&
+                        !neighbors.contains(new Vec3(pos.x, pos.y, position.z))
+        );
+
         return neighbors;
     }
 
@@ -166,6 +170,15 @@ public class AStarPathfinder {
 
     public boolean isTraversable(ABlock block) {
         return isClimbable(block) && block instanceof Air;
+    }
+
+    private boolean canGoOn(int originalY, int x, int y, int z) {
+        if (canNotStand(y, x, y + 1, z)) return false;
+        if (canNotStand(y, x, y + 2, z)) return false;
+        if (y == originalY - 1) {
+            return !canNotStand(y, x, y + 3, z);
+        }
+        return true;
     }
 
     public boolean canNotStand(int yOriginal, int xPos, int yAbove, int zPos) {
