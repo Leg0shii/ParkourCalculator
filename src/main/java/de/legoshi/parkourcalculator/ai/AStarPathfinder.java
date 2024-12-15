@@ -33,7 +33,7 @@ public class AStarPathfinder {
     private static final int MIN_X = -50;
     private static final int MAX_X = 50;
 
-    private static final int MIN_Y = -20;
+    private static final int MIN_Y = -50;
     private static final int MAX_Y = 50;
 
     private static final int MIN_Z = -50;
@@ -136,7 +136,7 @@ public class AStarPathfinder {
             }
         }
 
-        validateDiagonalNeighbors(neighbors, position);
+        // validateDiagonalNeighbors(neighbors, position);
         return neighbors;
     }
 
@@ -159,7 +159,7 @@ public class AStarPathfinder {
             }
         }
 
-        validateDiagonalNeighbors(neighbors, position);
+        // validateDiagonalNeighbors(neighbors, position);
         return neighbors;
     }
 
@@ -195,7 +195,7 @@ public class AStarPathfinder {
     }
 
     public boolean isTraversable(ABlock block) {
-        return isSwimable(block) || block instanceof Air;
+        return isClimbable(block) || isSwimable(block) || block instanceof Air;
     }
 
     private boolean canGoOn(int originalX, int originalY, int originalZ, int x, int y, int z) {
