@@ -1,6 +1,7 @@
 package de.legoshi.parkourcalculator.ai.bruteforcer;
 
 import de.legoshi.parkourcalculator.Application;
+import de.legoshi.parkourcalculator.gui.debug.menu.InfoWindow;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.ai.AStarPathfinder;
 import de.legoshi.parkourcalculator.ai.BruteforceOptions;
@@ -36,6 +37,9 @@ public class MultiThreadBruteforcer {
     private final InputTickGUI inputTickGUI;
     private final InputTickManager inputTickManager;
 
+    private final InfoWindow infoWindow;
+    private long started;
+
     private final List<Bruteforcer> bruteforcers;
     private final List<BruteforceOptions> bruteforceOptions;
     private final List<InputGenerator> inputGenerators;
@@ -61,6 +65,7 @@ public class MultiThreadBruteforcer {
         this.bruteforceOptions = new ArrayList<>();
         this.inputGenerators = new ArrayList<>();
         this.boundaries = boundaries;
+        this.infoWindow = new InfoWindow();
 
         this.aStarPathfinder = new AStarPathfinder(application.getParkour(), application.getMinecraftGUI());
         this.aStarPathfinder.setColorize(true);
@@ -85,20 +90,25 @@ public class MultiThreadBruteforcer {
         this.boundaries.addAll(aStarPathfinder.calculateBoundaries(start, end));
     }
 
-    public void cancelBruteforce() {
+    private void shutdown() {
         bruteforcers.forEach(Bruteforcer::cancelBruteforce);
-        endRun();
+        if (bfService != null) bfService.shutdown();
+        if (scheduler != null) scheduler.shutdown();
+        if (mainService != null) mainService.shutdown();
+        if (infoWindow != null) infoWindow.updateStatus("Ended");
+    }
+
+    public void endRun() {
+        syncAllToMain();
+        shutdown();
+        showResult();
     }
 
     public void clearAll() {
-        if (mainService != null && !mainService.isShutdown()) {
-            mainService.shutdownNow();
-        }
-        if (scheduler != null && !scheduler.isShutdown()) {
-            scheduler.shutdownNow();
-        }
-        if (bfService != null && !bfService.isShutdown()) {
-            bfService.shutdownNow();
+        shutdown();
+        if (infoWindow != null) {
+            infoWindow.close();
+            infoWindow.getBruteforcerMap().clear();
         }
 
         this.lowestBound = 0;
@@ -117,6 +127,13 @@ public class MultiThreadBruteforcer {
         scheduler = Executors.newSingleThreadScheduledExecutor();
         bfService = Executors.newCachedThreadPool();
 
+        started = System.currentTimeMillis();
+
+        infoWindow.setBFOptions(bruteforceOptions.get(0));
+        infoWindow.show();
+        infoWindow.clearWindow();
+        infoWindow.updateStatus("Running");
+
         mainService.submit(() -> {
             try {
                 buildBruteforcer();
@@ -127,6 +144,7 @@ public class MultiThreadBruteforcer {
             for (Bruteforcer bruteforcer : bruteforcers) {
                 bruteforcer.setBoundaries(boundaries);
                 bfService.submit(bruteforcer);
+                infoWindow.addBruteforcer(bruteforcer.getUuid().toString());
             }
 
             scheduler.scheduleAtFixedRate(() -> {
@@ -148,6 +166,7 @@ public class MultiThreadBruteforcer {
 
             scheduler.scheduleAtFixedRate(this::syncAllToMain, SYNC_INTERVAL, SYNC_INTERVAL, TimeUnit.SECONDS);
             scheduler.scheduleAtFixedRate(this::showUpdate, SHOW_INTERVAL, SHOW_INTERVAL, TimeUnit.MILLISECONDS);
+            scheduler.scheduleAtFixedRate(this::updateInfoWindow, 1, 1, TimeUnit.SECONDS);
         });
     }
 
@@ -193,6 +212,8 @@ public class MultiThreadBruteforcer {
 
     private void showResult() {
         logger.debug("Setting current fastest solution: {}", currentFastestSolution.size());
+        if (currentFastestSolution.isEmpty()) return;
+
         Platform.runLater(() -> {
             inputTickGUI.clearAllTicks();
             inputTickManager.setInputTicks(currentFastestSolution);
@@ -215,7 +236,38 @@ public class MultiThreadBruteforcer {
                 currentFastestSolution = new ArrayList<>(bruteforcer.getCurrentFastestSolution());
             }
         }
+
         bruteforcers.forEach(bf -> bf.syncMap(ticksMap));
+        bruteforcers.forEach(bf -> bf.syncCFS(currentFastestSolution));
+    }
+
+    private void updateInfoWindow() {
+        infoWindow.updateTimePassed("" + (System.currentTimeMillis() - started) / 1000);
+        infoWindow.updateGlobalBest("" + currentFastestSolution.size());
+
+        long nextSync = SYNC_INTERVAL - (((System.currentTimeMillis() - started) / 1000) % SYNC_INTERVAL);
+        infoWindow.updateNextSync("" + (nextSync - 1));
+
+        for (Bruteforcer bf : bruteforcers) {
+            long nextIntervall = TICK_INTERVAL - (((System.currentTimeMillis() - started) / 1000) % TICK_INTERVAL);
+            int lower, upper;
+            lower = 0;
+            if (bruteforceOptions.get(0).isWindowed()) {
+                lower = bf.getLowestBound();
+                upper = bf.getHighestBound();
+            } else {
+                lower = Math.max(lower, bf.getLongestElement() - bruteforceOptions.get(0).getRecTicks());
+                upper = bf.getLongestElement();
+            }
+
+            infoWindow.updateBruteforcer(
+                    bf.getUuid().toString(),
+                    "" + bf.getTickGeneration(),
+                    lower + " - " + upper,
+                    "" + (nextIntervall - 1),
+                    "" + bf.getCurrentFastestSolution().size()
+                    );
+        }
     }
 
     private boolean setIterationCount() {
@@ -256,16 +308,6 @@ public class MultiThreadBruteforcer {
             }
             lowestBound = highestBound - Math.min(highestBound, bruteforceOptions.getRecTicks());
         }
-    }
-
-    private void endRun() {
-        syncAllToMain();
-
-        bfService.shutdown();
-        scheduler.shutdownNow();
-        mainService.shutdownNow();
-
-        showResult();
     }
 
     private boolean isAllDone() {

@@ -55,7 +55,7 @@ public class InputGenerator {
     }
     
     private float generateFacing() {
-        float facing = 0;
+        float facing = 0.0F;
         if (random.nextDouble() < fChangeProb) {
             facing = new Random().nextFloat(361) - 180;
         }

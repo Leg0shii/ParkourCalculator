@@ -103,6 +103,8 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
         this.intervallOfLastShownField = addUIPair("Show Path:", new TextField("100"), 0, 1, 10);
 
         this.recTicksField = addUIPair("Recursive:", new TextField("100"), 2, 3, 2);
+        this.recTicksField.setDisable(true);
+
         this.syncField = addUIPair("Sync (s):", new TextField("5"), 2, 3, 3);
         this.instancesField = addUIPair("Instance:", new TextField("5"), 2, 3, 4);
         this.overlapField = addUIPair("Overlap (t):", new TextField("20"), 2, 3, 9);
@@ -128,7 +130,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
         this.removePathButton = addButton(new Button("Remove Path"), 2, 16, 2);
 
         this.bruteforceButton = addButton(new Button("Bruteforce"), 0, 17, 1);
-        this.cancelButton = addButton(new Button("Cancel"), 1, 17, 1);
+        this.cancelButton = addButton(new Button("Stop"), 1, 17, 1);
         this.resetAllButton = addButton(new Button("Reset ALL"), 2, 17, 2);
     }
 
@@ -267,7 +269,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     }
 
     private void cancelBruteforce() {
-        multiThreadBruteforcer.cancelBruteforce();
+        multiThreadBruteforcer.endRun();
     }
 
     private <T extends Node> T addUIPair(String labelName, T node, int column1, int column2, int row) {

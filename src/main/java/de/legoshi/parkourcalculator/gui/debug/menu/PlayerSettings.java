@@ -233,6 +233,10 @@ public class PlayerSettings extends TitledPane {
             player.getPotionEffects().get(Potion.jump).setAmplifier(value);
             syncPathAndScreen();
         });
+
+        this.speedField.setDisable(true);
+        this.slownessField.setDisable(true);
+        this.jumpField.setDisable(true);
     }
 
     private void syncPathAndScreen() {

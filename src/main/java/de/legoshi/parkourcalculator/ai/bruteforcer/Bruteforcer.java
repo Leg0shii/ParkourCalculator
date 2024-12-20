@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Bruteforcer implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(Bruteforcer.class.getName());
+    @Getter private final UUID uuid = UUID.randomUUID();
 
     @Getter private HashMap<Vec3, List<InputTick>> ticksMap = new HashMap<>();
     @Getter private List<InputTick> currentFastestSolution = new ArrayList<>();
@@ -33,10 +34,11 @@ public class Bruteforcer implements Runnable {
     @Getter private boolean isActive;
     private long startTime;
 
-    private int longestElement;
+    @Getter private int tickGeneration;
+    @Getter private int longestElement;
     @Getter @Setter private int iterationCount;
-    @Setter private int lowestBound;
-    @Setter private int highestBound;
+    @Getter @Setter private int lowestBound;
+    @Getter @Setter private int highestBound;
 
     private final MultiThreadBruteforcer instance;
     private Parkour parkour;
@@ -50,7 +52,7 @@ public class Bruteforcer implements Runnable {
 
     @Override
     public void run() {
-        logger.debug("Started bruteforcer instance. " + this);
+        logger.debug("Started bruteforcer instance. {}", this);
         this.parkour = parkour.clone();
         this.clearBruteforce();
         this.findPath();
@@ -58,6 +60,10 @@ public class Bruteforcer implements Runnable {
 
     protected synchronized void syncMap(ConcurrentHashMap<Vec3, List<InputTick>> map) {
         this.ticksMap = new HashMap<>(map);
+    }
+
+    protected synchronized void syncCFS(List<InputTick> solution) {
+        setCurrentFastestSolution(solution);
     }
 
     protected void cancelBruteforce() {
@@ -87,6 +93,7 @@ public class Bruteforcer implements Runnable {
                         inputTicks = new ArrayList<>(nthEntry);
                         startIndex = inputTicks.size();
                     }
+                    this.tickGeneration = startIndex;
 
                     for (int j = 0; j < bruteforceOptions.getTicksPerTrial(); j++) {
                         inputTicks.add(inputGenerator.getNextTick());
@@ -99,7 +106,7 @@ public class Bruteforcer implements Runnable {
                 }
             }
         } catch (Exception e) {
-            logger.error("An error occurred in findPath: " + e.getMessage(), e);
+            logger.error("An error occurred in findPath: {}", e.getMessage(), e);
         } finally {
             this.isActive = false;
         }
@@ -146,16 +153,15 @@ public class Bruteforcer implements Runnable {
                 }
             }
 
-            Vec3 possibleLBPos = roundedVec.copy();
-            possibleLBPos.y--;
-            ABlock possibleLB = parkour.getBlockManager().getBlock(possibleLBPos);
+            List<Vec3> endBlockBounds = new ArrayList<>();
+            endBlockBounds.add(endBlock.getVec3());
 
-            if (!(possibleLB instanceof Air) && possibleLB.getVec3().equals(endBlock.getVec3())) {
+            if (isInsideBoundaries(endBlockBounds, unRoundedVec)) {
                 List<InputTick> shrinkList = new ArrayList<>(inputTicks.subList(0, count));
                 if ((currentFastestSolution.isEmpty() || shrinkList.size() < currentFastestSolution.size())) {
-                    instance.mergeFastestSolution(shrinkList);
-                    logger.debug("New Solution with " + currentFastestSolution.size() + " ticks. Found in: "
-                            + ((System.currentTimeMillis() - startTime)) + "ms");
+                    // instance.mergeFastestSolution(shrinkList);
+                    this.currentFastestSolution = new ArrayList<>(shrinkList);
+                    logger.debug("New Solution with {} ticks. Found in: {}ms", currentFastestSolution.size(), System.currentTimeMillis() - startTime);
                 }
             }
 
