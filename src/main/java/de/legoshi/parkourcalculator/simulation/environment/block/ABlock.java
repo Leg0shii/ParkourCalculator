@@ -99,6 +99,13 @@ public abstract class ABlock {
         boxesArrayList.forEach(b -> b.setMaterial(new PhongMaterial(this.materialColor)));
     }
 
+    public void resetColoredAirBlocks() {
+        if (boxesArrayList == null || boxesArrayList.isEmpty()) return;
+        boxesArrayList.stream()
+                .filter(b -> this instanceof Air)
+                .forEach(b -> this.applyMaterialColor(BlockColors.TRANSPARENT.get()));
+    }
+
     public void setSpecularColor(Color specularColor) {
         if (specularColor.equals(BlockColors.IRON_SPEC.get())) this.specularPower = 50;
         else if (specularColor.equals(BlockColors.STONE_SPEC.get())) this.specularPower = 20;

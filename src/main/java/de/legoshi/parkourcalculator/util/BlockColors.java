@@ -35,7 +35,9 @@ public enum BlockColors {
     SOUL_SAND("0x523600ff"),
     HEAD("0xb9b9b9ff"),
     COCOA_BEAN("0x7b5100ff"),
-    FLOWER_POT("0xd24a00ff");
+    FLOWER_POT("0xd24a00ff"),
+    A_STAR_PATH("0x00000033"),
+    TRANSPARENT("0x00000000");
 
     private final Color color;
 

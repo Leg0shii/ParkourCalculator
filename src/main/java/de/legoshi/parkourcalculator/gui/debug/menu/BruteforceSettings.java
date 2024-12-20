@@ -7,6 +7,7 @@ import de.legoshi.parkourcalculator.ai.bruteforcer.MultiThreadBruteforcer;
 import de.legoshi.parkourcalculator.gui.VersionDependent;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.simulation.environment.block.ABlock;
+import de.legoshi.parkourcalculator.simulation.environment.block.Air;
 import de.legoshi.parkourcalculator.simulation.environment.blockmanager.BlockManager;
 import de.legoshi.parkourcalculator.simulation.player.Player;
 import de.legoshi.parkourcalculator.util.Vec3;
@@ -28,7 +29,7 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     private static final Logger logger = LogManager.getLogger(BruteforceSettings.class.getName());
     private final Application application;
 
-    private MultiThreadBruteforcer multiThreadBruteforcer;
+    @Getter private MultiThreadBruteforcer multiThreadBruteforcer;
     private GridPane gridPane;
 
     public List<Vec3> boundaries = new ArrayList<>();
@@ -157,7 +158,13 @@ public class BruteforceSettings extends TitledPane implements VersionDependent {
     }
 
     private void removePathBlocks() {
-        this.boundaries.forEach(block -> blockManager.getBlock(block).resetAndApplyMaterialColor());
+        this.boundaries.forEach(block -> {
+            ABlock aBlock = blockManager.getBlock(block);
+            aBlock.resetAndApplyMaterialColor();
+            if (aBlock instanceof Air) {
+                application.minecraftGUI.removeBlock(aBlock);
+            }
+        });
         this.boundaries.clear();
     }
 

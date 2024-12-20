@@ -1,7 +1,6 @@
 package de.legoshi.parkourcalculator.ai.bruteforcer;
 
 import de.legoshi.parkourcalculator.Application;
-import de.legoshi.parkourcalculator.gui.debug.CoordinateScreen;
 import de.legoshi.parkourcalculator.simulation.Parkour;
 import de.legoshi.parkourcalculator.ai.AStarPathfinder;
 import de.legoshi.parkourcalculator.ai.BruteforceOptions;
@@ -12,6 +11,7 @@ import de.legoshi.parkourcalculator.simulation.tick.InputTick;
 import de.legoshi.parkourcalculator.simulation.tick.InputTickManager;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.application.Platform;
+import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +40,7 @@ public class MultiThreadBruteforcer {
     private final List<BruteforceOptions> bruteforceOptions;
     private final List<InputGenerator> inputGenerators;
 
-    private final AStarPathfinder aStarPathfinder;
+    @Getter private final AStarPathfinder aStarPathfinder;
 
     @Setter private ABlock endBlock;
 
@@ -62,7 +62,7 @@ public class MultiThreadBruteforcer {
         this.inputGenerators = new ArrayList<>();
         this.boundaries = boundaries;
 
-        this.aStarPathfinder = new AStarPathfinder(application.getParkour());
+        this.aStarPathfinder = new AStarPathfinder(application.getParkour(), application.getMinecraftGUI());
         this.aStarPathfinder.setColorize(true);
     }
 
@@ -121,8 +121,7 @@ public class MultiThreadBruteforcer {
             try {
                 buildBruteforcer();
             } catch (Exception e) {
-                logger.error("An error occurred while building the bruteforcers: " + e.getMessage(), e);
-                e.printStackTrace();
+                logger.error("An error occurred while building the bruteforcers: {}", e.getMessage(), e);
             }
 
             for (Bruteforcer bruteforcer : bruteforcers) {
@@ -193,7 +192,7 @@ public class MultiThreadBruteforcer {
     }
 
     private void showResult() {
-        logger.debug("Setting current fastest solution: " + currentFastestSolution.size());
+        logger.debug("Setting current fastest solution: {}", currentFastestSolution.size());
         Platform.runLater(() -> {
             inputTickGUI.clearAllTicks();
             inputTickManager.setInputTicks(currentFastestSolution);

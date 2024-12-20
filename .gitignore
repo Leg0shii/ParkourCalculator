@@ -5,7 +5,7 @@ target/
 all.log
 config.properties
 dependency-reduced-pom.xml
-
+src/main/java/de/legoshi/parkourcalculator/Test.java
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -15,9 +15,6 @@ dependency-reduced-pom.xml
 *.iws
 *.iml
 *.ipr
-
-src/main/resources/config.properties
-src/main/java/de/legoshi/parkourcalculator/Test.java
 
 ### Eclipse ###
 .apt_generated

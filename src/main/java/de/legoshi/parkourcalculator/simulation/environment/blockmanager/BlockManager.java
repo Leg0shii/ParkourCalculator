@@ -3,6 +3,7 @@ package de.legoshi.parkourcalculator.simulation.environment.blockmanager;
 import de.legoshi.parkourcalculator.simulation.environment.block.*;
 import de.legoshi.parkourcalculator.util.Vec3;
 import javafx.scene.shape.Box;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,9 +20,8 @@ public abstract class BlockManager implements Observer, Cloneable {
 
     public ABlock currentBlock = new StandardBlock();
     public List<ABlock> registeredBlocks = new ArrayList<>();
+    @Getter
     public List<ABlock> allBlocks = new ArrayList<>();
-
-    // other methods and fields remain unchanged
 
     private int toInternalIndex(int coordinate) {
         return coordinate + OFFSET;
@@ -34,10 +34,10 @@ public abstract class BlockManager implements Observer, Cloneable {
     public ABlock getBlock(int x, int y, int z) {
         try {
             ABlock block = blocks[toInternalIndex(x)][toInternalIndex(y)][toInternalIndex(z)];
-            return block == null ? Air.getInstance() : block;
+            return block == null ? Air.getInstance(new Vec3(x, y, z)) : block;
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Cant get Block. Index out of bounds: " + x + ", " + y + ", " + z + " - " + e.getMessage(), e);
-            return null; // or handle differently
+            logger.error("Cant get Block. Index out of bounds: {}, {}, {} - {}", x, y, z, e.getMessage(), e);
+            return null;
         }
     }
 
@@ -49,7 +49,7 @@ public abstract class BlockManager implements Observer, Cloneable {
         try {
             blocks[x][y][z] = block;
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Cant place Block. Index out of bounds: " + x + ", " + y + ", " + z + " - " + e.getMessage(), e);
+            logger.error("Cant place Block. Index out of bounds: {}, {}, {} - {}", x, y, z, e.getMessage(), e);
             // handle the case where the block is outside the array bounds
         }
 
@@ -65,18 +65,14 @@ public abstract class BlockManager implements Observer, Cloneable {
         try {
             blocks[x][y][z] = null;
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Cant remove Block. Index out of bounds: " + x + ", " + y + ", " + z + " - " + e.getMessage(), e);
+            logger.error("Cant remove Block. Index out of bounds: {}, {}, {} - {}", x, y, z, e.getMessage(), e);
             // handle the case where the block is outside the array bounds
         }
 
         block.getBoxesArrayList().forEach(box -> boxBlocks.remove(box));
         allBlocks.remove(block);
     }
-    
-    public List<ABlock> getAllBlocks() {
-        return allBlocks;
-    }
-    
+
     public ABlock getBlockFromBox(Box box) {
         return boxBlocks.get(box);
     }
@@ -106,7 +102,7 @@ public abstract class BlockManager implements Observer, Cloneable {
         try {
             return (BlockManager) super.clone();
         } catch (CloneNotSupportedException e) {
-            logger.error("Couldnt clone blockmanager. " + e.getMessage(), e);
+            logger.error("Couldn't clone blockmanager. {}", e.getMessage(), e);
             throw new AssertionError();
         }
     }
