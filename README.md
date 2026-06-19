@@ -1,3 +1,5 @@
+⚠️ Work has moved into Minecraft as a mod. Rebuilt with far more features and a much better UX: https://github.com/Leg0shii/ParkourCalculatorMod
+
 # ParkourCalculator
 
 ## Overview
